@@ -1,4 +1,4 @@
-<widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" id="com.raghava.nmcmobile" version="2.1.0">
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" id="com.raghava.nmcmobile" version="1.0">
   <name>NMC Mobile App</name>
   <description>NMC Mobile App</description>
   <author href="" email="raghava.u@gmail.com">Raghavendra</author>
