@@ -75,7 +75,7 @@
   <gap:splash src="res/screen/ios/screen-iphone-portrait-568h-2x.png" gap:platform="ios" width="640" height="1136" />
   <access origin="*"/>
   <plugin name="cordova-plugin-whitelist" version="1"/>
-  <plugin name="com.simonmacdonald.telephonenumber" source="pgb" />
+  <!--<plugin name="com.simonmacdonald.telephonenumber" source="pgb" />-->
   <allow-intent href="http://*/*"/>
   <allow-intent href="https://*/*"/>
   <allow-intent href="tel:*"/>
