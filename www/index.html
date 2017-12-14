@@ -1,9 +1,128 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Index Page</title>
-    </head>
-    <body>
-        <h3>Index Page</h3>
-    </body>
+
+<head>
+    <title>Index Page</title>
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="semantic/css/semantic.css">
+    <link rel="stylesheet" type="text/css" href="fontawesome4.7.0/css/font-awesome.css">
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="semantic/js/semantic.js"></script>
+    <style type="text/css">
+        body {
+            background-color: #e5e5e5;
+        }
+
+        body>.grid {
+            height: 100%;
+        }
+
+        .column {
+            max-width: 450px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="ui middle aligned center aligned grid">
+        <!-- ui raised very padded text container
+             ui middle aligned center aligned grid
+        -->
+
+        <div class="ui column grid">
+            <div class="column">
+                <div class="ui stacked left aligned segment">
+                    <!-- red -->
+                    <div class="ui red ribbon label">Login to Your Account</div><br><br>
+                    <center>
+                        <img class="ui small image" src="img/logo2.png"></center><br>
+                    <form class="ui form">
+                        <div class="field">
+                            <div class="ui left icon input">
+                                <i class="user circle icon"></i>
+                                <input name="empid" placeholder="Employee Id" type="text">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui left icon input">
+                                <i class="lock icon"></i>
+                                <input name="emppin" placeholder="PIN" type="password">
+                            </div>
+                        </div>
+                        <button class="ui teal fluid submit button right labeled icon" type="submit">
+                            <i class="checkmark icon"></i>
+                            Login
+                        </button>
+                        <div class="ui error message"></div>
+                    </form>
+                    <br><br>
+                    <button class="ui red fluid submit button right labeled icon" type="button" id="forgotpin">
+                        <i class="right arrow icon"></i>
+                        Forgot PIN?
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ui modal">
+        <i class="close black icon"></i>
+        <div class="header">
+            Profile Picture
+        </div>
+        <div class="image content">
+            <div class="ui medium image">
+                <img src="/images/avatar/large/chris.jpg">
+            </div>
+            <div class="description">
+                <div class="ui header">We've auto-chosen a profile image for you.</div>
+                <p>We've grabbed the following image from the <a href="https://www.gravatar.com" target="_blank">gravatar</a> image associated with your registered e-mail address.</p>
+                <p>Is it okay to use this photo?</p>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui black deny button">
+                Nope
+            </div>
+            <div class="ui positive right labeled icon button">
+                Yep, that's me
+                <i class="checkmark icon"></i>
+            </div>
+        </div>
+    </div>
+</body>
+
 </html>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.ui.form').form({
+            fields: {
+                empid: {
+                    identifier: 'empid',
+                    rules: [{
+                        type: 'empty',
+                        prompt: 'Please enter your Employee Id'
+                    }]
+                },
+                emppin: {
+                    identifier: 'emppin',
+                    rules: [{
+                        type: 'empty',
+                        prompt: 'Please enter your Pin'
+                    }, {
+                        type: 'length[5]',
+                        prompt: 'Pin length must be 5 letters'
+                    }]
+                }
+            }
+        });
+
+        $('#forgotpin').click(function(){
+            $('.modal')
+            .modal({ inverted: true })
+            .modal('setting', 'transition', 'vertical flip')
+            .modal('show');
+        });
+    });
+
+</script>
