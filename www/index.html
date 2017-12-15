@@ -50,13 +50,13 @@
                                 <input name="emppin" placeholder="PIN" type="password">
                             </div>
                         </div>
-                        <button class="ui teal fluid submit button right labeled icon" type="submit">
+                        <button class="ui teal fluid submit button right labeled icon" type="submit" id="login">
                             <i class="checkmark icon"></i>
-                            Login
+                            <span>Login</span>
                         </button>
                         <div class="ui error message"></div>
                     </form>
-                    <br><br>
+                    <div class="ui section divider"></div>
                     <button class="ui red fluid submit button right labeled icon" type="button" id="forgotpin">
                         <i class="right arrow icon"></i>
                         Forgot PIN?
@@ -65,20 +65,26 @@
             </div>
         </div>
     </div>
-    <div class="ui modal">
+    <div class="ui small modal">
         <i class="close black icon"></i>
         <div class="header">
-            Profile Picture
+            Reset Pin
         </div>
-        <div class="image content">
-            <div class="ui medium image">
-                <img src="/images/avatar/large/chris.jpg">
-            </div>
-            <div class="description">
-                <div class="ui header">We've auto-chosen a profile image for you.</div>
-                <p>We've grabbed the following image from the <a href="https://www.gravatar.com" target="_blank">gravatar</a> image associated with your registered e-mail address.</p>
-                <p>Is it okay to use this photo?</p>
-            </div>
+        <div class="content">
+            <center>
+                <div class="ui left icon input">
+                    <i class="user circle icon"></i>
+                    <input name="empid" placeholder="Employee Id" type="text">
+                </div>
+                <div class="ui left icon input">
+                    <i class="call square icon"></i>
+                    <input name="mobile" placeholder="Mobile No" type="mobile">
+                </div>
+                <div class="ui input">
+                    <input name="otp" placeholder="OTP" type="text">
+                </div>
+                <!--<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>-->
+            </center>
         </div>
         <div class="actions">
             <div class="ui black deny button">
@@ -104,7 +110,7 @@
                         prompt: 'Please enter your Employee Id'
                     }]
                 },
-                emppin: {
+                number: {
                     identifier: 'emppin',
                     rules: [{
                         type: 'empty',
@@ -114,14 +120,27 @@
                         prompt: 'Pin length must be 5 letters'
                     }]
                 }
+            },
+            onSuccess: function() {
+                //$('#login').find('span').text("");
+                //$('#login').attr('disabled', 'true');
+                //$('#login').find(".checkmark.icon").attr('class', 'fa fa-spinner fa-spin');
+                $('#login').attr('class', 'ui loading fluid button');
+                return false;
+            },
+            onFailure: function() {
+                return false;
             }
         });
 
-        $('#forgotpin').click(function(){
+        $('#forgotpin').click(function() {
             $('.modal')
-            .modal({ inverted: true })
-            .modal('setting', 'transition', 'vertical flip')
-            .modal('show');
+                .modal({
+                    inverted: true
+                })
+                .modal('setting', 'closable', false)
+                .modal('setting', 'transition', 'vertical flip')
+                .modal('show');
         });
     });
 
