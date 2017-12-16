@@ -11,6 +11,7 @@
     <style type="text/css">
         body {
             background-color: #e5e5e5;
+            overflow: hidden;
         }
 
         body>.grid {
@@ -126,7 +127,7 @@
                 //$('#login').find('span').text("");
                 //$('#login').attr('disabled', 'true');
                 //$('#login').find(".checkmark.icon").attr('class', 'fa fa-spinner fa-spin');
-                $('#login').attr('class', 'ui loading fluid button');
+                $('#login').attr('class', 'ui disabled inverted loading fluid button');
                 return false;
             },
             onFailure: function() {
@@ -135,13 +136,14 @@
         });
 
         $('#forgotpin').click(function() {
-            $('.modal')
+            /*$('.modal')
                 .modal({
                     inverted: true
                 })
                 .modal('setting', 'closable', false)
                 .modal('setting', 'transition', 'vertical flip')
-                .modal('show');
+                .modal('show');*/
+            window.location.href = 'resetpin.html';
         });
     });
 

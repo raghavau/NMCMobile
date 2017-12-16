@@ -20093,6 +20093,7 @@ ol.ui.horizontal.list li:before,
 .ui.grid > .row > .yellow.column,
 .ui.grid > .row > .olive.column,
 .ui.grid > .row > .green.column,
+.ui.grid > .row > .customcolor.column,
 .ui.grid > .row > .teal.column,
 .ui.grid > .row > .blue.column,
 .ui.grid > .row > .violet.column,
@@ -37116,6 +37117,352 @@ body.pushable > .pusher {
     -webkit-transform: scale3d(1, 1, 1);
     transform: scale3d(1, 1, 1);
   }
+}
+
+/*--- customcolor ---*/
+
+.ui.customcolor.buttons .button,
+.ui.customcolor.button {
+  background-color: #4ca64c;
+  color: #FFFFFF;
+  text-shadow: none;
+  background-image: none;
+}
+
+.ui.customcolor.button {
+  box-shadow: 0px 0em 0px 0px rgba(34, 36, 38, 0.15) inset;
+}
+
+.ui.customcolor.buttons .button:hover,
+.ui.customcolor.button:hover {
+  background-color: #3c843c;
+  color: #FFFFFF;
+  text-shadow: none;
+}
+
+.ui.customcolor.buttons .button:focus,
+.ui.customcolor.button:focus {
+  background-color: #0ea432;
+  color: #FFFFFF;
+  text-shadow: none;
+}
+
+.ui.customcolor.buttons .button:active,
+.ui.customcolor.button:active {
+  background-color: #198f35;
+  color: #FFFFFF;
+  text-shadow: none;
+}
+
+.ui.customcolor.buttons .active.button,
+.ui.customcolor.buttons .active.button:active,
+.ui.customcolor.active.button,
+.ui.customcolor.button .active.button:active {
+  background-color: #13ae38;
+  color: #FFFFFF;
+  text-shadow: none;
+}
+
+/* Basic */
+
+.ui.basic.customcolor.buttons .button,
+.ui.basic.customcolor.button {
+  box-shadow: 0px 0px 0px 1px #4ca64c inset !important;
+  color: #4ca64c !important;
+}
+
+.ui.basic.customcolor.buttons .button:hover,
+.ui.basic.customcolor.button:hover {
+  background: transparent !important;
+  box-shadow: 0px 0px 0px 1px #3c843c inset !important;
+  color: #3c843c !important;
+}
+
+.ui.basic.customcolor.buttons .button:focus,
+.ui.basic.customcolor.button:focus {
+  background: transparent !important;
+  box-shadow: 0px 0px 0px 1px #0ea432 inset !important;
+  color: #3c843c !important;
+}
+
+.ui.basic.customcolor.buttons .active.button,
+.ui.basic.customcolor.active.button {
+  background: transparent !important;
+  box-shadow: 0px 0px 0px 1px #13ae38 inset !important;
+  color: #198f35 !important;
+}
+
+.ui.basic.customcolor.buttons .button:active,
+.ui.basic.customcolor.button:active {
+  box-shadow: 0px 0px 0px 1px #198f35 inset !important;
+  color: #198f35 !important;
+}
+
+.ui.buttons:not(.vertical) > .basic.customcolor.button:not(:first-child) {
+  margin-left: -1px;
+}
+
+/* Inverted */
+
+.ui.inverted.customcolor.buttons .button,
+.ui.inverted.customcolor.button {
+  background-color: transparent;
+  box-shadow: 0px 0px 0px 2px #2ECC40 inset !important;
+  color: #2ECC40;
+}
+
+.ui.inverted.customcolor.buttons .button:hover,
+.ui.inverted.customcolor.button:hover,
+.ui.inverted.customcolor.buttons .button:focus,
+.ui.inverted.customcolor.button:focus,
+.ui.inverted.customcolor.buttons .button.active,
+.ui.inverted.customcolor.button.active,
+.ui.inverted.customcolor.buttons .button:active,
+.ui.inverted.customcolor.button:active {
+  box-shadow: none !important;
+  color: #FFFFFF;
+}
+
+.ui.inverted.customcolor.buttons .button:hover,
+.ui.inverted.customcolor.button:hover {
+  background-color: #22be34;
+}
+
+.ui.inverted.customcolor.buttons .button:focus,
+.ui.inverted.customcolor.button:focus {
+  background-color: #19b82b;
+}
+
+.ui.inverted.customcolor.buttons .active.button,
+.ui.inverted.customcolor.active.button {
+  background-color: #1fc231;
+}
+
+.ui.inverted.customcolor.buttons .button:active,
+.ui.inverted.customcolor.button:active {
+  background-color: #25a233;
+}
+
+/* Inverted Basic */
+
+.ui.inverted.customcolor.basic.buttons .button,
+.ui.inverted.customcolor.buttons .basic.button,
+.ui.inverted.customcolor.basic.button {
+  background-color: transparent;
+  box-shadow: 0px 0px 0px 2px rgba(255, 255, 255, 0.5) inset !important;
+  color: #FFFFFF !important;
+}
+
+.ui.inverted.customcolor.basic.buttons .button:hover,
+.ui.inverted.customcolor.buttons .basic.button:hover,
+.ui.inverted.customcolor.basic.button:hover {
+  box-shadow: 0px 0px 0px 2px #22be34 inset !important;
+  color: #2ECC40 !important;
+}
+
+.ui.inverted.customcolor.basic.buttons .button:focus,
+.ui.inverted.customcolor.basic.buttons .button:focus,
+.ui.inverted.customcolor.basic.button:focus {
+  box-shadow: 0px 0px 0px 2px #19b82b inset !important;
+  color: #2ECC40 !important;
+}
+
+.ui.inverted.customcolor.basic.buttons .active.button,
+.ui.inverted.customcolor.buttons .basic.active.button,
+.ui.inverted.customcolor.basic.active.button {
+  box-shadow: 0px 0px 0px 2px #1fc231 inset !important;
+  color: #2ECC40 !important;
+}
+
+.ui.inverted.customcolor.basic.buttons .button:active,
+.ui.inverted.customcolor.buttons .basic.button:active,
+.ui.inverted.customcolor.basic.button:active {
+  box-shadow: 0px 0px 0px 2px #25a233 inset !important;
+  color: #2ECC40 !important;
+}
+
+/*--- customcolor ---*/
+
+.ui.customcolor.header {
+  color: #4ca64c !important;
+}
+
+a.ui.customcolor.header:hover {
+  color: #3c843c !important;
+}
+
+.ui.customcolor.dividing.header {
+  border-bottom: 2px solid #4ca64c;
+}
+
+/* Inverted */
+
+.ui.inverted.customcolor.header {
+  color: #2ECC40 !important;
+}
+
+a.ui.inverted.customcolor.header:hover {
+  color: #22be34 !important;
+}
+
+/* customcolor */
+
+i.customcolor.icon {
+  color: #4ca64c !important;
+}
+
+i.inverted.customcolor.icon {
+  color: #2ECC40 !important;
+}
+
+i.inverted.bordered.customcolor.icon,
+i.inverted.circular.customcolor.icon {
+  background-color: #4ca64c !important;
+  color: #FFFFFF !important;
+}
+
+/*--- customcolor ---*/
+
+.ui.customcolor.labels .label,
+.ui.customcolor.label {
+  background-color: #4ca64c !important;
+  border-color: #4ca64c !important;
+  color: #FFFFFF !important;
+}
+
+/* Link */
+
+.ui.customcolor.labels .label:hover,
+a.ui.customcolor.label:hover {
+  background-color: #3c843c !important;
+  border-color: #3c843c !important;
+  color: #FFFFFF !important;
+}
+
+/* Corner */
+
+.ui.customcolor.corner.label,
+.ui.customcolor.corner.label:hover {
+  background-color: transparent !important;
+}
+
+/* Ribbon */
+
+.ui.customcolor.ribbon.label {
+  border-color: #198f35 !important;
+}
+
+/* Basic */
+
+.ui.basic.customcolor.label {
+  background-color: #FFFFFF !important;
+  color: #4ca64c !important;
+  border-color: #4ca64c !important;
+}
+
+.ui.basic.customcolor.labels a.label:hover,
+a.ui.basic.customcolor.label:hover {
+  background-color: #FFFFFF !important;
+  color: #3c843c !important;
+  border-color: #3c843c !important;
+}
+
+/* customcolor */
+
+.ui.customcolor.segment:not(.inverted) {
+  border-top: 2px solid #4ca64c !important;
+}
+
+.ui.inverted.customcolor.segment {
+  background-color: #4ca64c !important;
+  color: #FFFFFF !important;
+}
+
+/* customcolor */
+
+.ui.grid > .customcolor.row,
+.ui.grid > .customcolor.column,
+.ui.grid > .row > .customcolor.column {
+  background-color: #4ca64c !important;
+  color: #FFFFFF;
+}
+
+.ui.menu .customcolor.active.item,
+.ui.customcolor.menu .active.item {
+  border-color: #4ca64c !important;
+  color: #4ca64c !important;
+}
+
+/* customcolor */
+
+.ui.inverted.menu .customcolor.active.item,
+.ui.inverted.customcolor.menu {
+  background-color: #4ca64c;
+}
+
+.ui.inverted.customcolor.menu .item:before {
+  background-color: rgba(34, 36, 38, 0.1);
+}
+
+.ui.inverted.customcolor.menu .active.item {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.ui.customcolor.message {
+  background-color: #E5F9E7;
+  color: #1EBC30;
+  box-shadow: 0px 0px 0px 1px #1EBC30 inset, 0px 0px 0px 0px rgba(0, 0, 0, 0);
+}
+
+.ui.customcolor.message .header {
+  color: #1aa62a;
+}
+
+/* customcolor */
+
+.ui.customcolor.table {
+  border-top: 0.2em solid #4ca64c;
+}
+
+.ui.inverted.customcolor.table {
+  background-color: #4ca64c !important;
+  color: #FFFFFF !important;
+}
+
+/* customcolor */
+
+.ui.customcolor.cards > .card,
+.ui.cards > .customcolor.card,
+.ui.customcolor.card {
+  box-shadow: 0px 0px 0px 1px #D4D4D5, 0px 2px 0px 0px #4ca64c, 0px 1px 3px 0px #D4D4D5;
+}
+
+.ui.customcolor.cards > .card:hover,
+.ui.cards > .customcolor.card:hover,
+.ui.customcolor.card:hover {
+  box-shadow: 0px 0px 0px 1px #D4D4D5, 0px 2px 0px 0px #3c843c, 0px 1px 3px 0px #BCBDBD;
+}
+
+.ui.customcolor.statistics .statistic > .value,
+.ui.statistics .customcolor.statistic > .value,
+.ui.customcolor.statistic > .value {
+  color: #4ca64c;
+}
+
+.ui.inverted.customcolor.statistics .statistic > .value,
+.ui.statistics .inverted.customcolor.statistic > .value,
+.ui.inverted.customcolor.statistic > .value {
+  color: #2ECC40;
+}
+
+/* customcolor */
+
+.ui.customcolor.progress .bar {
+  background-color: #4ca64c;
+}
+
+.ui.customcolor.inverted.progress .bar {
+  background-color: #2ECC40;
 }
 
 /*******************************

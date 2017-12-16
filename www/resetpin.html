@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Index Page</title>
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="semantic/css/semantic.css">
+    <link rel="stylesheet" type="text/css" href="fontawesome4.7.0/css/font-awesome.css">
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="semantic/js/semantic.js"></script>
+    <style type="text/css">
+        body {
+            background-color: #e5e5e5;
+            overflow: hidden;
+        }
+
+        body>.grid {
+            height: 100%;
+        }
+
+        .column {
+            max-width: 450px;
+        }
+
+        #generate {
+            opacity: 0;
+            transform: translateX(0) rotate(0deg);
+            transition: all .75s linear;
+        }
+
+        #generate.show2 {
+            /*transform: translateX(0px) rotate(360deg);*/
+
+            opacity: 1;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="ui middle aligned center aligned grid">
+        <!-- ui raised very padded text container
+             ui middle aligned center aligned grid
+        -->
+        <div class="ui column grid">
+            <div class="column">
+                <div class="ui stacked left aligned segment" id="reset">
+                    <!-- red -->
+                    <div class="ui red ribbon label">Reset Your PIN</div><br><br>
+                    <form class="ui form">
+                        <div class="field">
+                            <div class="ui left icon input">
+                                <i class="user circle icon"></i>
+                                <input id="empid" placeholder="Employee Id" type="text">
+                            </div>
+                        </div>
+                        <button class="ui teal fluid submit button right labeled icon" type="button" id="send">
+                            <i class="right arrow icon"></i>
+                            <span>Send OTP</span>
+                        </button><br>
+                        <div id="show">
+                            <div class="ui blue tiny message">OTP sent to this Mobile No.</div>
+                            <div class="field">
+                                <div class="ui disabled left icon input">
+                                    <i class="call square icon"></i>
+                                    <input id="mobile" placeholder="Mobile No" type="text" readonly>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="ui left icon input">
+                                    <i class="unlock alternate icon"></i>
+                                    <input id="otp" placeholder="OTP" type="text">
+                                </div>
+                            </div>
+                            <button class="ui green fluid submit button right labeled icon" type="button" id="verify">
+                                <i class="checkmark icon"></i>
+                                <span>Verify OTP</span>
+                            </button>
+                        </div>
+                        <div class="ui error message"></div>
+                    </form>
+                </div>
+
+                <div class="ui stacked left aligned segment" id="generate">
+                    <!-- red -->
+                    <div class="ui red ribbon label">Create New PIN</div><br><br>
+                    <form class="ui form">
+                        <div class="field">
+                            <div class="ui left icon input">
+                                <i class="user circle icon"></i>
+                                <input id="pin" placeholder="Enter PIN" type="text">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui left icon input">
+                                <i class="call square icon"></i>
+                                <input id="cnfpin" placeholder="Confirm PIN" type="text">
+                            </div>
+                        </div>
+                        <button class="ui green fluid submit button right labeled icon" type="submit" id="confirm">
+                                <i class="checkmark icon"></i>
+                                <span>Confirm</span>
+                            </button>
+                        <div class="ui error message"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#show').hide();
+        $('#generate').hide();
+        $('#send').click(function() {
+            var empid = $('#empid').val();
+            if (empid != "") {
+                $('#send').hide();
+                $('#show').show();
+                $('.blue.message').transition('pulse');
+                $('#mobile').val('9542508667');
+                $('#otp').focus();
+            }
+        });
+
+        $('#verify').click(function() {
+            $('#generate').show('slow');
+            $('#generate').toggleClass('show2');
+            $('#reset').transition('slide left');
+        });
+    });
+
+</script>
