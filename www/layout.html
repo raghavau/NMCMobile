@@ -43,31 +43,43 @@
         </div>
     </div>
     <div class="ui bottom fixed fluid four item labeled icon menu">
-        <a class="item">
+        <a class="item" id="profile">
             <i class="id card red icon"></i>
             Profile
         </a>
-        <a class="item">
+        <a class="item" id="attendance">
             <i class="hand pointer camera blue icon"></i>
             Attendance
         </a>
-        <a class="item">
+        <a class="item" id="leave">
             <i class="calendar green icon"></i>
             Leave
         </a>
-        <a class="item">
+        <a class="item" id="availability">
             <i class="doctor purple icon"></i>
             Availability
         </a>
     </div>
         <br><br>
-        <iframe frameborder="0" height="100%" width="100%" id="ifrm" src="profile.html" style="position: absolute"></iframe>
+        <iframe frameborder="0" height="100%" width="100%" id="ifrm"  style="position: absolute"></iframe>
 </body>
 
 </html>
 <script type="text/javascript">
     $(document).ready(function() {
-
+        $('#ifrm').attr('src', 'profile.html');
+        $('#profile').click(function(){
+            $('#ifrm').attr('src', 'profile.html');
+        });
+        $('#attendance').click(function(){
+            $('#ifrm').attr('src', 'attendance.html');
+        });
+        $('#leave').click(function(){
+            $('#ifrm').attr('src', 'leave.html');
+        });
+        $('#availability').click(function(){
+            $('#ifrm').attr('src', 'availability.html');
+        });
     });
 
 </script>
