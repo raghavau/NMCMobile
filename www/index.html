@@ -51,7 +51,7 @@
                                 <input name="emppin" placeholder="PIN" type="password">
                             </div>
                         </div>
-                        <button class="ui teal fluid submit button right labeled icon" type="submit" id="login">
+                        <button class="ui teal fluid submit button right labeled icon" type="button" id="login">
                             <i class="checkmark icon"></i>
                             <span>Login</span>
                         </button>
@@ -66,83 +66,27 @@
             </div>
         </div>
     </div>
-    <div class="ui small modal">
-        <i class="close black icon"></i>
-        <div class="header">
-            Reset Pin
-        </div>
-        <div class="content">
-            <center>
-                <div class="ui left icon input">
-                    <i class="user circle icon"></i>
-                    <input name="empid" placeholder="Employee Id" type="text">
-                </div>
-                <div class="ui left icon input">
-                    <i class="call square icon"></i>
-                    <input name="mobile" placeholder="Mobile No" type="mobile">
-                </div>
-                <div class="ui left icon input">
-                    <i class="unlock alternate icon"></i>
-                    <input name="otp" placeholder="OTP" type="text">
-                </div>
-                <!--<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>-->
-            </center>
-        </div>
-        <div class="actions">
-            <div class="ui black deny button">
-                Cancel
-            </div>
-            <div class="ui positive right labeled icon button">
-                Verify
-                <i class="checkmark icon"></i>
-            </div>
-        </div>
-    </div>
 </body>
 
 </html>
 <script type="text/javascript">
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+    function onDeviceReady() {
+        document.addEventListener("backbutton", onBackKeyDown, false);
+    }
+
+    function onBackKeyDown() {
+        var state = confirm('Are You Sure you want to Exit.');
+        if (state)
+            navigator.app.exitApp(); // exit the app
+    }
     $(document).ready(function() {
-        $('.ui.form').form({
-            fields: {
-                empid: {
-                    identifier: 'empid',
-                    rules: [{
-                        type: 'empty',
-                        prompt: 'Please enter your Employee Id'
-                    }]
-                },
-                number: {
-                    identifier: 'emppin',
-                    rules: [{
-                        type: 'empty',
-                        prompt: 'Please enter your Pin'
-                    }, {
-                        type: 'length[5]',
-                        prompt: 'Pin length must be 5 letters'
-                    }]
-                }
-            },
-            onSuccess: function() {
-                //$('#login').find('span').text("");
-                //$('#login').attr('disabled', 'true');
-                //$('#login').find(".checkmark.icon").attr('class', 'fa fa-spinner fa-spin');
-                $('#login').attr('class', 'ui disabled inverted loading fluid button');
-                return false;
-            },
-            onFailure: function() {
-                return false;
-            }
+        $('#login').click(function() {
+            window.location.href = 'layout.html';
         });
 
         $('#forgotpin').click(function() {
-            /*$('.modal')
-                .modal({
-                    inverted: true
-                })
-                .modal('setting', 'closable', false)
-                .modal('setting', 'transition', 'vertical flip')
-                .modal('show');*/
             window.location.href = 'resetpin.html';
         });
     });

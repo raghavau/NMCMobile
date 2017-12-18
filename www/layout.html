@@ -31,13 +31,13 @@
             <i class="sidebar icon"></i>
         </a>
         <div class="right icon menu">
-            <a class="item">
+            <a class="item" id="home">
             <i class="home icon"></i>
         </a>
-            <a class="item">
+            <a class="item" id="notifications">
             <i class="alarm icon"></i>
         </a>
-            <a class="item">
+            <a class="item" id="signout">
             <i class="sign out icon"></i>
         </a>
         </div>
@@ -60,24 +60,41 @@
             Availability
         </a>
     </div>
-        <br><br>
-        <iframe frameborder="0" height="100%" width="100%" id="ifrm"  style="position: absolute"></iframe>
+    <br><br>
+    <iframe frameborder="0" height="100%" width="100%" id="ifrm" style="position: absolute"></iframe>
 </body>
 
 </html>
 <script type="text/javascript">
+    document.addEventListener("deviceready", onDeviceReady, false);
+    function onDeviceReady() {
+        document.addEventListener("backbutton", onBackKeyDown, false);
+    }
+    function onBackKeyDown() {
+    }
     $(document).ready(function() {
-        $('#ifrm').attr('src', 'profile.html');
-        $('#profile').click(function(){
+        $('#ifrm').attr('src', 'home.html');
+
+        $('#home').click(function() {
+            $('#ifrm').attr('src', 'home.html');
+        });
+        $('#notifications').click(function() {
+
+        });
+        $('#signout').click(function() {
+            window.location.href = 'index.html';
+        });
+
+        $('#profile').click(function() {
             $('#ifrm').attr('src', 'profile.html');
         });
-        $('#attendance').click(function(){
+        $('#attendance').click(function() {
             $('#ifrm').attr('src', 'attendance.html');
         });
-        $('#leave').click(function(){
+        $('#leave').click(function() {
             $('#ifrm').attr('src', 'leave.html');
         });
-        $('#availability').click(function(){
+        $('#availability').click(function() {
             $('#ifrm').attr('src', 'availability.html');
         });
     });
