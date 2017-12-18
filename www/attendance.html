@@ -5,9 +5,10 @@
     <title>Attendance</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="semantic/css/semantic.css">
-    <link rel="stylesheet" type="text/css" href="fontawesome4.7.0/css/font-awesome.css">
     <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.js"></script>
     <script type="text/javascript" src="semantic/js/semantic.js"></script>
     <style type="text/css">
         body {
@@ -24,17 +25,51 @@
             margin: 20px;
         }
 
+        a.ui-datepicker-prev,
+        a.ui-datepicker-next {
+            display: none;
+        }
+
+        .ui-datepicker-header {
+            border: none;
+            background-color: #0E6EB8;
+            border-radius: 0;
+            -webkit-border-radius: 0;
+            -moz-border-radius: 0;
+            -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14);
+            -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14);
+            color: #fff;
+        }
     </style>
 </head>
 
 <body>
-    <h2>In-Progress</h2>
+    <div class="ui column grid">
+        <div class="column">
+            <div class="ui stacked left aligned segment">
+                <div class="ui red ribbon label">Attendance</div><br><br>
+                <center>
+                    <div id="datepicker"></div>
+                </center>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
 <script type="text/javascript">
     $(document).ready(function() {
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = date.getMonth();
 
+        $("#datepicker").datepicker({
+            maxDate: new Date(year, month, "25"),
+            minDate: new Date(year, month - 1, "26"),
+            numberOfMonths: 2,
+            showOtherMonths: true
+        });
     });
 
 </script>
