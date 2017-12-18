@@ -32,7 +32,7 @@
 
         .ui-datepicker-header {
             border: none;
-            background-color: #0E6EB8;
+            background-color: steelblue;
             border-radius: 0;
             -webkit-border-radius: 0;
             -moz-border-radius: 0;
@@ -41,6 +41,38 @@
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14);
             color: #fff;
         }
+
+        .ui-datepicker-multi .ui-datepicker-group {
+            float: none;
+        }
+
+        .ui-datepicker-inline .ui-datepicker .ui-widget {
+            width: 15em;
+        }
+
+        /*.ui-datepicker-multi-2 .ui-datepicker-group {
+            width: 100%;
+        }*/
+
+        .ui-datepicker .holiday a {
+            background: #2793e8;
+            color: #fff;
+        }
+
+        .ui-datepicker .absent a {
+            background: #cc181e;
+            color: #fff;
+        }
+
+        .ui-datepicker .fullday a {
+            background: #559900;
+            color: #fff;
+        }
+
+        .ui-datepicker .halfday a {
+            background: #FFD700;
+        }
+
     </style>
 </head>
 
@@ -49,8 +81,12 @@
         <div class="column">
             <div class="ui stacked left aligned segment">
                 <div class="ui red ribbon label">Attendance</div><br><br>
+                <a class="ui blue label">Holiday</a>
+                <a class="ui red label">Absent</a>
+                <a class="ui green label">Fullday</a>
+                <a class="ui yellow label">Halfday</a>
                 <center>
-                    <div id="datepicker"></div>
+                    <div id="fromdate"></div>
                 </center>
             </div>
         </div>
@@ -64,11 +100,21 @@
         var year = date.getFullYear();
         var month = date.getMonth();
 
-        $("#datepicker").datepicker({
-            maxDate: new Date(year, month, "25"),
+        var halfday = ['12/18/2017'];
+        var fullday = ['11/27/2017', '12/22/2017'];
+        var absent = ['12/12/2017', '12/2/2017', '12/23/2017'];
+        var holiday = '12/25/2017';
+
+        $("#fromdate").datepicker({
             minDate: new Date(year, month - 1, "26"),
+            //maxDate: new Date(year, month - 1, new Date(year, month, 0).getDate()),
+            maxDate: new Date(year, month, "25"),
+            showOtherMonths: true,
             numberOfMonths: 2,
-            showOtherMonths: true
+            beforeShowDay: function(date) {
+                var theday = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
+                return [true, holiday == theday ? "holiday" : ($.inArray(theday, fullday) >= 0 ? "fullday" : ($.inArray(theday, absent) >= 0 ? "absent" : ($.inArray(theday, halfday) >= 0 ? "halfday" : "")))];
+            }
         });
     });
 
