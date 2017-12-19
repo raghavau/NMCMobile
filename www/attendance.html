@@ -5,7 +5,7 @@
     <title>Attendance</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui-custom.css">
     <link rel="stylesheet" type="text/css" href="semantic/css/semantic.css">
     <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui.js"></script>
@@ -13,7 +13,7 @@
     <style type="text/css">
         body {
             background-color: #e5e5e5;
-            overflow: hidden;
+            /*overflow: hidden;*/
         }
 
         body>.grid {
@@ -30,9 +30,9 @@
             display: none;
         }
 
-        .ui-datepicker-header {
+        /*.ui-datepicker-header {
             border: none;
-            background-color: steelblue;
+            background-color: #2185D0;
             border-radius: 0;
             -webkit-border-radius: 0;
             -moz-border-radius: 0;
@@ -40,37 +40,42 @@
             -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14);
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14);
             color: #fff;
-        }
+        }*/
 
-        .ui-datepicker-multi .ui-datepicker-group {
+        /*.ui-datepicker-multi .ui-datepicker-group {
             float: none;
         }
 
         .ui-datepicker-inline .ui-datepicker .ui-widget {
-            width: 15em;
+            width: 25em;
         }
 
-        /*.ui-datepicker-multi-2 .ui-datepicker-group {
+        .ui-datepicker-multi-2 .ui-datepicker-group {
             width: 100%;
         }*/
 
         .ui-datepicker .holiday a {
-            background: #2793e8;
-            color: #fff;
+            background: #2185D0;
+            border-radius: 50%;
+            color: #000;
+            width: 10px;
+            height: 10px;
+            position: relative;
+            text-align: center;
         }
 
         .ui-datepicker .absent a {
-            background: #cc181e;
+            background: #DB2828;
             color: #fff;
         }
 
         .ui-datepicker .fullday a {
-            background: #559900;
+            background: #21BA45;
             color: #fff;
         }
 
         .ui-datepicker .halfday a {
-            background: #FFD700;
+            background: #FBBD08;
         }
 
     </style>
@@ -81,13 +86,14 @@
         <div class="column">
             <div class="ui stacked left aligned segment">
                 <div class="ui red ribbon label">Attendance</div><br><br>
-                <a class="ui blue label">Holiday</a>
-                <a class="ui red label">Absent</a>
-                <a class="ui green label">Fullday</a>
-                <a class="ui yellow label">Halfday</a>
                 <center>
                     <div id="fromdate"></div>
+                    <div id="todate"></div>
                 </center>
+                <a class="ui red empty circular label"></a>Absent
+                <a class="ui blue empty circular label"></a>Holiday
+                <a class="ui green empty circular label"></a>Fullday
+                <a class="ui yellow empty circular label"></a>Halfday
             </div>
         </div>
     </div>
@@ -100,20 +106,32 @@
         var year = date.getFullYear();
         var month = date.getMonth();
 
-        var halfday = ['12/18/2017'];
+        var halfday = ['12/11/2017'];
         var fullday = ['11/27/2017', '12/22/2017'];
         var absent = ['12/12/2017', '12/2/2017', '12/23/2017'];
-        var holiday = '12/25/2017';
+        var holiday = ['12/23/2017', '12/25/2017'];
 
         $("#fromdate").datepicker({
             minDate: new Date(year, month - 1, "26"),
-            //maxDate: new Date(year, month - 1, new Date(year, month, 0).getDate()),
-            maxDate: new Date(year, month, "25"),
-            showOtherMonths: true,
-            numberOfMonths: 2,
+            maxDate: new Date(year, month - 1, new Date(year, month, 0).getDate()),
+            //maxDate: new Date(year, month, "25"),
+            //showOtherMonths: true,
+            //numberOfMonths: 2,
+            inline: true,
             beforeShowDay: function(date) {
                 var theday = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
-                return [true, holiday == theday ? "holiday" : ($.inArray(theday, fullday) >= 0 ? "fullday" : ($.inArray(theday, absent) >= 0 ? "absent" : ($.inArray(theday, halfday) >= 0 ? "halfday" : "")))];
+                return [true, $.inArray(theday, holiday) >= 0 ? "holiday" : ($.inArray(theday, fullday) >= 0 ? "fullday" : ($.inArray(theday, absent) >= 0 ? "absent" : ($.inArray(theday, halfday) >= 0 ? "halfday" : "")))];
+            }
+        });
+
+        $("#todate").datepicker({
+            //minDate: new Date(year, month - 1, "26"),
+            maxDate: new Date(year, month, "25"),
+            //showOtherMonths: true,
+            //numberOfMonths: 2,
+            beforeShowDay: function(date) {
+                var theday = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
+                return [true, $.inArray(theday, holiday) >= 0 ? "holiday" : ($.inArray(theday, fullday) >= 0 ? "fullday" : ($.inArray(theday, absent) >= 0 ? "absent" : ($.inArray(theday, halfday) >= 0 ? "halfday" : "")))];
             }
         });
     });
