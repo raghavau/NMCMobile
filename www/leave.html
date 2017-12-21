@@ -6,9 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="css/jquery-ui-custom.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.multidatespicker.css">
     <link rel="stylesheet" type="text/css" href="semantic/css/semantic.css">
     <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.multidatespicker.js"></script>
     <script type="text/javascript" src="semantic/js/semantic.js"></script>
     <style type="text/css">
         body {
@@ -36,6 +38,45 @@
                 <center>
                     <div id="fromdate"></div>
                 </center>
+                <div class="ui form">
+                    <div class="grouped fields">
+                        <label>Leave Type</label>
+                        <div class="field">
+                            <div class="ui toggle checkbox">
+                                <input name="example2" type="radio">
+                                <label>CL</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui toggle checkbox">
+                                <input name="example2" type="radio">
+                                <label>SL</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui toggle checkbox">
+                                <input name="example2" type="radio">
+                                <label>AL</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui toggle checkbox">
+                                <input name="example2" type="radio">
+                                <label>OD</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui checkbox">
+                                <input name="example" type="checkbox">
+                                <label>Halfday</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <input name="hidDates" id="hidDates" type="hidden">
+                            <input name="txtDates" id="txtDates" type="text">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -48,17 +89,16 @@
         var year = date.getFullYear();
         var month = date.getMonth();
 
-        $("#fromdate").datepicker({
-            multiSelect: 999,
-            minDate: new Date(year, month - 1, "26"),
-            maxDate: new Date(year, month, "25"),
-            showOtherMonths: true,
-            //numberOfMonths: 2,
-            inline: true,
-            /*beforeShowDay: function(date) {
-                var theday = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
-                return [true, $.inArray(theday, holiday) >= 0 ? "holiday" : ($.inArray(theday, fullday) >= 0 ? "fullday" : ($.inArray(theday, absent) >= 0 ? "absent" : ($.inArray(theday, halfday) >= 0 ? "halfday" : "")))];
-            }*/
+        var mindate = ((new Date(year, month, 1).getDate() + date.getDate()) + (new Date(year, month, 0).getDate() - 25)) - 2;
+        var maxdate = date.getDate() - 25;
+
+        $('#fromdate').multiDatesPicker({
+            //mode: 'daysRange',
+            maxPicks: 3,
+            altField: '#hidDates',
+            dateFormat: "dd/mm/yy",
+            minDate: -(mindate),
+            maxDate: Math.abs(maxdate)
         });
     });
 
