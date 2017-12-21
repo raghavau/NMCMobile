@@ -60,19 +60,23 @@
             Availability
         </a>
     </div>
-    <br><br>
-    <iframe frameborder="0" height="95%" width="100%" id="ifrm" style="position: absolute" scrolling="auto"></iframe>
+    <iframe frameborder="0" width="100%" id="ifrm" style="position: absolute" scrolling="auto"></iframe>
 </body>
 
 </html>
 <script type="text/javascript">
     document.addEventListener("deviceready", onDeviceReady, false);
+
     function onDeviceReady() {
         document.addEventListener("backbutton", onBackKeyDown, false);
     }
-    function onBackKeyDown() {
-    }
+
+    function onBackKeyDown() {}
     $(document).ready(function() {
+        var ifrmheight = $('body').height() - $('.bottom').height();
+        $('#ifrm').css('top', $('.top').height());
+        $('#ifrm').height(ifrmheight - 45);
+
         $('#ifrm').attr('src', 'home.html');
 
         $('#home').click(function() {
