@@ -26,7 +26,6 @@
             /*max-width: 450px;*/
             margin: 20px;
         }
-
     </style>
 </head>
 
@@ -66,6 +65,7 @@
                             </div>
                         </div>
                         <div class="field">
+                            <label>If Halfday, please check.</label>
                             <div class="ui checkbox">
                                 <input name="example" type="checkbox">
                                 <label>Halfday</label>
@@ -73,10 +73,14 @@
                         </div>
                         <div class="field">
                             <input name="hidDates" id="hidDates" type="hidden">
-                            <input name="txtDates" id="txtDates" type="text">
+                            <textarea name="txtReason" id="txtReason" rows="5" cols="40"></textarea>
                         </div>
                     </div>
                 </div>
+                <button class="ui teal fluid submit button right labeled icon" type="button" id="login">
+                    <i class="checkmark icon"></i>
+                    <span>Submit</span>
+                </button>
             </div>
         </div>
     </div>
@@ -101,5 +105,4 @@
             maxDate: Math.abs(maxdate)
         });
     });
-
 </script>
