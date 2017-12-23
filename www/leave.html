@@ -26,6 +26,7 @@
             /*max-width: 450px;*/
             margin: 20px;
         }
+
     </style>
 </head>
 
@@ -35,6 +36,12 @@
             <div class="ui stacked left aligned segment">
                 <div class="ui red ribbon label">Leave Request</div><br><br>
                 <center>
+                    <div class="ui circular labels">
+                    <a class="ui green label">CL <div class="detail">12</div></a>
+                    <a class="ui teal label">SL <div class="detail">12</div></a>
+                    <a class="ui blue label">AL <div class="detail">12</div></a>
+                    <a class="ui orange label">OD <div class="detail">12</div></a>
+                        </div>
                     <div id="fromdate"></div>
                 </center>
                 <div class="ui form">
@@ -105,4 +112,5 @@
             maxDate: Math.abs(maxdate)
         });
     });
+
 </script>
