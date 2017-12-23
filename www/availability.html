@@ -12,7 +12,6 @@
     <style type="text/css">
         body {
             background-color: #e5e5e5;
-            overflow: hidden;
         }
 
         body>.grid {
@@ -23,7 +22,6 @@
             /*max-width: 450px;*/
             margin: 20px;
         }
-
     </style>
 </head>
 
@@ -32,40 +30,67 @@
         <div class="column">
             <div class="ui stacked left aligned segment">
                 <div class="ui red ribbon label">Doctor Availability</div><br>
-                <table class="ui unstackable very basic large celled table">
+                <table class="ui top aligned center aligned very basic celled table">
                     <tbody>
-                        <tr>
-                            <td class="four wide top aligned center aligned">
-                                <img class="ui tiny circular image" src="img/op.svg"> OP
+                        <tr class="top aligned">
+                            <td>
+                                <div class="content">
+                                    OP
+                                </div>
+                                <img class="ui tiny centered circular image" src="img/op.svg">
                             </td>
-                            <td class="top aligned left aligned">
-                                <div class="ui checkbox">
-                                    <input name="example2" type="radio">
+                            <td>
+                                <div class="ui fitted toggle checkbox">
+                                    <input name="avail" type="radio"> <label></label>
                                 </div>
                             </td>
                         </tr>
-                        <tr>
-                            <td class="two wide top aligned center aligned">
-                                <img class="ui tiny circular image" src="img/ip.svg">IP
-                            </td>
-                            <td class="top aligned left aligned">
-                                <label id="doj">02/11/2017</label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="two wide top aligned center aligned">
-                                <img class="ui tiny circular image" src="img/ot.svg">OT
-                            </td>
-                            <td class="top aligned left aligned">
-                                <label id="dept large icon">IT</label>
+                        <tr class="top aligned">
+                            <td>
+                                <div class="content">
+                                    IP
+                                </div>
+                                <img class="ui tiny centered circular image" src="img/ip.svg"></td>
+                            <td>
+                                <div class="ui fitted toggle checkbox">
+                                    <input name="avail" type="radio"> <label></label>
+                                </div>
                             </td>
                         </tr>
-                        <tr>
-                            <td class="two wide top aligned center aligned">
-                                <img class="ui tiny circular image" src="img/rounds.svg">Rounds
+                        <tr class="top aligned">
+                            <td>
+                                <div class="content">
+                                    OT
+                                </div>
+                                <img class="ui tiny centered circular image" src="img/ot.svg"></td>
+                            <td>
+                                <div class="ui fitted toggle checkbox">
+                                    <input name="avail" type="radio"> <label></label>
+                                </div>
                             </td>
-                            <td class="top aligned left aligned">
-                                <label id="empid">5683 00646</label>
+                        </tr>
+                        <tr class="top aligned">
+                            <td>
+                                <div class="content">
+                                    Rounds
+                                </div>
+                                <img class="ui tiny centered circular image" src="img/rounds.svg"></td>
+                            <td>
+                                <div class="ui fitted toggle checkbox">
+                                    <input name="avail" type="radio"> <label></label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="top aligned">
+                            <td>
+                                <div class="content">
+                                    Others
+                                </div>
+                                <img class="ui tiny centered circular image" src="img/others.svg"></td>
+                            <td>
+                                <div class="ui fitted toggle checkbox">
+                                    <input name="avail" type="radio"> <label></label>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -80,5 +105,4 @@
     $(document).ready(function() {
 
     });
-
 </script>
