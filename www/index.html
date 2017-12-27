@@ -83,7 +83,25 @@
     }
     $(document).ready(function() {
         $('#login').click(function() {
-            window.location.href = 'layout.html';
+            var userData = {};
+            userData.UserName = 'admin';
+            userData.Password = 'raghava';
+            $.ajax({
+                type: "GET",
+                url: "http://localhost/NtraktApi/api/Account/",
+                data: userData,
+                contentType: "application/json",
+                success: function(data) {
+                    debugger;
+                    var objData = jQuery.parseJSON(data);
+                    if (objData.Status == 'Success') {
+                        window.location.href = 'layout.html';
+                    }
+                },
+                error: function() {
+                    debugger;
+                }
+            });
         });
 
         $('#forgotpin').click(function() {
