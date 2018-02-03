@@ -75,7 +75,7 @@
     function onDeviceReady() {
         document.addEventListener("backbutton", onBackKeyDown, false);
     }
-
+//mobidb@develop
     function onBackKeyDown() {
         var state = confirm('Are You Sure you want to Exit.');
         if (state)
@@ -88,21 +88,27 @@
             userData.Password = 'raghava';
             $.ajax({
                 type: "GET",
-                url: "http://localhost/NtraktApi/api/Account/",
+                url: "http://narayanagroup.co.in/NtraktApi/api/Account/",
                 data: userData,
                 contentType: "application/json",
+                async: true,
+                crossDomain: true,
                 success: function(data) {
                     debugger;
                     var objData = jQuery.parseJSON(data);
                     if (objData.Status == 'Success') {
-                        window.location.href = 'layout.html';
+                        //window.location.href = 'layout.html';
                     }
                 },
                 error: function() {
-                    debugger;
+                    //debugger;
                 }
             });
         });
+
+        /*$('#login').api({
+            url: 'http://narayanagroup.co.in/NtraktApi/api/Account/'
+        });*/
 
         $('#forgotpin').click(function() {
             window.location.href = 'resetpin.html';
