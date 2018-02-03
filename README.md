@@ -1,2 +1,2 @@
-# NMCMobile
-NMC Mobile App
+# Ntrakt
+Narayana Professional Colleges and Hospital Mobile App
