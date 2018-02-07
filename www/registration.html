@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Index Page</title>
+    <title>Registration</title>
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="semantic/css/semantic.css">
     <link rel="stylesheet" type="text/css" href="fontawesome4.7.0/css/font-awesome.css">
@@ -34,38 +34,33 @@
             <div class="column">
                 <div class="ui stacked left aligned segment">
                     <!-- red -->
-                    <div class="ui red ribbon label">Login to Your Account</div><br><br>
+                    <div class="ui red ribbon label">Registration</div><br><br>
                     <center>
                         <img class="ui small image" src="img/logo2.png"></center><br>
                     <form class="ui form">
                         <div class="field">
-                            <div class="ui left icon input">
+                            <div class="ui left icon right action input">
                                 <i class="user circle icon"></i>
                                 <input name="empid" placeholder="Employee Id" type="text">
+                                <button class="ui submit icon button"><i class="search icon"></i></button>
                             </div>
                         </div>
                         <div class="field">
                             <div class="ui left icon input">
-                                <i class="lock icon"></i>
-                                <input name="emppin" placeholder="PIN" type="password">
+                                <i class="call icon"></i>
+                                <input name="emppin" placeholder="mobileno" type="mobile" readonly>
                             </div>
                         </div>
                         <button class="ui teal fluid submit button right labeled icon" type="button" id="login">
                             <i class="checkmark icon"></i>
-                            <span>Login</span>
+                            <span>Submit</span>
                         </button>
                         <div class="ui error message"></div>
                     </form>
-                    <div class="ui section divider"></div>
-                    <!--<button class="ui red fluid submit button right labeled icon" type="button" id="forgotpin">
-                        <i class="right arrow icon"></i>
-                        Forgot PIN?
-                    </button>-->
-                    <div class="two ui fluid buttons">
-                        <button class="ui positive submit button left labeled icon" id="register"><i class="right arrow icon"></i>Registration</button>
-                        <div class="or"></div>
-                        <button class="ui negative submit button right labeled icon" id="forgotpin"><i class="right arrow icon"></i>Forgot PIN?</button>
-                    </div>
+                    <!--<div class="ui section divider"></div>
+                    <div class="ui fluid buttons">
+                        <button class="ui positive submit button left labeled icon"><i class="right arrow icon"></i>Submit</button>
+                    </div>-->
                 </div>
             </div>
         </div>
@@ -79,7 +74,7 @@
     function onDeviceReady() {
         document.addEventListener("backbutton", onBackKeyDown, false);
     }
-    //mobidb@develop
+
     function onBackKeyDown() {
         var state = confirm('Are You Sure you want to Exit.');
         if (state)
@@ -108,18 +103,6 @@
                     //debugger;
                 }
             });
-        });
-
-        /*$('#login').api({
-            url: 'http://narayanagroup.co.in/NtraktApi/api/Account/'
-        });*/
-
-        $('#register').click(function() {
-            window.location.href = 'registration.html';
-        });
-
-        $('#forgotpin').click(function() {
-            window.location.href = 'resetpin.html';
         });
     });
 </script>
