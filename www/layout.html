@@ -71,7 +71,9 @@
         document.addEventListener("backbutton", onBackKeyDown, false);
     }
 
-    function onBackKeyDown() {}
+    function onBackKeyDown() {
+        e.preventDefault();
+    }
     $(document).ready(function() {
         var ifrmheight = $('body').height() - $('.bottom').height();
         $('#ifrm').css('top', $('.top').height());

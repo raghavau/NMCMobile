@@ -21,6 +21,7 @@
         .column {
             max-width: 450px;
         }
+
     </style>
 </head>
 
@@ -39,24 +40,37 @@
                         <img class="ui small image" src="img/logo2.png"></center><br>
                     <form class="ui form">
                         <div class="field">
-                            <div class="ui left icon right action input">
+                            <div class="ui left icon right action input focus">
                                 <i class="user circle icon"></i>
                                 <input name="empid" placeholder="Employee Id" type="text">
-                                <button class="ui submit icon button"><i class="search icon"></i></button>
+                                <button class="ui icon button" type="button" id="search"><i class="search icon"></i></button>
                             </div>
                         </div>
-                        <div class="field">
+                        <div class="field" id="field2">
                             <div class="ui left icon input">
                                 <i class="call icon"></i>
-                                <input name="emppin" placeholder="mobileno" type="mobile" readonly>
+                                <input name="mobile" placeholder="Mobile No" type="text" readonly>
+                            </div>
+                            <div class="ui ignored info message">
+                                <p>OTP sent to this Mobile No.</p>
                             </div>
                         </div>
-                        <button class="ui teal fluid submit button right labeled icon" type="button" id="login">
+                        <div class="field" id="field3">
+                            <div class="ui left icon action input">
+                                <i class="privacy icon"></i>
+                                <input name="otp" placeholder="OTP" type="text">
+                                <button class="ui teal basic button" type="button" id="verify">Verify</button>
+                            </div>
+                        </div>
+                        <button class="ui teal fluid submit button right labeled icon" type="button" id="submit">
                             <i class="checkmark icon"></i>
                             <span>Submit</span>
                         </button>
                         <div class="ui error message"></div>
                     </form>
+                    <div class="ui active inverted dimmer">
+                        <div class="ui massive text loader">Loading</div>
+                    </div>
                     <!--<div class="ui section divider"></div>
                     <div class="ui fluid buttons">
                         <button class="ui positive submit button left labeled icon"><i class="right arrow icon"></i>Submit</button>
@@ -81,28 +95,12 @@
             navigator.app.exitApp(); // exit the app
     }
     $(document).ready(function() {
-        $('#login').click(function() {
-            var userData = {};
-            userData.UserName = 'admin';
-            userData.Password = 'raghava';
-            $.ajax({
-                type: "GET",
-                url: "http://narayanagroup.co.in/NtraktApi/api/Account/",
-                data: userData,
-                contentType: "application/json",
-                async: true,
-                crossDomain: true,
-                success: function(data) {
-                    debugger;
-                    var objData = jQuery.parseJSON(data);
-                    if (objData.Status == 'Success') {
-                        //window.location.href = 'layout.html';
-                    }
-                },
-                error: function() {
-                    //debugger;
-                }
-            });
+        $("#field2").hide();
+        $(".dimmer").hide();
+        $('#search').click(function() {
+            $("#field2").show();
+            //$(".dimmer").show();
         });
     });
+
 </script>

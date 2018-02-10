@@ -22,15 +22,18 @@
             max-width: 450px;
         }
 
+        #show {
+            display: none;
+        }
+
         #generate {
             opacity: 0;
-            transform: translateX(0) rotate(0deg);
-            transition: all .75s linear;
+            /*transform: translateX(0) rotate(0deg);
+            transition: all .75s linear;*/
         }
 
         #generate.show2 {
             /*transform: translateX(0px) rotate(360deg);*/
-
             opacity: 1;
         }
 
@@ -57,7 +60,7 @@
                         <button class="ui teal fluid submit button right labeled icon" type="button" id="send">
                             <i class="right arrow icon"></i>
                             <span>Send OTP</span>
-                        </button><br>
+                        </button>
                         <div id="show">
                             <div class="ui blue tiny message">OTP sent to this Mobile No.</div>
                             <div class="field">
@@ -112,23 +115,24 @@
 </html>
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#show').hide();
-        $('#generate').hide();
+        //$('#show').hide();
+        //$('#generate').hide();
         $('#send').click(function() {
             var empid = $('#empid').val();
             if (empid != "") {
                 $('#send').hide();
                 $('#show').show();
-                $('.blue.message').transition('pulse');
+                //$('.blue.message').transition('pulse');
                 $('#mobile').val('9542508667');
                 $('#otp').focus();
             }
         });
 
         $('#verify').click(function() {
-            $('#generate').show('slow');
+            $('#generate').show();
             $('#generate').toggleClass('show2');
-            $('#reset').transition('slide left');
+            //$('#reset').transition('slide left');
+            $('#reset').hide();
         });
     });
 

@@ -21,6 +21,7 @@
         .column {
             max-width: 450px;
         }
+
     </style>
 </head>
 
@@ -41,13 +42,13 @@
                         <div class="field">
                             <div class="ui left icon input">
                                 <i class="user circle icon"></i>
-                                <input name="empid" placeholder="Employee Id" type="text">
+                                <input name="empid" id="empid" placeholder="Employee Id" type="text">
                             </div>
                         </div>
                         <div class="field">
                             <div class="ui left icon input">
                                 <i class="lock icon"></i>
-                                <input name="emppin" placeholder="PIN" type="password">
+                                <input name="emppin" id="emppin" placeholder="PIN" type="password">
                             </div>
                         </div>
                         <button class="ui teal fluid submit button right labeled icon" type="button" id="login">
@@ -57,14 +58,17 @@
                         <div class="ui error message"></div>
                     </form>
                     <div class="ui section divider"></div>
-                    <!--<button class="ui red fluid submit button right labeled icon" type="button" id="forgotpin">
+                    <button class="ui red fluid submit button right labeled icon" type="button" id="forgotpin">
                         <i class="right arrow icon"></i>
                         Forgot PIN?
-                    </button>-->
-                    <div class="two ui fluid buttons">
-                        <button class="ui positive submit button left labeled icon" id="register"><i class="right arrow icon"></i>Registration</button>
+                    </button>
+                    <!--<div class="two ui fluid buttons">
+                        <button class="ui positive submit button" id="register">Registration</button>
                         <div class="or"></div>
-                        <button class="ui negative submit button right labeled icon" id="forgotpin"><i class="right arrow icon"></i>Forgot PIN?</button>
+                        <button class="ui negative submit button" id="forgotpin">Forgot PIN?</button>
+                    </div>-->
+                    <div class="ui active inverted dimmer">
+                        <div class="ui large text loader">Loading</div>
                     </div>
                 </div>
             </div>
@@ -86,33 +90,43 @@
             navigator.app.exitApp(); // exit the app
     }
     $(document).ready(function() {
+        $(".dimmer").hide();
+        $("#empid").focus();
         $('#login').click(function() {
+            //debugger;
             var userData = {};
-            userData.UserName = 'admin';
-            userData.Password = 'raghava';
-            $.ajax({
-                type: "GET",
-                url: "http://narayanagroup.co.in/NtraktApi/api/Account/",
-                data: userData,
-                contentType: "application/json",
-                async: true,
-                crossDomain: true,
-                success: function(data) {
-                    debugger;
-                    var objData = jQuery.parseJSON(data);
-                    if (objData.Status == 'Success') {
-                        //window.location.href = 'layout.html';
-                    }
-                },
-                error: function() {
-                    //debugger;
-                }
-            });
-        });
+            userData.OperatorCode = $("#empid").val();
+            userData.UniqueId = $("#emppin").val();
 
-        /*$('#login').api({
-            url: 'http://narayanagroup.co.in/NtraktApi/api/Account/'
-        });*/
+            if ($("#empid").val() == "") {
+                alert('Please enter Employee Id');
+                $("#empid").focus();
+                return false;
+            } else if ($("#emppin").val() == "") {
+                alert('Please enter PIN');
+                $("#emppin").focus();
+                return false;
+            } else {
+                $(".dimmer").show();
+                $.post('http://localhost/NtraktApi/api/CheckPin', userData, function(response) {
+                    //debugger;
+                    if (response.data == 'Success')
+                        setTimeout(function() {
+                            window.location.href = 'layout.html';
+                        }, 3000);
+                    else {
+                        $(".dimmer").hide();
+                        alert('Invalid Employee Id/PIN. Please check.')
+                        $("#empid").val("");
+                        $("#emppin").val("");
+                        $("#empid").focus();
+                    }
+                }, 'json').fail(function(jqxhr, settings, ex) {
+                    $(".dimmer").hide();
+                    alert("error: " + ex);
+                });
+            }
+        });
 
         $('#register').click(function() {
             window.location.href = 'registration.html';
@@ -122,4 +136,5 @@
             window.location.href = 'resetpin.html';
         });
     });
+
 </script>
