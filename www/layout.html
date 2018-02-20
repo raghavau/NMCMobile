@@ -60,6 +60,7 @@
             Availability
         </a>
     </div>
+    <input type="hidden" id="hempid" />
     <iframe frameborder="0" width="100%" id="ifrm" style="position: absolute" scrolling="auto"></iframe>
 </body>
 
@@ -74,15 +75,38 @@
     function onBackKeyDown() {
         e.preventDefault();
     }
+    var qsParm = new Array();
+    function qs() {
+        //debugger;
+        var query = window.location.search.substring(1);
+        var parms = query.split('&');
+        for (var i = 0; i < parms.length; i++) {
+            var pos = parms[i].indexOf('=');
+            if (pos > 0) {
+                var key = parms[i].substring(0, pos);
+                var val = parms[i].substring(pos + 1);
+                qsParm[key] = val;
+            }
+        }
+        if (parms.length > 0) {
+            $("#hempid").val(atob(qsParm["empid"]));
+            return true;
+        }
+        else {
+            window.location.href = 'index.html';
+            return false;
+        }
+    }
     $(document).ready(function() {
+        qs();
         var ifrmheight = $('body').height() - $('.bottom').height();
         $('#ifrm').css('top', $('.top').height());
         $('#ifrm').height(ifrmheight - 45);
 
-        $('#ifrm').attr('src', 'home.html');
+        $('#ifrm').attr('src', 'home.html?empid=' + btoa($("#hempid").val()));
 
         $('#home').click(function() {
-            $('#ifrm').attr('src', 'home.html');
+            $('#ifrm').attr('src', 'home.html?empid=' + btoa($("#hempid").val()));
         });
         $('#notifications').click(function() {
 
@@ -92,16 +116,16 @@
         });
 
         $('#profile').click(function() {
-            $('#ifrm').attr('src', 'profile.html');
+            $('#ifrm').attr('src', 'profile.html?empid=' + btoa($("#hempid").val()));
         });
         $('#attendance').click(function() {
-            $('#ifrm').attr('src', 'attendance.html');
+            $('#ifrm').attr('src', 'attendance.html?empid=' + btoa($("#hempid").val()));
         });
         $('#leave').click(function() {
-            $('#ifrm').attr('src', 'leave.html');
+            $('#ifrm').attr('src', 'leave.html?empid=' + btoa($("#hempid").val()));
         });
         $('#availability').click(function() {
-            $('#ifrm').attr('src', 'availability.html');
+            $('#ifrm').attr('src', 'availability.html?empid=' + btoa($("#hempid").val()));
         });
     });
 

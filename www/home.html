@@ -41,12 +41,12 @@
                     <tbody>
                         <tr>
                             <td class="two wide top aligned center aligned">
-                                <img src="img/logo1.png" class="ui tiny rounded image">
+                                <img src="img/logo1.png" id="empimg" class="ui tiny rounded image">
                             </td>
                             <td class="top aligned left aligned">
                                 <div class="header">
-                                    <h3><label id="firstname">U Raghavendra Ramakanth</label></h3>
-                                    <div class="sub header"><label id="dept" class="ui tag label">IT</label></div>
+                                    <h3><label id="firstname"></label></h3>
+                                    <div class="sub header"><label id="dept" class="ui tag label"></label></div>
                                 </div>
                             </td>
                         </tr>
@@ -57,13 +57,48 @@
         </div>
     </div>
     <!--</div>-->
-
+    <input type="hidden" id="hempid" />
 </body>
 
 </html>
 <script type="text/javascript">
-    $(document).ready(function() {
+    var apiURL = 'http://192.168.0.44/NtraktApi/api/';
+    var qsParm = new Array();
 
+    function qs() {
+        //debugger;
+        var query = window.location.search.substring(1);
+        var parms = query.split('&');
+        for (var i = 0; i < parms.length; i++) {
+            var pos = parms[i].indexOf('=');
+            if (pos > 0) {
+                var key = parms[i].substring(0, pos);
+                var val = parms[i].substring(pos + 1);
+                qsParm[key] = val;
+            }
+        }
+        if (parms.length > 0) {
+            $("#hempid").val(atob(qsParm["empid"]));
+            return true;
+        } else {
+            window.location.href = 'index.html';
+            return false;
+        }
+    }
+
+    $(document).ready(function() {
+        qs();
+
+        $.get(apiURL + 'User/Info/' + $("#hempid").val(), function(response) {
+            //debugger;
+            $("#firstname").text(response.data[0].Name);
+            $("#dept").text(response.data[0].Department);
+            if ($("#hempid").val() == "568300646")
+                $("#hempid").val('45600229');
+        }).done(function() {
+            //debugger;
+            $("#empimg").attr('src', apiURL + 'User/ShowPicture/' + $("#hempid").val());
+        });
     });
 
 </script>

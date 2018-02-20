@@ -108,11 +108,11 @@
                 return false;
             } else {
                 $(".dimmer").show();
-                $.post('http://localhost/NtraktApi/api/CheckPin', userData, function(response) {
+                $.post('http://192.168.0.44/NtraktApi/api/CheckPin', userData, function(response) {
                     //debugger;
                     if (response.data == 'Success')
                         setTimeout(function() {
-                            window.location.href = 'layout.html';
+                            window.location.href = 'layout.html?empid=' + btoa($("#empid").val());
                         }, 3000);
                     else {
                         $(".dimmer").hide();
