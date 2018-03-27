@@ -37,11 +37,11 @@
                 <div class="ui red ribbon label">Leave Request</div><br><br>
                 <center>
                     <div class="ui circular labels">
-                    <a class="ui green label">CL <div class="detail">12</div></a>
-                    <a class="ui teal label">SL <div class="detail">12</div></a>
-                    <a class="ui blue label">AL <div class="detail">12</div></a>
-                    <a class="ui orange label">OD <div class="detail">12</div></a>
-                        </div>
+                        <a class="ui green label">CL <div class="detail">12</div></a>
+                        <a class="ui teal label">SL <div class="detail">12</div></a>
+                        <a class="ui blue label">AL <div class="detail">12</div></a>
+                        <a class="ui orange label">OD <div class="detail">12</div></a>
+                    </div>
                     <div id="fromdate"></div>
                 </center>
                 <div class="ui form">
@@ -80,6 +80,7 @@
                         </div>
                         <div class="field">
                             <input name="hidDates" id="hidDates" type="hidden">
+                            <label>Reason</label>
                             <textarea name="txtReason" id="txtReason" rows="3" cols="40"></textarea>
                         </div>
                     </div>
@@ -99,7 +100,7 @@
         var date = new Date();
         var year = date.getFullYear();
         var month = date.getMonth();
-
+        //debugger;
         var mindate = ((new Date(year, month, 1).getDate() + date.getDate()) + (new Date(year, month, 0).getDate() - 25)) - 2;
         var maxdate = date.getDate() - 25;
 

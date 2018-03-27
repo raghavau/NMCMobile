@@ -157,10 +157,10 @@
                 holiday.push(response.Holidays[i]);
             }
             for (i = 0; i <= response.Fulldays.length - 1; i++) {
-                fullday.push(response.Fulldays[i][0]);
+                fullday.push(response.Fulldays[i]);
             }
             for (i = 0; i <= response.Halfdays.length - 1; i++) {
-                halfday.push(response.Halfdays[i][0]);
+                halfday.push(response.Halfdays[i]);
             }
 
             var html = "<table cellspacing='0'><tr><td colspan='3' class='header'>" + mons[new Date(year, month, 0).getMonth()] + '-' + new Date(year, month, 0).getFullYear() +
@@ -248,7 +248,7 @@
                         else if (color == null)
                             html = html + "<td class='day'><br>" + prevdate[j] + "</td>";
                         else
-                            html = html + "<td class='day'><i class='circle " + color + " small icon'></i><br>" + prevdate[j] + "</td>";
+                            html = html + "<td class='day' data-tooltip='" + leaveType + "' data-position='top center'><i class='circle " + color + " small icon'></i><br>" + prevdate[j] + "</td>";
                         if (e == 0)
                             html = html + "</tr><tr>";
                         break;
