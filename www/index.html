@@ -80,7 +80,7 @@
     document.addEventListener("deviceready", onDeviceReady, false);
 
     function onDeviceReady() {
-        //document.addEventListener("backbutton", onBackKeyDown, false);
+        document.addEventListener("backbutton", onBackKeyDown, false);
     }
     //mobidb@develop
     /*
@@ -88,17 +88,12 @@
 
     45.123.0.152
     */
-    /*function onBackKeyDown() {
+    function onBackKeyDown() {
         var state = confirm('Are You Sure you want to Exit.');
         if (state)
             navigator.app.exitApp(); // exit the app
-    }*/
+    }
 
-    navigator.Backbutton.goHome(function() {
-        console.log('success')
-    }, function() {
-        console.log('fail')
-    });
     $(document).ready(function() {
         $(".dimmer").hide();
         $("#empid").focus();
