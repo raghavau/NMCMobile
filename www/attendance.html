@@ -131,6 +131,14 @@
         holiday = new Array(),
         halfday = new Array();
 
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+    function onDeviceReady() {
+        document.addEventListener("backbutton", function(e) {
+            e.preventDefault();
+        }, false);
+    }
+
     function qs() {
         //debugger;
         var query = window.location.search.substring(1);

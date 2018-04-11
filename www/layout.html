@@ -27,9 +27,9 @@
 
 <body>
     <div class="ui top fixed fluid huge customcolor inverted labeled menu">
-        <a class="item">
+        <!--<a class="item">
             <i class="sidebar icon"></i>
-        </a>
+        </a>-->
         <div class="right icon menu">
             <a class="item" id="home">
             <i class="home icon"></i>
@@ -69,13 +69,12 @@
     document.addEventListener("deviceready", onDeviceReady, false);
 
     function onDeviceReady() {
-        document.addEventListener("backbutton", onBackKeyDown, false);
-    }
-
-    function onBackKeyDown() {
-        e.preventDefault();
+        document.addEventListener("backbutton", function(e) {
+            e.preventDefault();
+        }, false);
     }
     var qsParm = new Array();
+
     function qs() {
         //debugger;
         var query = window.location.search.substring(1);
@@ -91,8 +90,7 @@
         if (parms.length > 0) {
             $("#hempid").val(atob(qsParm["empid"]));
             return true;
-        }
-        else {
+        } else {
             window.location.href = 'index.html';
             return false;
         }

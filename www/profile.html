@@ -41,7 +41,7 @@
                     <tbody>
                         <tr>
                             <td class="two wide top aligned center aligned">
-                                <img src="img/logo1.png" id="empimg" class="ui tiny rounded image">
+                                <img src="" id="empimg" class="ui tiny rounded image">
                             </td>
                             <td class="top aligned left aligned">
                                 <div class="header">
@@ -107,6 +107,9 @@
                         </tr>
                     </tbody>
                 </table>
+                <div class="ui active inverted dimmer">
+                    <div class="ui large text loader">Loading</div>
+                </div>
             </div>
         </div>
     </div>
@@ -118,6 +121,14 @@
 <script type="text/javascript">
     var apiURL = 'http://175.101.102.104/NtraktApi/api/';
     var qsParm = new Array();
+
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+    function onDeviceReady() {
+        document.addEventListener("backbutton", function(e) {
+            e.preventDefault();
+        }, false);
+    }
 
     function qs() {
         //debugger;
@@ -141,7 +152,7 @@
     }
     $(document).ready(function() {
         qs();
-
+        $(".dimmer").show();
         $.get(apiURL + 'User/Info/' + $("#hempid").val(), function(response) {
             //debugger;
             $("#firstname").text(response.data[0].Name);
@@ -156,15 +167,19 @@
                 $("#hempid").val('45600229');
         }).done(function() {
             //debugger;
-            $("#empimg").attr('src', apiURL + 'User/ShowPicture/' + $("#hempid").val());
             setTimeout(function() {
                 $.get(apiURL + 'Attendance/Current/' + $("#hempid").val(), function(response) {
-                    debugger;
+                    //debugger;
                     if (response.data.length > 0) {
                         $("#attndate").text(response.data[0].AttendanceDate);
                         $("#intime").text(response.data[0].InTime);
                         $("#outtime").text(response.data[0].OutTime);
                     }
+                }).done(function() {
+                    $("#empimg").attr('src', apiURL + 'User/ShowPicture/' + $("#hempid").val());
+                    $(".dimmer").hide();
+                }).fail(function() {
+                    $(".dimmer").hide();
                 });
             }, 500);
         });
