@@ -30,7 +30,6 @@
         <!-- ui raised very padded text container
              ui middle aligned center aligned grid
         -->
-
         <div class="ui column grid">
             <div class="column">
                 <div class="ui stacked left aligned segment">
@@ -57,11 +56,11 @@
                         </button>
                         <div class="ui error message"></div>
                     </form>
-                    <div class="ui section divider"></div>
+                    <!--<div class="ui section divider"></div>
                     <button class="ui red fluid submit button right labeled icon" type="button" id="forgotpin">
                         <i class="right arrow icon"></i>
                         Forgot PIN?
-                    </button>
+                    </button>-->
                     <!--<div class="two ui fluid buttons">
                         <button class="ui positive submit button" id="register">Registration</button>
                         <div class="or"></div>
@@ -81,7 +80,7 @@
     document.addEventListener("deviceready", onDeviceReady, false);
 
     function onDeviceReady() {
-        document.addEventListener("backbutton", onBackKeyDown, false);
+        //document.addEventListener("backbutton", onBackKeyDown, false);
     }
     //mobidb@develop
     /*
@@ -89,11 +88,17 @@
 
     45.123.0.152
     */
-    function onBackKeyDown() {
+    /*function onBackKeyDown() {
         var state = confirm('Are You Sure you want to Exit.');
         if (state)
             navigator.app.exitApp(); // exit the app
-    }
+    }*/
+
+    navigator.Backbutton.goHome(function() {
+        console.log('success')
+    }, function() {
+        console.log('fail')
+    });
     $(document).ready(function() {
         $(".dimmer").hide();
         $("#empid").focus();
