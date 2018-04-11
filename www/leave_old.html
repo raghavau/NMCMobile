@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Attendance</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui-custom.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.multidatespicker.css">
+    <link rel="stylesheet" type="text/css" href="semantic/css/semantic.css">
+    <link rel="stylesheet" type="text/css" href="bootstrap/dist/css/bootstrap.min.css">
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.multidatespicker.js"></script>
+    <script type="text/javascript" src="semantic/js/semantic.js"></script>
+    <script type="text/javascript" src="bootstrap/dist/js/bootstrap.min.js"></script>
+    <style type="text/css">
+        body {
+            background-color: #e5e5e5;
+            /*overflow: hidden;*/
+        }
+
+        body>.grid {
+            height: 100%;
+        }
+
+        .column {
+            /*max-width: 450px;*/
+            margin: 20px;
+        }
+
+        .alertbox {
+            position: fixed;
+            top: 5%;
+            z-index: 9000;
+            visibility: hidden;
+            width: 99%;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="ui column grid">
+        <div class="column">
+            <div class="ui stacked left aligned segment">
+                <div class="ui red ribbon label">Leave Request</div><br><br>
+                <center>
+                    <div id="leavecount"></div>
+                    <div id="fromdate"></div>
+                </center>
+                <div class="ui form">
+                    <div class="grouped fields">
+                        <label>Leave Type</label>
+                        <div id="divChk"></div>
+                        <div class="field">
+                            <label>If Halfday, please check.</label>
+                            <div class="ui checkbox hd">
+                                <input name="example" type="checkbox" id="halfday">
+                                <label>Halfday</label>
+                            </div>
+                        </div>
+                        <div class='field' id="halftype">
+                            <div class='ui toggle checkbox ht'>
+                                <input name='example3' type='radio' value='1'>
+                                <label>Morning</label>
+                            </div>
+                            <div class='ui toggle checkbox ht'>
+                                <input name='example3' type='radio' value='2'>
+                                <label>Afternoon</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <input name="hidDates" id="hidDates" type="hidden">
+                            <label>Reason</label>
+                            <textarea name="txtReason" id="txtReason" rows="3" cols="40"></textarea>
+                        </div>
+
+                    </div>
+                </div>
+                <button class="ui teal fluid submit button right labeled icon disabled" type="button" id="request">
+                    <i class="checkmark icon"></i>
+                    <span>Submit</span>
+                </button>
+                <div class="ui active inverted dimmer">
+                    <div class="ui large text loader">Loading</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-success alert-dismissible fade show alertbox" role="alert">
+        Your Leave Request is Success.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    </div>
+    <div class="alert alert-danger alert-dismissible fade show alertbox" role="alert">
+        Your Leave Request is Failed.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    </div>
+
+    <input type="hidden" id="hempid" />
+</body>
+
+</html>
+<script type="text/javascript">
+    var chkValue = null,
+        hflday = false,
+        hlfvalue = null,
+        disableDays = [],
+        colors = ["green", "brown", "blue", "teal", "red", "orange", "purple", "yellow"];
+    var apiURL = 'http://175.101.102.104/NtraktApi/api/';
+    var qsParm = new Array();
+
+    function qs() {
+        //debugger;
+        var query = window.location.search.substring(1);
+        var parms = query.split('&');
+        for (var i = 0; i < parms.length; i++) {
+            var pos = parms[i].indexOf('=');
+            if (pos > 0) {
+                var key = parms[i].substring(0, pos);
+                var val = parms[i].substring(pos + 1);
+                qsParm[key] = val;
+            }
+        }
+        if (parms.length > 0) {
+            $("#hempid").val(atob(qsParm["empid"]));
+            return true;
+        } else {
+            window.location.href = 'index.html';
+            return false;
+        }
+    }
+    $(document).ready(function() {
+        qs();
+        $(".dimmer").hide();
+        $("#halftype").hide();
+
+        if ($("#hempid").val() == "568300646")
+            $("#hempid").val('45600229');
+
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = date.getMonth();
+        //debugger;
+        var mindate = ((new Date(year, month, 1).getDate() + date.getDate()) + (new Date(year, month, 0).getDate() - 25)) - 2;
+        var maxdate = date.getDate() - 25;
+
+        $('#fromdate').multiDatesPicker({
+            beforeShowDay: disableSpecificWeekDays,
+            //mode: 'daysRange',
+            maxPicks: 3,
+            altField: '#hidDates',
+            dateFormat: "dd/mm/yy",
+            minDate: -(mindate),
+            maxDate: Math.abs(maxdate)
+        });
+
+        LeaveTypes();
+
+        $(".ui.checkbox.hd").checkbox({
+            onChange: function() {
+                //debugger;
+                if ($(this)[0].checked) {
+                    $("#halftype").show();
+                    hflday = true;
+                } else {
+                    $("#halftype").hide();
+                    hflday = false;
+                    hlfvalue = null;
+                }
+            }
+        });
+
+        $(".ui.checkbox.ht").checkbox({
+            onChange: function() {
+                //debugger;
+                if ($(this)[0].checked)
+                    hlfvalue = $(this)[0].value;
+            }
+        });
+
+        $("#txtReason").keyup(function() {
+            //debugger;
+            if ($(this)[0].value.length > 0) {
+                $("#request").removeClass('disabled');
+            } else {
+                $("#request").addClass('disabled');
+            }
+        });
+
+        $("#request").click(function() {
+            debugger;
+            var userData = {};
+            if ($('#fromdate').val() == "") {
+                alert('Please select Leave Date');
+                return false;
+            } else if (chkValue == null) {
+                alert('Please select Leave Type');
+                return false;
+            } else if (hflday == true && hlfvalue == null) {
+                alert('Please select Halfday Type');
+                return false;
+            } else {
+                userData.EmpNo = $("#hempid").val();
+                if (hlfvalue == null) {
+                    userData.FirstHalfStatus = 2;
+                    userData.SecondHalfStatus = 2;
+                } else {
+                    switch (hlfvalue) {
+                        case "1":
+                            userData.FirstHalfStatus = 2;
+                            userData.SecondHalfStatus = null;
+                            break;
+                        case "2":
+                            userData.FirstHalfStatus = null;
+                            userData.SecondHalfStatus = 2;
+                            break;
+                    }
+                }
+                userData.LeaveReason = $("#txtReason").val();
+                userData.LeaveTemplate = chkValue;
+                userData.LeaveDate = $('#fromdate').val();
+                $(".dimmer").show();
+                $.post(apiURL + 'Attendance/LeaveRequest', userData, function(response) {
+                    debugger;
+                    if (response.data == 'Success') {
+                        $(".alert-success").css('visibility', 'visible');
+                        $(".alert-danger").css('visibility', 'hidden');
+                    } else {
+                        $(".dimmer").hide();
+                        alert('');
+                    }
+                }, 'json').fail(function(jqxhr, settings, ex) {
+                    $(".dimmer").hide();
+                    $(".alert-success").css('visibility', 'hidden');
+                    $(".alert-danger").css('visibility', 'visible');
+                });
+            }
+        });
+        $('.alert').on('.close.alert', function() {
+            document.location.reload();
+        })
+    });
+
+    $(document).on('click', '.ui.checkbox.lt', function() {
+        //debugger;
+        $('.ui.checkbox.lt').each(function() {
+            //debugger;
+            var boolval = $(this)[0].firstChild.checked;
+            var inputval = $(this)[0].firstChild.value;
+            if (boolval) {
+                chkValue = inputval;
+            }
+        });
+    });
+
+    function LeaveTypes() {
+        $(".dimmer").show();
+        $.get(apiURL + 'Attendance/LeaveTypes/' + $("#hempid").val(), function(response) {
+            //debugger;
+            var htmlStr = '';
+            for (i = 0; i <= response.data.length - 1; i++) {
+                if (parseInt(response.data[i].LeaveCount) > 0)
+                    htmlStr += "<div class='field'><div class='ui toggle checkbox lt'><input name='example2' type='radio' value='" + response.data[i].LeaveTypeSlno + "'><label> " + response.data[i].LeaveType + " </label></div></div>";
+            }
+            $("#divChk").append(htmlStr);
+        }).done(function() {
+            $.get(apiURL + 'Attendance/LeavesRemaining/' + $("#hempid").val(), function(response) {
+                //debugger;
+                var htmlStr = "<div class='ui circular labels '>";
+                for (i = 0; i <= response.data.length - 1; i++) {
+                    if (parseInt(response.data[i].LeaveCount) > 0)
+                        htmlStr += "<a class='ui " + colors[i] + " label'>" + response.data[i].LeaveType + "<div class='detail'>" + response.data[i].LeaveCount + "</div></a>";
+                }
+                htmlStr += '</div>';
+                $("#leavecount").append(htmlStr);
+            }).done(function() {
+                $.get(apiURL + 'Attendance/LeavesHold/' + $("#hempid").val(), function(response) {
+                    //debugger;
+                    var date = new Date();
+                    for (i = 0; i <= response.data.length - 1; i++) {
+                        if (parseInt(response.data[i].LeaveDay) > 25) {
+                            var day = new Date(date.getFullYear(), date.getMonth(), 0).getDate() - (parseInt(response.data[i].LeaveDay));
+                            disableDays.push(date.setDate(parseInt(-day)));
+                        } else
+                            disableDays.push(date.setDate(parseInt(response.data[i].LeaveDay)));
+                    }
+                }).done(function() {
+                    if (disableDays.length > 0) {
+                        $('#fromdate').multiDatesPicker({
+                            beforeShowDay: disableSpecificWeekDays,
+                            addDisabledDates: disableDays
+                        });
+                    }
+                });
+            });
+        });
+        $(".dimmer").hide();
+    }
+
+    function disableSpecificWeekDays(date) {
+        var theday = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+        var day = date.getDay();
+        return [day != 0];
+    }
+
+</script>

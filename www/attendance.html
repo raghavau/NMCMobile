@@ -77,6 +77,19 @@
             vertical-align: top;
         }
 
+        .datepicker .selected {
+            border-bottom: 1px solid #e5e5e5;
+            background: #c2ddf1;
+            color: #4b5760;
+            padding: 10;
+            text-align: center;
+            width: 50px;
+            height: 30px;
+            font-size: 15px;
+            font-weight: bold;
+            vertical-align: top;
+        }
+
     </style>
 </head>
 
@@ -92,6 +105,9 @@
                     <i class='circle green small icon'></i>Fullday
                     <i class='stop circle green small icon'></i>Halfday
                 </center>
+                <div class="ui active inverted dimmer">
+                    <div class="ui large text loader">Loading</div>
+                </div>
             </div>
         </div>
     </div>
@@ -108,7 +124,7 @@
         e = 0,
         f, color;
 
-    var apiURL = 'http://192.168.0.44/NtraktApi/api/';
+    var apiURL = 'http://175.101.102.104/NtraktApi/api/';
     var qsParm = new Array(),
         absent = new Array(),
         fullday = new Array(),
@@ -138,6 +154,7 @@
 
     $(document).ready(function() {
         qs();
+        $(".dimmer").show();
         var date = new Date();
         var year = date.getFullYear();
         var month = date.getMonth();
@@ -242,18 +259,18 @@
 
                     if (day[k] == f) {
                         if (f == 'Su')
-                            html = html + "<td class='sunday'><br>" + prevdate[j] + "</td>";
+                            html = html + '<td class="sunday"><br>' + prevdate[j] + '</td>';
                         else if (color == 'h')
-                            html = html + "<td class='holiday' data-tooltip='" + leaveType + "' data-position='top center'><br>" + prevdate[j] + "</td>";
+                            html = html + '<td class="holiday" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
                         else if (color == null)
-                            html = html + "<td class='day'><br>" + prevdate[j] + "</td>";
+                            html = html + '<td class="day"><br>' + prevdate[j] + '</td>';
                         else
-                            html = html + "<td class='day' data-tooltip='" + leaveType + "' data-position='top center'><i class='circle " + color + " small icon'></i><br>" + prevdate[j] + "</td>";
+                            html = html + '<td class="day" data-tooltip="' + leaveType + '" data-position="top center"><i class="circle ' + color + ' small icon"></i><br>' + prevdate[j] + '</td>';
                         if (e == 0)
-                            html = html + "</tr><tr>";
+                            html = html + '</tr><tr>';
                         break;
                     } else {
-                        html = html + "<td class='day'></td>";
+                        html = html + '<td class="day"></td>';
                     }
                 }
             }
@@ -261,6 +278,8 @@
             html = html + "</table>";
             $('#fromdate').append(html);
 
+        }).done(function() {
+            $(".dimmer").hide();
         });
     });
 
