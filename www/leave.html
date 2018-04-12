@@ -517,7 +517,7 @@
             m = new Date(year, month, 0).getMonth();
         else
             m = new Date(year, month, 1).getMonth();
-        if (selectedDates.length <= 2) {
+        if (selectedDates.length <= 10) {
             if (selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1))) == -1) {
                 $('#' + obj)[0].className = 'selected';
                 selectedDates.push($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1)));
