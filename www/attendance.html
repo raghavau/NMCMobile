@@ -56,6 +56,7 @@
         .datepicker .sunday {
             border-bottom: 1px solid #e5e5e5;
             background: #ececec;
+            color: #d4d4d4;
             padding: 10;
             text-align: center;
             width: 50px;
@@ -68,6 +69,19 @@
             border-bottom: 1px solid #e5e5e5;
             background: #c2ddf1;
             color: #4b5760;
+            padding: 10;
+            text-align: center;
+            width: 50px;
+            height: 30px;
+            font-size: 15px;
+            font-weight: bold;
+            vertical-align: top;
+        }
+
+        .datepicker .holdday {
+            border-bottom: 1px solid #e5e5e5;
+            background: #f6f6f6;
+            color: #d6d6d6;
             padding: 10;
             text-align: center;
             width: 50px;
@@ -129,7 +143,9 @@
         absent = new Array(),
         fullday = new Array(),
         holiday = new Array(),
-        halfday = new Array();
+        halfday = new Array(),
+        holdday = new Array(),
+        days = new Array();
 
     document.addEventListener("deviceready", onDeviceReady, false);
 
@@ -173,119 +189,157 @@
         prevdate.push.apply(prevdate, curdate);
         //debugger;
 
-        $.get(apiURL + 'Attendance/Leaves/' + $("#hempid").val(), function(response) {
+        $.get('http://192.168.0.44/NtraktApi/api/Attendance/' + $("#hempid").val(), function(response) {
             //debugger;
 
-            for (i = 0; i <= response.Holidays.length - 1; i++) {
-                holiday.push(response.Holidays[i]);
+            for (i = 0; i <= response.data.length - 1; i++) {
+                days.push(response.data[i].AttendanceDate + ',' + response.data[i].InTime + ',' + response.data[i].OutTime);
             }
-            for (i = 0; i <= response.Fulldays.length - 1; i++) {
-                fullday.push(response.Fulldays[i]);
-            }
-            for (i = 0; i <= response.Halfdays.length - 1; i++) {
-                halfday.push(response.Halfdays[i]);
-            }
-
-            var html = "<table cellspacing='0'><tr><td colspan='3' class='header'>" + mons[new Date(year, month, 0).getMonth()] + '-' + new Date(year, month, 0).getFullYear() +
-                "</td><td class='header'>-</td><td colspan='3' class='header'>" + mons[new Date(year, month, 1).getMonth()] + '-' + new Date(year, month, 1).getFullYear() + "</td></tr>";
-            html = html + "<tr>";
-            for (i = 0; i <= 7 - 1; i++) {
-                html = html + "<td class='header'>" + day[i] + "</td>";
-            }
-            html = html + '</tr>';
-
-            for (j = 0; j < prevdate.length; j++) {
-                var leaveType = '';
-                if (j >= cnt) {
-                    f = day[new Date(year, month, prevdate[j]).getDay()];
-                    var cd = new Date(year, month, prevdate[j]);
-                    //debugger;
-                    color = null;
-
-                    for (l = 0; l <= absent.length - 1; l++) {
-                        if (absent[l][0].indexOf(cd.toLocaleDateString()) != -1) {
-                            color = 'red';
-                            leaveType = absent[l][1];
-                        }
-                    }
-                    for (l = 0; l <= fullday.length - 1; l++) {
-                        if (fullday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
-                            color = 'green';
-                            leaveType = fullday[l][1];
-                        }
-                    }
-                    for (l = 0; l <= halfday.length - 1; l++) {
-                        if (halfday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
-                            color = 'stop green';
-                            leaveType = halfday[l][1];
-                        }
-                    }
-                    for (l = 0; l <= holiday.length - 1; l++) {
-                        if (holiday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
-                            color = 'h';
-                            leaveType = holiday[l][1];
-                        }
-                    }
-                } else {
-                    f = day[new Date(year, month - 1, prevdate[j]).getDay()];
-                    var cd = new Date(year, month - 1, prevdate[j]);
-                    color = null;
-
-                    for (l = 0; l <= absent.length - 1; l++) {
-                        if (absent[l][0].indexOf(cd.toLocaleDateString()) != -1) {
-                            color = 'red';
-                            leaveType = absent[l][1];
-                        }
-                    }
-                    for (l = 0; l <= fullday.length - 1; l++) {
-                        if (fullday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
-                            color = 'green';
-                            leaveType = fullday[l][1];
-                        }
-                    }
-                    for (l = 0; l <= halfday.length - 1; l++) {
-                        if (halfday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
-                            color = 'stop green';
-                            leaveType = halfday[l][1];
-                        }
-                    }
-                    for (l = 0; l <= holiday.length - 1; l++) {
-                        if (holiday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
-                            color = 'h';
-                            leaveType = holiday[l][1];
-                        }
-                    }
-                }
-                for (k = e; k < 7; k++) {
-                    //debugger;
-                    if (e == 6)
-                        e = 0;
-                    else
-                        e++;
-
-                    if (day[k] == f) {
-                        if (f == 'Su')
-                            html = html + '<td class="sunday"><br>' + prevdate[j] + '</td>';
-                        else if (color == 'h')
-                            html = html + '<td class="holiday" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
-                        else if (color == null)
-                            html = html + '<td class="day"><br>' + prevdate[j] + '</td>';
-                        else
-                            html = html + '<td class="day" data-tooltip="' + leaveType + '" data-position="top center"><i class="circle ' + color + ' small icon"></i><br>' + prevdate[j] + '</td>';
-                        if (e == 0)
-                            html = html + '</tr><tr>';
-                        break;
-                    } else {
-                        html = html + '<td class="day"></td>';
-                    }
-                }
-            }
-
-            html = html + "</table>";
-            $('#fromdate').append(html);
-
         }).done(function() {
-            $(".dimmer").hide();
+            $.get(apiURL + 'Attendance/Leaves/' + $("#hempid").val(), function(response) {
+                //debugger;
+
+                for (i = 0; i <= response.Holidays.length - 1; i++) {
+                    holiday.push(response.Holidays[i]);
+                }
+                for (i = 0; i <= response.Fulldays.length - 1; i++) {
+                    fullday.push(response.Fulldays[i]);
+                }
+                for (i = 0; i <= response.Halfdays.length - 1; i++) {
+                    halfday.push(response.Halfdays[i]);
+                }
+                for (i = 0; i <= response.Holddays.length - 1; i++) {
+                    holdday.push(response.Holddays[i]);
+                }
+
+            }).done(function() {
+                $(".dimmer").hide();
+                var d = 0;
+                var html = "<table cellspacing='0'><tr><td colspan='3' class='header'>" + mons[new Date(year, month, 0).getMonth()] + '-' + new Date(year, month, 0).getFullYear() +
+                    "</td><td class='header'>-</td><td colspan='3' class='header'>" + mons[new Date(year, month, 1).getMonth()] + '-' + new Date(year, month, 1).getFullYear() + "</td></tr>";
+                html = html + "<tr>";
+                for (i = 0; i <= 7 - 1; i++) {
+                    html = html + "<td class='header'>" + day[i] + "</td>";
+                }
+                html = html + '</tr>';
+
+                for (j = 0; j < prevdate.length; j++) {
+                    var leaveType = '';
+                    if (j >= cnt) {
+                        f = day[new Date(year, month, prevdate[j]).getDay()];
+                        var cd = new Date(year, month, prevdate[j]);
+                        //debugger;
+                        color = null;
+
+                        for (l = 0; l <= absent.length - 1; l++) {
+                            if (absent[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'red';
+                                leaveType = absent[l][1];
+                            }
+                        }
+                        for (l = 0; l <= fullday.length - 1; l++) {
+                            if (fullday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'green';
+                                leaveType = fullday[l][1];
+                            }
+                        }
+                        for (l = 0; l <= halfday.length - 1; l++) {
+                            if (halfday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'stop green';
+                                leaveType = halfday[l][1];
+                            }
+                        }
+                        for (l = 0; l <= holiday.length - 1; l++) {
+                            if (holiday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'h';
+                                leaveType = holiday[l][1];
+                            }
+                        }
+                        for (l = 0; l <= holdday.length - 1; l++) {
+                            if (holdday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'hold';
+                                leaveType = holdday[l][1];
+                            }
+                        }
+                    } else {
+                        f = day[new Date(year, month - 1, prevdate[j]).getDay()];
+                        var cd = new Date(year, month - 1, prevdate[j]);
+                        color = null;
+
+                        for (l = 0; l <= absent.length - 1; l++) {
+                            if (absent[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'red';
+                                leaveType = absent[l][1];
+                            }
+                        }
+                        for (l = 0; l <= fullday.length - 1; l++) {
+                            if (fullday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'green';
+                                leaveType = fullday[l][1];
+                            }
+                        }
+                        for (l = 0; l <= halfday.length - 1; l++) {
+                            if (halfday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'stop green';
+                                leaveType = halfday[l][1];
+                            }
+                        }
+                        for (l = 0; l <= holiday.length - 1; l++) {
+                            if (holiday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'h';
+                                leaveType = holiday[l][1];
+                            }
+                        }
+                        for (l = 0; l <= holdday.length - 1; l++) {
+                            if (holdday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'hold';
+                                leaveType = holdday[l][1];
+                            }
+                        }
+                    }
+
+                    for (k = e; k < 7; k++) {
+                        //debugger;
+                        if (e == 6)
+                            e = 0;
+                        else
+                            e++;
+
+                        if (day[k] == f) {
+                            if (f == 'Su')
+                                html = html + '<td class="sunday"><br>' + prevdate[j] + '</td>';
+                            else if (color == 'h')
+                                html = html + '<td class="holiday" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                            else if (color == 'hold')
+                                html = html + '<td class="holdday" data-tooltip="Pending" data-position="top center"><br>' + prevdate[j] + '</td>';
+                            else if (color == null) {
+                                if (parseInt(d) <= parseInt(days.length - 1)) {
+                                    var sday = null;
+                                    if (parseInt(prevdate[j]) < 10)
+                                        sday = '0' + prevdate[j];
+                                    else sday = prevdate[j];
+                                    if (days[d].startsWith(sday)) {
+                                        html = html + '<td class="day" data-tooltip="' + days[d].split(',')[1] + ' - ' + days[d].split(',')[2] + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                                        d++;
+                                    }
+                                } else {
+                                    html = html + '<td class="day"><br>' + prevdate[j] + '</td>';
+                                }
+
+                            } else
+                                html = html + '<td class="day" data-tooltip="' + leaveType + '" data-position="top center"><i class="circle ' + color + ' small icon"></i><br>' + prevdate[j] + '</td>';
+                            if (e == 0)
+                                html = html + '</tr><tr>';
+                            break;
+                        } else {
+                            html = html + '<td class="day"></td>';
+                        }
+                    }
+                }
+
+                html = html + "</table>";
+                $('#fromdate').append(html);
+            });
         });
     });
 

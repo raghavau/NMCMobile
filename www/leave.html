@@ -58,6 +58,7 @@
         .datepicker .sunday {
             border-bottom: 1px solid #e5e5e5;
             background: #ececec;
+            color: #d4d4d4;
             padding: 10;
             text-align: center;
             width: 50px;
@@ -104,6 +105,7 @@
             font-weight: bold;
             vertical-align: top;
         }
+
     </style>
 </head>
 
@@ -183,8 +185,8 @@
         absent = new Array(),
         fullday = new Array(),
         holiday = new Array(),
-        halfday = new Array();
-    holdday = new Array();
+        halfday = new Array(),
+        holdday = new Array();
 
     document.addEventListener("deviceready", onDeviceReady, false);
 
@@ -294,7 +296,7 @@
             for (i = 0; i <= response.Holddays.length - 1; i++) {
                 holdday.push(response.Holddays[i]);
             }
-
+        }).done(function() {
             var html = "<table cellspacing='0'><tr><td colspan='3' class='header'>" + mons[new Date(year, month, 0).getMonth()] + '-' + new Date(year, month, 0).getFullYear() +
                 "</td><td class='header'>-</td><td colspan='3' class='header'>" + mons[new Date(year, month, 1).getMonth()] + '-' + new Date(year, month, 1).getFullYear() + "</td></tr>";
             html = html + "<tr>";
@@ -406,8 +408,6 @@
 
             html = html + "</table>";
             $('#fromdate').append(html);
-
-        }).done(function() {
             LeaveTypes();
         });
     }
