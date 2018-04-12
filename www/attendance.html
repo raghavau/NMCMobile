@@ -173,8 +173,6 @@
         prevdate.push.apply(prevdate, curdate);
         //debugger;
 
-        if ($("#hempid").val() == "568300646")
-            $("#hempid").val('45600229');
         $.get(apiURL + 'Attendance/Leaves/' + $("#hempid").val(), function(response) {
             //debugger;
 
