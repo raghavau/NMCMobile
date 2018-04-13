@@ -104,6 +104,71 @@
             vertical-align: top;
         }
 
+        .half-day {
+            background-color: #ff9f9f;
+            color: white !important;
+        }
+
+        .half-day-bottom {
+            /* IE10+ */
+            background-image: -ms-linear-gradient(top, #FFFFFF 50%, #ff9f9f 50%);
+            /* Mozilla Firefox */
+            background-image: -moz-linear-gradient(top, #FFFFFF 50%, #ff9f9f 50%);
+            /* Opera */
+            background-image: -o-linear-gradient(top, #FFFFFF 50%, #ff9f9f 50%);
+            /* Webkit (Safari/Chrome 10) */
+            background-image: -webkit-gradient(linear, left top, left bottom, color-stop(50, #FFFFFF), color-stop(50, #ff9f9f));
+            /* Webkit (Chrome 11+) */
+            background-image: -webkit-linear-gradient(top, #FFFFFF 50%, #ff9f9f 50%);
+            /* W3C Markup */
+            background-image: linear-gradient(to bottom, #FFFFFF 50%, #ff9f9f 50%);
+            color: white !important;
+        }
+
+        .half-day-top {
+            /* IE10+ */
+            background-image: -ms-linear-gradient(bottom, #FFFFFF 50%, #ff9f9f 50%);
+            /* Mozilla Firefox */
+            background-image: -moz-linear-gradient(bottom, #FFFFFF 50%, #ff9f9f 50%);
+            /* Opera */
+            background-image: -o-linear-gradient(bottom, #FFFFFF 50%, #ff9f9f 50%);
+            /* Webkit (Safari/Chrome 10) */
+            background-image: -webkit-gradient(linear, left bottom, left top, color-stop(50, #FFFFFF), color-stop(50, #ff9f9f));
+            /* Webkit (Chrome 11+) */
+            background-image: -webkit-linear-gradient(bottom, #FFFFFF 50%, #ff9f9f 50%);
+            /* W3C Markup */
+            background-image: linear-gradient(to top, #FFFFFF 50%, #ff9f9f 50%);
+        }
+
+        .half-circle-bottom {
+            width: 10px;
+            height: 5px;
+            top: 5px;
+            background-color: red;
+            border-bottom-left-radius: 100px;
+            border-bottom-right-radius: 100px;
+            border: 0px solid gray;
+            border-bottom: 0;
+
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        .half-circle-top {
+            width: 10px;
+            height: 5px;
+            background-color: red;
+            border-top-left-radius: 100px;
+            border-top-right-radius: 100px;
+            border: 0px solid gray;
+            border-bottom: 0;
+
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
     </style>
 </head>
 
@@ -114,13 +179,13 @@
                 <div class="ui red ribbon label">Attendance</div><br><br>
                 <center>
                     <div id="fromdate" class="datepicker"></div><br>
-                    <i class='circle red small icon'></i>Absent
+                    <!--<i class='circle red small icon'></i>Absent-->
                     <i class='circle blue small icon'></i>Holiday
                     <i class='circle green small icon'></i>Leave
                     <i class='stop circle green small icon'></i>Halfday Leave
                 </center>
                 <div class="ui active inverted dimmer">
-                    <div class="ui large text loader">Loading</div>
+                    <div class="ui large text loader">Loading Please Wait.....</div>
                 </div>
             </div>
         </div>
@@ -189,7 +254,7 @@
         prevdate.push.apply(prevdate, curdate);
         //debugger;
 
-        $.get('http://192.168.0.44/NtraktApi/api/Attendance/' + $("#hempid").val(), function(response) {
+        $.get(apiURL + 'Attendance/' + $("#hempid").val(), function(response) {
             //debugger;
 
             for (i = 0; i <= response.data.length - 1; i++) {
@@ -231,12 +296,12 @@
                         //debugger;
                         color = null;
 
-                        for (l = 0; l <= absent.length - 1; l++) {
+                        /*for (l = 0; l <= absent.length - 1; l++) {
                             if (absent[l][0].indexOf(cd.toLocaleDateString()) != -1) {
                                 color = 'red';
                                 leaveType = absent[l][1];
                             }
-                        }
+                        }*/
                         for (l = 0; l <= fullday.length - 1; l++) {
                             if (fullday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
                                 color = 'green';
@@ -266,12 +331,12 @@
                         var cd = new Date(year, month - 1, prevdate[j]);
                         color = null;
 
-                        for (l = 0; l <= absent.length - 1; l++) {
+                        /*for (l = 0; l <= absent.length - 1; l++) {
                             if (absent[l][0].indexOf(cd.toLocaleDateString()) != -1) {
                                 color = 'red';
                                 leaveType = absent[l][1];
                             }
-                        }
+                        }*/
                         for (l = 0; l <= fullday.length - 1; l++) {
                             if (fullday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
                                 color = 'green';
@@ -311,19 +376,33 @@
                             else if (color == 'h')
                                 html = html + '<td class="holiday" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
                             else if (color == 'hold')
-                                html = html + '<td class="holdday" data-tooltip="Pending" data-position="top center"><br>' + prevdate[j] + '</td>';
+                                html = html + '<td class="holdday" data-tooltip="' + leaveType + ' Pending For Approval" data-position="top center"><br>' + prevdate[j] + '</td>';
                             else if (color == null) {
+                                //debugger;
                                 if (parseInt(d) <= parseInt(days.length - 1)) {
                                     var sday = null;
                                     if (parseInt(prevdate[j]) < 10)
                                         sday = '0' + prevdate[j];
                                     else sday = prevdate[j];
                                     if (days[d].startsWith(sday)) {
-                                        html = html + '<td class="day" data-tooltip="' + days[d].split(',')[1] + ' - ' + days[d].split(',')[2] + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                                        if (days[d].split(',')[1] == "" && days[d].split(',')[2] == "") {
+                                            html = html + '<td class="day half-day" data-tooltip="No Data" data-position="top center"><br>' + prevdate[j] + '</td>';
+                                        } else if (days[d].split(',')[1] == "") {
+                                            html = html + '<td class="day half-day-bottom" data-tooltip="' + days[d].split(',')[2] + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                                        } else if (days[d].split(',')[2] == "") {
+                                            html = html + '<td class="day half-day-top" data-tooltip="' + days[d].split(',')[1] + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                                        } else {
+                                            html = html + '<td class="day" data-tooltip="' + days[d].split(',')[1] + ' - ' + days[d].split(',')[2] + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                                        }
                                         d++;
+                                    } else {
+                                        html = html + '<td class="day half-day" data-tooltip="No Data" data-position="top center"><br>' + prevdate[j] + '</td>';
                                     }
                                 } else {
-                                    html = html + '<td class="day"><br>' + prevdate[j] + '</td>';
+                                    if (date.getDate() > prevdate[j])
+                                        html = html + '<td class="day half-day" data-tooltip="No Data" data-position="top center"><br>' + prevdate[j] + '</td>';
+                                    else
+                                        html = html + '<td class="day"><br>' + prevdate[j] + '</td>';
                                 }
 
                             } else
