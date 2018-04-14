@@ -56,22 +56,23 @@
                         </button>
                         <div class="ui error message"></div>
                     </form>
-                    <!--<div class="ui section divider"></div>
+                    <div class="ui section divider"></div>
                     <button class="ui red fluid submit button right labeled icon" type="button" id="forgotpin">
                         <i class="right arrow icon"></i>
-                        Forgot PIN?
-                    </button>-->
+                        Reset PIN
+                    </button>
                     <!--<div class="two ui fluid buttons">
                         <button class="ui positive submit button" id="register">Registration</button>
                         <div class="or"></div>
                         <button class="ui negative submit button" id="forgotpin">Forgot PIN?</button>
                     </div>-->
-                    <div class="ui active inverted dimmer">
-                        <div class="ui large text loader">Loading</div>
-                    </div>
+
                 </div>
             </div>
         </div>
+    </div>
+    <div class="ui active inverted page dimmer">
+        <div class="ui large text loader">Loading</div>
     </div>
 </body>
 
@@ -139,7 +140,7 @@
         });
 
         $('#forgotpin').click(function() {
-            window.location.href = 'resetpin.html';
+            window.location.href = 'resetpin.html?empid=' + btoa($("#empid").val());
         });
     });
 

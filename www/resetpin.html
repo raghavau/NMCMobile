@@ -101,19 +101,43 @@
                             </div>
                         </div>
                         <button class="ui green fluid submit button right labeled icon" type="submit" id="confirm">
-                                <i class="checkmark icon"></i>
-                                <span>Confirm</span>
-                            </button>
+                            <i class="checkmark icon"></i>
+                            <span>Confirm</span>
+                        </button>
                         <div class="ui error message"></div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+    <input type="hidden" id="hempid" />
 </body>
 
 </html>
 <script type="text/javascript">
+    var apiURL = 'http://175.101.102.104/NtraktApi/api/';
+    var qsParm = new Array();
+
+    function qs() {
+        //debugger;
+        var query = window.location.search.substring(1);
+        var parms = query.split('&');
+        for (var i = 0; i < parms.length; i++) {
+            var pos = parms[i].indexOf('=');
+            if (pos > 0) {
+                var key = parms[i].substring(0, pos);
+                var val = parms[i].substring(pos + 1);
+                qsParm[key] = val;
+            }
+        }
+        if (parms.length > 0) {
+            $("#hempid").val(atob(qsParm["empid"]));
+            return true;
+        } else {
+            window.location.href = 'index.html';
+            return false;
+        }
+    }
     $(document).ready(function() {
         //$('#show').hide();
         //$('#generate').hide();
@@ -122,7 +146,6 @@
             if (empid != "") {
                 $('#send').hide();
                 $('#show').show();
-                //$('.blue.message').transition('pulse');
                 $('#mobile').val('9542508667');
                 $('#otp').focus();
             }
@@ -131,7 +154,6 @@
         $('#verify').click(function() {
             $('#generate').show();
             $('#generate').toggleClass('show2');
-            //$('#reset').transition('slide left');
             $('#reset').hide();
         });
     });

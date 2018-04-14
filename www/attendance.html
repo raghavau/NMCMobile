@@ -54,9 +54,9 @@
         }
 
         .datepicker .sunday {
-            border-bottom: 1px solid #e5e5e5;
-            background: #ececec;
-            color: #d4d4d4;
+            border-bottom: 1px solid #c1cddc;
+            background: #d7e4f5;
+            color: #404449;
             padding: 10;
             text-align: center;
             width: 50px;
@@ -67,8 +67,8 @@
 
         .datepicker .holiday {
             border-bottom: 1px solid #e5e5e5;
-            background: #c2ddf1;
-            color: #4b5760;
+            background: #91bbe4;
+            color: #fff;
             padding: 10;
             text-align: center;
             width: 50px;
@@ -80,8 +80,8 @@
 
         .datepicker .holdday {
             border-bottom: 1px solid #e5e5e5;
-            background: #f6f6f6;
-            color: #d6d6d6;
+            background: #dddddd;
+            color: #939393;
             padding: 10;
             text-align: center;
             width: 50px;
@@ -92,9 +92,9 @@
         }
 
         .datepicker .selected {
-            border-bottom: 1px solid #e5e5e5;
-            background: #c2ddf1;
-            color: #4b5760;
+            border: 1px solid #9e1906;
+            background: #e07572;
+            color: #f5e8e6;
             padding: 10;
             text-align: center;
             width: 50px;
@@ -102,6 +102,42 @@
             font-size: 15px;
             font-weight: bold;
             vertical-align: top;
+        }
+
+        .leave-day {
+            background-color: #94d8a6;
+            color: white !important;
+        }
+
+        .leave-day-bottom {
+            /* IE10+ */
+            background-image: -ms-linear-gradient(top, #FFFFFF 50%, #94d8a6 50%);
+            /* Mozilla Firefox */
+            background-image: -moz-linear-gradient(top, #FFFFFF 50%, #94d8a6 50%);
+            /* Opera */
+            background-image: -o-linear-gradient(top, #FFFFFF 50%, #94d8a6 50%);
+            /* Webkit (Safari/Chrome 10) */
+            background-image: -webkit-gradient(linear, left top, left bottom, color-stop(50, #FFFFFF), color-stop(50, #94d8a6));
+            /* Webkit (Chrome 11+) */
+            background-image: -webkit-linear-gradient(top, #FFFFFF 50%, #94d8a6 50%);
+            /* W3C Markup */
+            background-image: linear-gradient(to bottom, #FFFFFF 50%, #94d8a6 50%);
+            color: white !important;
+        }
+
+        .leave-day-top {
+            /* IE10+ */
+            background-image: -ms-linear-gradient(bottom, #FFFFFF 50%, #94d8a6 50%);
+            /* Mozilla Firefox */
+            background-image: -moz-linear-gradient(bottom, #FFFFFF 50%, #94d8a6 50%);
+            /* Opera */
+            background-image: -o-linear-gradient(bottom, #FFFFFF 50%, #94d8a6 50%);
+            /* Webkit (Safari/Chrome 10) */
+            background-image: -webkit-gradient(linear, left bottom, left top, color-stop(50, #FFFFFF), color-stop(50, #94d8a6));
+            /* Webkit (Chrome 11+) */
+            background-image: -webkit-linear-gradient(bottom, #FFFFFF 50%, #94d8a6 50%);
+            /* W3C Markup */
+            background-image: linear-gradient(to top, #FFFFFF 50%, #94d8a6 50%);
         }
 
         .half-day {
@@ -140,35 +176,6 @@
             background-image: linear-gradient(to top, #FFFFFF 50%, #ff9f9f 50%);
         }
 
-        .half-circle-bottom {
-            width: 10px;
-            height: 5px;
-            top: 5px;
-            background-color: red;
-            border-bottom-left-radius: 100px;
-            border-bottom-right-radius: 100px;
-            border: 0px solid gray;
-            border-bottom: 0;
-
-            -webkit-box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            box-sizing: border-box;
-        }
-
-        .half-circle-top {
-            width: 10px;
-            height: 5px;
-            background-color: red;
-            border-top-left-radius: 100px;
-            border-top-right-radius: 100px;
-            border: 0px solid gray;
-            border-bottom: 0;
-
-            -webkit-box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            box-sizing: border-box;
-        }
-
     </style>
 </head>
 
@@ -179,16 +186,17 @@
                 <div class="ui red ribbon label">Attendance</div><br><br>
                 <center>
                     <div id="fromdate" class="datepicker"></div><br>
-                    <!--<i class='circle red small icon'></i>Absent-->
+                    <i class='circle red small icon'></i>No Data
                     <i class='circle blue small icon'></i>Holiday
                     <i class='circle green small icon'></i>Leave
                     <i class='stop circle green small icon'></i>Halfday Leave
                 </center>
-                <div class="ui active inverted dimmer">
-                    <div class="ui large text loader">Loading Please Wait.....</div>
-                </div>
+
             </div>
         </div>
+    </div>
+    <div class="ui active inverted page dimmer">
+        <div class="ui large text loader">Loading Please Wait.....</div>
     </div>
     <input type="hidden" id="hempid" />
 </body>

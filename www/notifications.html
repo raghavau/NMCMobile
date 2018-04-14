@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Home</title>
+    <title>My Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="semantic/css/semantic.css">
@@ -12,7 +12,7 @@
     <style type="text/css">
         body {
             background-color: #e5e5e5;
-            overflow: hidden;
+            /*overflow: hidden;*/
         }
 
         body>.grid {
@@ -28,38 +28,37 @@
 </head>
 
 <body>
-    <!--<div class="ui middle aligned center aligned grid">-->
-    <!-- ui raised very padded text container
-             ui middle aligned center aligned grid
-        -->
-
     <div class="ui column grid">
         <div class="column">
-            <div class="ui stacked left aligned segment">
-                <div class="ui red ribbon label">Profile</div>
-                <table class="ui unstackable very basic large celled table">
-                    <tbody>
-                        <tr>
-                            <td class="two wide top aligned center aligned">
-                                <img src="" id="empimg" class="ui tiny rounded image">
-                            </td>
-                            <td class="top aligned left aligned">
-                                <div class="header">
-                                    <h3><label id="firstname"></label></h3>
-                                    <div class="sub header"><label id="dept" class="ui tag label"></label></div>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="ui section divider"></div>
+            <div class="ui left aligned segment">
+                <div class="ui middle aligned selection divided list">
+                    <div class="item">
+                        <div class="right floated content">
+                            <button class="ui right floated circular icon green basic button"><i class="icon green check"></i></button>
+                        </div>
+                        <i class="right triangle icon"></i>
+                        <div class="top aligned content">
+                            <div class="header">Leave Status</div>
+                            <div class="description">Your SL request for the date 12/04/2018 is pending for approval
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="right floated content">
+                            <button class="ui right floated circular icon green basic button"><i class="icon green check"></i></button>
+                        </div>
+                        <i class="right triangle icon"></i>
+                        <div class="content">
+                            <div class="header">Leave Status</div>
+                            <div class="description">Your SL request for the date 12/04/2018 has been approved
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
-    <div class="ui active inverted page dimmer">
-        <div class="ui large text loader">Loading</div>
-    </div>
-    <!--</div>-->
     <input type="hidden" id="hempid" />
 </body>
 
@@ -67,6 +66,7 @@
 <script type="text/javascript">
     var apiURL = 'http://175.101.102.104/NtraktApi/api/';
     var qsParm = new Array();
+
     document.addEventListener("deviceready", onDeviceReady, false);
 
     function onDeviceReady() {
@@ -95,21 +95,10 @@
             return false;
         }
     }
-
     $(document).ready(function() {
         qs();
         $(".dimmer").show();
-        $.get(apiURL + 'User/Info/' + $("#hempid").val(), function(response) {
-            //debugger;
-            $("#firstname").text(response.data[0].Name);
-            $("#dept").text(response.data[0].Department);
-            if ($("#hempid").val() == "568300646")
-                $("#hempid").val('45600229');
-        }).done(function() {
-            //debugger;
-            $(".dimmer").hide();
-            $("#empimg").attr('src', apiURL + 'User/ShowPicture/' + $("#hempid").val());
-        });
+        $('.ui.accordion').accordion();
     });
 
 </script>
