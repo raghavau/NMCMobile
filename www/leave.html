@@ -8,177 +8,11 @@
     <link rel="stylesheet" type="text/css" href="css/jquery-ui-custom.css">
     <link rel="stylesheet" type="text/css" href="semantic/css/semantic.css">
     <link rel="stylesheet" type="text/css" href="bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/attenstyle.css">
     <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui.js"></script>
     <script type="text/javascript" src="semantic/js/semantic.js"></script>
     <script type="text/javascript" src="bootstrap/dist/js/bootstrap.min.js"></script>
-    <style type="text/css">
-        body {
-            background-color: #e5e5e5;
-            /*overflow: hidden;*/
-        }
-
-        body>.grid {
-            height: 100%;
-        }
-
-        .column {
-            /*max-width: 450px;*/
-            margin: 20px;
-        }
-
-        .datepicker table {
-            border: 1px solid #d5d8d8;
-            border-radius: 5px;
-            padding: 2px;
-        }
-
-        .datepicker .header {
-            background: #2185D0;
-            border-bottom: 1px solid #4d9dd9;
-            color: #fff;
-            padding: 10;
-            text-align: center;
-            width: 50px;
-            height: 30px;
-            font-weight: bold;
-        }
-
-        .datepicker .day {
-            border-bottom: 1px solid #e5e5e5;
-            /*border-right: 1px solid #e5e5e5;*/
-            padding: 10;
-            text-align: center;
-            width: 50px;
-            height: 30px;
-            font-size: 15px;
-            vertical-align: top;
-        }
-
-        .datepicker .sunday {
-            border-bottom: 1px solid #c1cddc;
-            background: #d7e4f5;
-            color: #404449;
-            padding: 10;
-            text-align: center;
-            width: 50px;
-            height: 30px;
-            font-size: 15px;
-            vertical-align: top;
-        }
-
-        .datepicker .holiday {
-            border-bottom: 1px solid #e5e5e5;
-            background: #91bbe4;
-            color: #fff;
-            padding: 10;
-            text-align: center;
-            width: 50px;
-            height: 30px;
-            font-size: 15px;
-            font-weight: bold;
-            vertical-align: top;
-        }
-
-        .datepicker .holdday {
-            border-bottom: 1px solid #e5e5e5;
-            background: #dddddd;
-            color: #939393;
-            padding: 10;
-            text-align: center;
-            width: 50px;
-            height: 30px;
-            font-size: 15px;
-            font-weight: bold;
-            vertical-align: top;
-        }
-
-        .datepicker .selected {
-            border: 1px solid #9e1906;
-            background: #e07572;
-            color: #f5e8e6;
-            padding: 10;
-            text-align: center;
-            width: 50px;
-            height: 30px;
-            font-size: 15px;
-            font-weight: bold;
-            vertical-align: top;
-        }
-
-        .leave-day {
-            background-color: #94d8a6;
-            color: white !important;
-        }
-
-        .leave-day-bottom {
-            /* IE10+ */
-            background-image: -ms-linear-gradient(top, #FFFFFF 50%, #94d8a6 50%);
-            /* Mozilla Firefox */
-            background-image: -moz-linear-gradient(top, #FFFFFF 50%, #94d8a6 50%);
-            /* Opera */
-            background-image: -o-linear-gradient(top, #FFFFFF 50%, #94d8a6 50%);
-            /* Webkit (Safari/Chrome 10) */
-            background-image: -webkit-gradient(linear, left top, left bottom, color-stop(50, #FFFFFF), color-stop(50, #94d8a6));
-            /* Webkit (Chrome 11+) */
-            background-image: -webkit-linear-gradient(top, #FFFFFF 50%, #94d8a6 50%);
-            /* W3C Markup */
-            background-image: linear-gradient(to bottom, #FFFFFF 50%, #94d8a6 50%);
-            color: white !important;
-        }
-
-        .leave-day-top {
-            /* IE10+ */
-            background-image: -ms-linear-gradient(bottom, #FFFFFF 50%, #94d8a6 50%);
-            /* Mozilla Firefox */
-            background-image: -moz-linear-gradient(bottom, #FFFFFF 50%, #94d8a6 50%);
-            /* Opera */
-            background-image: -o-linear-gradient(bottom, #FFFFFF 50%, #94d8a6 50%);
-            /* Webkit (Safari/Chrome 10) */
-            background-image: -webkit-gradient(linear, left bottom, left top, color-stop(50, #FFFFFF), color-stop(50, #94d8a6));
-            /* Webkit (Chrome 11+) */
-            background-image: -webkit-linear-gradient(bottom, #FFFFFF 50%, #94d8a6 50%);
-            /* W3C Markup */
-            background-image: linear-gradient(to top, #FFFFFF 50%, #94d8a6 50%);
-        }
-
-        .half-day {
-            background-color: #ff9f9f;
-            color: white !important;
-        }
-
-        .half-day-bottom {
-            /* IE10+ */
-            background-image: -ms-linear-gradient(top, #FFFFFF 50%, #ff9f9f 50%);
-            /* Mozilla Firefox */
-            background-image: -moz-linear-gradient(top, #FFFFFF 50%, #ff9f9f 50%);
-            /* Opera */
-            background-image: -o-linear-gradient(top, #FFFFFF 50%, #ff9f9f 50%);
-            /* Webkit (Safari/Chrome 10) */
-            background-image: -webkit-gradient(linear, left top, left bottom, color-stop(50, #FFFFFF), color-stop(50, #ff9f9f));
-            /* Webkit (Chrome 11+) */
-            background-image: -webkit-linear-gradient(top, #FFFFFF 50%, #ff9f9f 50%);
-            /* W3C Markup */
-            background-image: linear-gradient(to bottom, #FFFFFF 50%, #ff9f9f 50%);
-            color: white !important;
-        }
-
-        .half-day-top {
-            /* IE10+ */
-            background-image: -ms-linear-gradient(bottom, #FFFFFF 50%, #ff9f9f 50%);
-            /* Mozilla Firefox */
-            background-image: -moz-linear-gradient(bottom, #FFFFFF 50%, #ff9f9f 50%);
-            /* Opera */
-            background-image: -o-linear-gradient(bottom, #FFFFFF 50%, #ff9f9f 50%);
-            /* Webkit (Safari/Chrome 10) */
-            background-image: -webkit-gradient(linear, left bottom, left top, color-stop(50, #FFFFFF), color-stop(50, #ff9f9f));
-            /* Webkit (Chrome 11+) */
-            background-image: -webkit-linear-gradient(bottom, #FFFFFF 50%, #ff9f9f 50%);
-            /* W3C Markup */
-            background-image: linear-gradient(to top, #FFFFFF 50%, #ff9f9f 50%);
-        }
-
-    </style>
 </head>
 
 <body>
@@ -191,8 +25,8 @@
                     <div id="fromdate" class="datepicker"></div><br>
                     <i class='circle red small icon'></i>No Data
                     <i class='circle blue small icon'></i>Holiday
-                    <i class='circle green small icon'></i>Leave
-                    <i class='stop circle green small icon'></i>Halfday Leave
+                    <!--<i class='circle green small icon'></i>Leave
+                    <i class='stop circle green small icon'></i>Halfday Leave-->
                 </center>
                 <div class="ui form">
                     <div class="grouped fields">
@@ -250,11 +84,12 @@
         hflday = false,
         hlfvalue = null,
         disableDays = [],
-        colors = ["green", "brown", "blue", "teal", "red", "orange", "purple", "yellow"];
+        colors = ["green", "blue", "red", "orange", "teal", "brown", "purple", "yellow"];
 
     var apiURL = 'http://175.101.102.104/NtraktApi/api/';
     var qsParm = new Array(),
         absent = new Array(),
+        altday = new Array(),
         fullday = new Array(),
         holiday = new Array(),
         halfday = new Array(),
@@ -322,7 +157,7 @@
 
         $("#txtReason").keyup(function() {
             //debugger;
-            if ($(this)[0].value.length > 0) {
+            if ($(this)[0].value.trim().length > 0) {
                 $("#request").removeClass('disabled');
             } else {
                 $("#request").addClass('disabled');
@@ -375,6 +210,9 @@
                 for (i = 0; i <= response.Holddays.length - 1; i++) {
                     holdday.push(response.Holddays[i]);
                 }
+                for (i = 0; i <= response.Altdays.length - 1; i++) {
+                    altday.push(response.Altdays[i]);
+                }
             }).done(function() {
                 var html = "<table cellspacing='0'><tr><td colspan='3' class='header'>" + mons[new Date(year, month, 0).getMonth()] + '-' + new Date(year, month, 0).getFullYear() +
                     "</td><td class='header'>-</td><td colspan='3' class='header'>" + mons[new Date(year, month, 1).getMonth()] + '-' + new Date(year, month, 1).getFullYear() + "</td></tr>";
@@ -422,6 +260,12 @@
                                 leaveType = holdday[l][1];
                             }
                         }
+                        for (l = 0; l <= altday.length - 1; l++) {
+                            if (altday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'a';
+                                leaveType = altday[l][1];
+                            }
+                        }
                     } else {
                         f = day[new Date(year, month - 1, prevdate[j]).getDay()];
                         var cd = new Date(year, month - 1, prevdate[j]);
@@ -457,6 +301,12 @@
                                 leaveType = holdday[l][1];
                             }
                         }
+                        for (l = 0; l <= altday.length - 1; l++) {
+                            if (altday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'a';
+                                leaveType = altday[l][1];
+                            }
+                        }
                     }
                     for (k = e; k < 7; k++) {
                         //debugger;
@@ -472,7 +322,19 @@
                                 html = html + '<td class="holiday" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
                             else if (color == 'hold')
                                 html = html + '<td class="holdday" data-tooltip="' + leaveType + ' Pending For Approval" data-position="top center"><br>' + prevdate[j] + '</td>';
-                            else if (color == null) {
+                            else if (color == 'a') {
+                                //debugger;
+                                if (leaveType.split('/')[0] == "CL")
+                                    html = html + '<td class="day leave-cl-alt" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                                else if (leaveType.split('/')[0] == "SL")
+                                    html = html + '<td class="day leave-sl-alt" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                                else if (leaveType.split('/')[1] == "CL")
+                                    html = html + '<td class="day leave-alt-cl" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                                else if (leaveType.split('/')[1] == "SL")
+                                    html = html + '<td class="day leave-alt-sl" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                                else
+                                    html = html + '<td class="day leave-alt" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                            } else if (color == null) {
                                 //debugger;
                                 if (parseInt(d) <= parseInt(days.length - 1)) {
                                     var sday = null;
@@ -494,15 +356,20 @@
                                         html = html + '<td class="day half-day" id="' + j + '" data-tooltip="No Data" data-position="top center" onclick="DateSelect(' + j + ',' + prevdate[j] + ', 0)"><br>' + prevdate[j] + '</td>';
                                     }
                                 } else {
-                                    if (date.getDate() > prevdate[j])
+                                    if (parseInt(date.getDate()) < parseInt(prevdate[j]))
                                         html = html + '<td class="day" id="' + j + '" onclick="DateSelect(' + j + ',' + prevdate[j] + ', 0)"><br>' + prevdate[j] + '</td>';
                                     else
-                                        html = html + '<td class="day" id="' + j + '" onclick="DateSelect(' + j + ',' + prevdate[j] + ', 0)"><br>' + prevdate[j] + '</td>';
+                                        html = html + '<td class="day half-day" id="' + j + '" onclick="DateSelect(' + j + ',' + prevdate[j] + ', 0)"><br>' + prevdate[j] + '</td>';
                                 }
                             }
                             //html = html + '<td class="day" id="' + j + '" onclick="DateSelect(' + j + ',' + prevdate[j] + ')"><br>' + prevdate[j] + '</td>';
-                            else
-                                html = html + '<td class="day" data-tooltip="' + leaveType + '" data-position="top center"><i class="circle ' + color + ' small icon"></i><br>' + prevdate[j] + '</td>';
+                            else {
+                                //debugger;
+                                if (leaveType == "CL")
+                                    html = html + '<td class="day leave-cl" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                                else if (leaveType == "SL")
+                                    html = html + '<td class="day leave-sl" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                            }
                             if (e == 0)
                                 html = html + '</tr><tr>';
                             break;
@@ -534,8 +401,9 @@
                 //debugger;
                 var htmlStr = "<div class='ui circular labels '>";
                 for (i = 0; i <= response.data.length - 1; i++) {
-                    if (parseInt(response.data[i].LeaveCount) > 0)
-                        htmlStr += "<a class='ui " + colors[i] + " label'>" + response.data[i].LeaveType + "<div class='detail'>" + response.data[i].LeaveCount + "</div></a>";
+                    if (parseInt(response.data[i].LeaveCount) > 0) {
+                        htmlStr += "<a class='ui " + response.data[i].LeaveColour + " label'>" + response.data[i].LeaveType + "<div class='detail'>" + response.data[i].LeaveCount + "</div></a>";
+                    }
                 }
                 htmlStr += '</div>';
                 $("#leavecount").append(htmlStr);

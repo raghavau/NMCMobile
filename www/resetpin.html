@@ -57,7 +57,7 @@
                                 <input id="empid" placeholder="Employee Id" type="text">
                             </div>
                         </div>
-                        <button class="ui teal fluid submit button right labeled icon" type="button" id="send">
+                        <button class="ui teal fluid submit button right labeled icon disabled" type="button" id="send">
                             <i class="right arrow icon"></i>
                             <span>Send OTP</span>
                         </button>
@@ -100,7 +100,7 @@
                                 <input id="cnfpin" placeholder="Confirm PIN" type="text">
                             </div>
                         </div>
-                        <button class="ui green fluid submit button right labeled icon" type="submit" id="confirm">
+                        <button class="ui green fluid submit button right labeled icon" type="button" id="confirm">
                             <i class="checkmark icon"></i>
                             <span>Confirm</span>
                         </button>
@@ -139,15 +139,46 @@
         }
     }
     $(document).ready(function() {
+        //debugger;
+        qs();
         //$('#show').hide();
         //$('#generate').hide();
-        $('#send').click(function() {
-            var empid = $('#empid').val();
-            if (empid != "") {
+        var empid = $("#hempid").val();
+
+        $("#empid").keyup(function() {
+            //debugger;
+            if ($(this)[0].value.trim().length > 0) {
+                $("#send").removeClass('disabled');
+            } else {
+                $("#send").addClass('disabled');
+            }
+        });
+
+        if (empid.trim().length > 0) {
+            $.get(apiURL + 'User/Info/' + $("#hempid").val(), function(response) {
+                //debugger;
+                $("#empid").val(response.data[0].BioEmpNo);
+                $("#mobile").val(response.data[0].MobileNo);
+            }).done(function() {
+                //debugger;
                 $('#send').hide();
                 $('#show').show();
-                $('#mobile').val('9542508667');
                 $('#otp').focus();
+            });
+        }
+        $('#send').click(function() {
+            empid = $('#empid').val();
+            if (empid.trim().length > 0) {
+                $.get(apiURL + 'User/Info/' + empid, function(response) {
+                    //debugger;
+                    $("#empid").val(response.data[0].BioEmpNo);
+                    $("#mobile").val(response.data[0].MobileNo);
+                }).done(function() {
+                    //debugger;
+                    $('#send').hide();
+                    $('#show').show();
+                    $('#otp').focus();
+                });
             }
         });
 
