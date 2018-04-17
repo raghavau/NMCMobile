@@ -86,7 +86,7 @@
         disableDays = [],
         colors = ["green", "blue", "red", "orange", "teal", "brown", "purple", "yellow"];
 
-    var apiURL = 'http://175.101.102.104/NtraktApi/api/';
+    var apiURL = 'http://175.101.102.102/NtraktApi/api/';
     var qsParm = new Array(),
         absent = new Array(),
         altday = new Array(),
@@ -502,13 +502,27 @@
                 $('#' + obj)[0].className = 'selected';
                 selectedDates.push($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1)));
             } else {
-                $('#' + obj)[0].className = 'day';
+                if (parseInt(obj2) == 0)
+                    $('#' + obj)[0].className = 'day half-day';
+                else if (parseInt(obj2) == 1)
+                    $('#' + obj)[0].className = 'day half-day-bottom';
+                else if (parseInt(obj2) == 2)
+                    $('#' + obj)[0].className = 'day half-day-top';
+                else
+                    $('#' + obj)[0].className = 'day';
                 var i = selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1)));
                 selectedDates.splice(i, 1);
             }
         } else {
             if (selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1))) != -1) {
-                $('#' + obj)[0].className = 'day';
+                if (parseInt(obj2) == 0)
+                    $('#' + obj)[0].className = 'day half-day';
+                else if (parseInt(obj2) == 1)
+                    $('#' + obj)[0].className = 'day half-day-bottom';
+                else if (parseInt(obj2) == 2)
+                    $('#' + obj)[0].className = 'day half-day-top';
+                else
+                    $('#' + obj)[0].className = 'day';
                 var i = selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1)));
                 selectedDates.splice(i, 1);
             }

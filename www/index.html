@@ -87,8 +87,10 @@
     //mobidb@develop
     /*
     175.101.102.104
-
     45.123.0.152
+    192.168.1.251
+    175.101.102.102
+
     */
     function onBackKeyDown() {
         var state = confirm('Are You Sure you want to Exit.');
@@ -115,7 +117,7 @@
                 return false;
             } else {
                 $(".dimmer").show();
-                $.post('http://175.101.102.104/NtraktApi/api/CheckPin', userData, function(response) {
+                $.post('http://175.101.102.102/NtraktApi/api/CheckPin', userData, function(response) {
                     //debugger;
                     if (response.data == 'Success')
                         setTimeout(function() {

@@ -54,7 +54,7 @@
                         <div class="field">
                             <div class="ui left icon input">
                                 <i class="user circle icon"></i>
-                                <input id="empid" placeholder="Employee Id" type="text">
+                                <input id="empid" placeholder="Employee Id" type="number">
                             </div>
                         </div>
                         <button class="ui teal fluid submit button right labeled icon disabled" type="button" id="send">
@@ -91,13 +91,13 @@
                         <div class="field">
                             <div class="ui left icon input">
                                 <i class="user circle icon"></i>
-                                <input id="pin" placeholder="Enter PIN" type="text">
+                                <input id="pin" placeholder="Enter PIN" type="password">
                             </div>
                         </div>
                         <div class="field">
                             <div class="ui left icon input">
                                 <i class="call square icon"></i>
-                                <input id="cnfpin" placeholder="Confirm PIN" type="text">
+                                <input id="cnfpin" placeholder="Confirm PIN" type="number">
                             </div>
                         </div>
                         <button class="ui green fluid submit button right labeled icon" type="button" id="confirm">
@@ -110,12 +110,15 @@
             </div>
         </div>
     </div>
+    <div class="ui active inverted page dimmer">
+        <div class="ui large text loader">Loading Please Wait.....</div>
+    </div>
     <input type="hidden" id="hempid" />
 </body>
 
 </html>
 <script type="text/javascript">
-    var apiURL = 'http://175.101.102.104/NtraktApi/api/';
+    var apiURL = 'http://175.101.102.102/NtraktApi/api/';
     var qsParm = new Array();
 
     function qs() {
@@ -141,6 +144,7 @@
     $(document).ready(function() {
         //debugger;
         qs();
+        $('.dimmer').hide();
         //$('#show').hide();
         //$('#generate').hide();
         var empid = $("#hempid").val();
@@ -155,37 +159,108 @@
         });
 
         if (empid.trim().length > 0) {
+            $('.dimmer').show();
             $.get(apiURL + 'User/Info/' + $("#hempid").val(), function(response) {
                 //debugger;
-                $("#empid").val(response.data[0].BioEmpNo);
-                $("#mobile").val(response.data[0].MobileNo);
-            }).done(function() {
+            }).done(function(response) {
                 //debugger;
-                $('#send').hide();
-                $('#show').show();
-                $('#otp').focus();
+                if (response.data.length > 0) {
+                    $("#empid").val(response.data[0].BioEmpNo);
+                    $("#mobile").val(response.data[0].MobileNo);
+                    var userData = {};
+                    userData.EmpNo = empid;
+                    userData.MobileNo = $("#mobile").val();
+                    $.post(apiURL + 'User/OTP', userData, function(response) {
+                        //debugger;
+                    }).done(function() {
+                        $('.dimmer').hide();
+                        $('#send').hide();
+                        $('#show').show();
+                        $('#otp').focus();
+                    });
+                } else {
+                    alert('Invalid No Please Check.');
+                    $('.dimmer').hide();
+                    window.location.href = 'index.html';
+                }
             });
         }
+
         $('#send').click(function() {
+            $('.dimmer').show();
             empid = $('#empid').val();
             if (empid.trim().length > 0) {
                 $.get(apiURL + 'User/Info/' + empid, function(response) {
                     //debugger;
-                    $("#empid").val(response.data[0].BioEmpNo);
-                    $("#mobile").val(response.data[0].MobileNo);
-                }).done(function() {
+                }).done(function(response) {
                     //debugger;
-                    $('#send').hide();
-                    $('#show').show();
-                    $('#otp').focus();
+                    if (response.data.length > 0) {
+                        $("#empid").val(response.data[0].BioEmpNo);
+                        $("#mobile").val(response.data[0].MobileNo);
+                        var userData = {};
+                        userData.EmpNo = empid;
+                        userData.MobileNo = $("#mobile").val();
+                        $.post(apiURL + 'User/OTP', userData, function(response) {
+                            //debugger;
+                        }).done(function() {
+                            $('.dimmer').hide();
+                            $('#send').hide();
+                            $('#show').show();
+                            $('#otp').focus();
+                        });
+                    } else {
+                        alert('Invalid No Please Check.');
+                        $('.dimmer').hide();
+                    }
+                }).fail(function() {
+                    $('.dimmer').hide();
+                    alert('Invalid No.');
+                    $("#empid").focus();
                 });
             }
         });
 
         $('#verify').click(function() {
-            $('#generate').show();
-            $('#generate').toggleClass('show2');
-            $('#reset').hide();
+            $('.dimmer').show();
+            var userData = {};
+            userData.EmpNo = empid;
+            userData.MobileNo = $("#mobile").val();
+            userData.OTP = $("#otp").val();
+            $.post(apiURL + 'User/VerifyOTP', userData, function(response) {
+                //debugger;
+            }).done(function() {
+                $('.dimmer').hide();
+                $('#generate').show();
+                $('#generate').toggleClass('show2');
+                $('#reset').hide();
+            });
+        });
+
+        $("#confirm").click(function() {
+            if ($("#pin").val().trim().length == 0) {
+                alert('Please Enter PIN');
+                $("#pin").focus();
+                return false;
+            } else if ($("#cnfpin").val().trim().length == 0) {
+                alert('Please Enter Confirm PIN');
+                $("#cnfpin").focus();
+                return false;
+            } else if ($("#pin").val() != $("#cnfpin").val()) {
+                alert('Confirm PIN should not match to PIN');
+                $("#cnfpin").focus();
+                return false;
+            } else {
+                $('.dimmer').show();
+                var userData = {};
+                userData.OperatorCode = empid;
+                userData.UniqueId = $("#pin").val();
+                $.post(apiURL + 'User/UpdatePin', userData, function(response) {
+                    //debugger;
+                }).done(function() {
+                    $('.dimmer').hide();
+                    window.location.href = 'index.html';
+                });
+            }
         });
     });
 
