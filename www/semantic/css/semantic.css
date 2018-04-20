@@ -28895,7 +28895,8 @@ a.ui.card:hover,
 
 .ui.toggle.checkbox input:checked ~ .box:before,
 .ui.toggle.checkbox input:checked ~ label:before {
-  background-color: #2185D0 !important;
+  background-color: #0d71bb !important;
+  /*background-color: teal !important;*//*  Raghavendra  */
 }
 
 .ui.toggle.checkbox input:checked ~ .box:after,
@@ -28914,6 +28915,7 @@ a.ui.card:hover,
 .ui.toggle.checkbox input:focus:checked ~ .box:before,
 .ui.toggle.checkbox input:focus:checked ~ label:before {
   background-color: #0d71bb !important;
+  /*background-color: teal !important;*//*  Raghavendra  */
 }
 
 /*******************************

@@ -43,7 +43,7 @@
         </div>
     </div>
     <iframe frameborder="0" width="100%" id="ifrm" style="position: absolute" scrolling="auto"></iframe>
-    <div class="ui bottom fixed fluid three item labeled icon menu">
+    <div class="ui bottom fixed fluid five item labeled icon menu">
         <a class="item" id="profile">
             <i class="id card red icon"></i>
             Profile
@@ -56,10 +56,14 @@
             <i class="calendar green icon"></i>
             Leave
         </a>
-        <!--<a class="item" id="availability">
+        <a class="item" id="leaveapprove">
+            <i class="calendar check violet icon"></i>
+            Leave Approve
+        </a>
+        <a class="item" id="availability">
             <i class="doctor purple icon"></i>
             Availability
-        </a>-->
+        </a>
     </div>
     <input type="hidden" id="hempid" />
 
@@ -123,6 +127,9 @@
         });
         $('#leave').click(function() {
             $('#ifrm').attr('src', 'leave.html?empid=' + btoa($("#hempid").val()));
+        });
+        $('#leaveapprove').click(function() {
+            $('#ifrm').attr('src', 'leave_approve.html?empid=' + btoa($("#hempid").val()));
         });
         $('#availability').click(function() {
             $('#ifrm').attr('src', 'availability.html?empid=' + btoa($("#hempid").val()));

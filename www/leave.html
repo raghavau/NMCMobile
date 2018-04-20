@@ -86,6 +86,10 @@
         disableDays = [],
         colors = ["green", "blue", "red", "orange", "teal", "brown", "purple", "yellow"];
 
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth();
+
     var apiURL = 'http://175.101.102.102/NtraktApi/api/';
     var qsParm = new Array(),
         absent = new Array(),
@@ -124,9 +128,7 @@
             return false;
         }
     }
-    var date = new Date();
-    var year = date.getFullYear();
-    var month = date.getMonth();
+
     $(document).ready(function() {
         qs();
         $(".dimmer").hide();
@@ -336,7 +338,7 @@
                                     html = html + '<td class="day leave-alt" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
                             } else if (color == null) {
                                 //debugger;
-                                if (parseInt(d) <= parseInt(days.length - 1)) {
+                                if (parseInt(d) < parseInt(days.length - 1)) {
                                     var sday = null;
                                     if (parseInt(prevdate[j]) < 10)
                                         sday = '0' + prevdate[j];

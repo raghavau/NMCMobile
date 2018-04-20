@@ -149,6 +149,16 @@
         //$('#generate').hide();
         var empid = $("#hempid").val();
 
+        $("#empid").keypress(function(e) {
+            //debugger;
+            var current_val = $(this).val();
+            var typing_char = String.fromCharCode(e.which);
+
+            if (parseFloat(current_val + "" + typing_char) > 9999999999) {
+                return false;
+            }
+        });
+
         $("#empid").keyup(function() {
             //debugger;
             if ($(this)[0].value.trim().length > 0) {
