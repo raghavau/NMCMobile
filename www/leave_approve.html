@@ -5,6 +5,7 @@
     <title>Registration</title>
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui-custom.css">
     <link rel="stylesheet" type="text/css" href="semantic/css/semantic.css">
     <link rel="stylesheet" type="text/css" href="fontawesome4.7.0/css/font-awesome.css">
     <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
@@ -99,7 +100,9 @@
 
         $('.dimmer').hide();
         $('#txtdate').datepicker({
-            dateFormat: "dd/mm/yy"
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true
         });
         var date = new Date();
 
@@ -107,13 +110,17 @@
         $("#btnsearch").click(function() {
             getApprovalLeaves();
         });
+
+        $("#btnApproveAll").click(function() {
+            ApproveAll();
+        });
     });
 
     function getApprovalLeaves() {
         //debugger;
         $('.dimmer').show();
         var DateVal = $("#txtdate").val();
-        $.post('http://localhost:64867/api/Attendance/ApprovalLeaves/', {
+        $.post(apiURL + 'Attendance/ApprovalLeaves/', {
             "AttendanceDate": DateVal,
             "EmpNo": empid
         }, function(response) {
@@ -124,8 +131,12 @@
             if (response.data.length > 0) {
                 $("#btnApproveAll").removeClass('disabled');
                 for (var i = 0; i <= response.data.length - 1; i++) {
-                    htmlStr += '<div class="item"><div class="right floated content"><button class="ui tiny basic green icon button"><i class="check icon"></i></button>';
-                    htmlStr += '<button class="ui tiny basic red icon button"><i class="trash icon"></i></button></div>';
+                    //debugger;
+                    htmlStr += '<div class="item"><div class="right floated content">';
+                    htmlStr += '<button class="ui tiny basic green icon button" onclick="Approve(' + response.data[i].EmpNo + ',' + response.data[i].EventDate.replaceAll('/', '') + ')">';
+                    htmlStr += '<i class="check icon"></i></button>';
+                    htmlStr += '<button class="ui tiny basic red icon button" onclick="Reject(' + response.data[i].EmpNo + ',' + response.data[i].EventDate + ')">';
+                    htmlStr += '<i class="trash icon"></i></button></div>';
                     htmlStr += '<img class="ui mini rounded image" src="' + apiURL + 'User/ShowPicture/' + response.data[i].EmpNo + '">';
                     htmlStr += '<div class="ui content"><label class="header">' + response.data[i].EmpName + '  <div class="ui left tiny label">' + response.data[i].LeaveType + '</div></label>';
                     htmlStr += '<div class="description">' + response.data[i].EmpNo + '<br>' + response.data[i].EventDate + '</div></div></div>';
@@ -134,6 +145,55 @@
 
                 $(".divided.list").append(htmlStr);
             }
+            $('.dimmer').hide();
+        }).fail(function() {
+            $('.dimmer').hide();
+        });
+    }
+
+    function ApproveAll() {
+        $('.dimmer').show();
+        var DateVal = $("#txtdate").val();
+        $.post(apiURL + 'Attendance/LeavesApproveAll/', {
+            "AttendanceDate": DateVal,
+            "UserId": empid
+        }, function(response) {
+            //debugger;
+        }).done(function(response) {
+            document.location.reload();
+        }).fail(function() {
+            $('.dimmer').hide();
+        });
+    }
+
+    function Approve(empNo, leaveDate) {
+        debugger;
+        $('.dimmer').show();
+        $.post(apiURL + 'Attendance/LeaveApprove/', {
+            "EmpNo": empNo,
+            "LeaveDate": leaveDate,
+            "UserId": empid
+        }, function(response) {
+            debugger;
+        }).done(function(response) {
+            getApprovalLeaves();
+        }).fail(function() {
+            $('.dimmer').hide();
+        });
+    }
+
+    function Reject(empNo, leaveDate) {
+        debugger;
+        $('.dimmer').show();
+        $.post(apiURL + 'Attendance/LeaveReject/', {
+            "EmpNo": empNo,
+            "LeaveDate": leaveDate,
+            "UserId": empid
+        }, function(response) {
+            debugger;
+        }).done(function(response) {
+            getApprovalLeaves();
+        }).fail(function() {
             $('.dimmer').hide();
         });
     }
