@@ -273,3 +273,13 @@ body > .grid {
     /* W3C Markup */
     background-image: linear-gradient(to top, #FFFFFF 50%, #ff9f9f 50%);
 }
+
+.leave-appr {
+    background-color: #C5D8B2;
+    color: #321900 !important;
+}
+
+.leave-rej {
+    background-color: #ff727b;
+    color: white!important;
+}

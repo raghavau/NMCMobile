@@ -98,6 +98,8 @@
         holiday = new Array(),
         halfday = new Array(),
         holdday = new Array(),
+        apprday = new Array(),
+        rejday = new Array(),
         days = new Array();
 
     document.addEventListener("deviceready", onDeviceReady, false);
@@ -215,6 +217,12 @@
                 for (i = 0; i <= response.Altdays.length - 1; i++) {
                     altday.push(response.Altdays[i]);
                 }
+                for (i = 0; i <= response.Apprdays.length - 1; i++) {
+                    apprday.push(response.Apprdays[i]);
+                }
+                for (i = 0; i <= response.Rejdays.length - 1; i++) {
+                    rejday.push(response.Rejdays[i]);
+                }
             }).done(function() {
                 var html = "<table cellspacing='0'><tr><td colspan='3' class='header'>" + mons[new Date(year, month, 0).getMonth()] + '-' + new Date(year, month, 0).getFullYear() +
                     "</td><td class='header'>-</td><td colspan='3' class='header'>" + mons[new Date(year, month, 1).getMonth()] + '-' + new Date(year, month, 1).getFullYear() + "</td></tr>";
@@ -268,6 +276,18 @@
                                 leaveType = altday[l][1];
                             }
                         }
+                        for (l = 0; l <= apprday.length - 1; l++) {
+                            if (apprday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'appr';
+                                leaveType = apprday[l][1];
+                            }
+                        }
+                        for (l = 0; l <= rejday.length - 1; l++) {
+                            if (rejday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'rej';
+                                leaveType = rejday[l][1];
+                            }
+                        }
                     } else {
                         f = day[new Date(year, month - 1, prevdate[j]).getDay()];
                         var cd = new Date(year, month - 1, prevdate[j]);
@@ -309,6 +329,18 @@
                                 leaveType = altday[l][1];
                             }
                         }
+                        for (l = 0; l <= apprday.length - 1; l++) {
+                            if (apprday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'appr';
+                                leaveType = apprday[l][1];
+                            }
+                        }
+                        for (l = 0; l <= rejday.length - 1; l++) {
+                            if (rejday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'rej';
+                                leaveType = rejday[l][1];
+                            }
+                        }
                     }
                     for (k = e; k < 7; k++) {
                         //debugger;
@@ -324,6 +356,10 @@
                                 html = html + '<td class="holiday" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
                             else if (color == 'hold')
                                 html = html + '<td class="holdday" data-tooltip="' + leaveType + ' Pending For Approval" data-position="top center"><br>' + prevdate[j] + '</td>';
+                            else if (color == 'appr')
+                                html = html + '<td class="day leave-appr" data-tooltip="' + leaveType + ' is Approved" data-position="top center"><br>' + prevdate[j] + '</td>';
+                            else if (color == 'rej')
+                                html = html + '<td class="day leave-rej" data-tooltip="' + leaveType + ' is Rejected" data-position="top center"><br>' + prevdate[j] + '</td>';
                             else if (color == 'a') {
                                 //debugger;
                                 if (leaveType.split('/')[0] == "CL")
