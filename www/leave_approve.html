@@ -156,7 +156,7 @@
                     htmlStr += '<i class="check icon"></i></button>';
                     htmlStr += '<button class="ui tiny basic red icon button" onclick="Reject(' + response.data[i].EmpNo + ',\'' + response.data[i].EventDate + '\')">';
                     htmlStr += '<i class="trash icon"></i></button></div>';
-                    htmlStr += '<img class="ui avatar image" src="data:image/png;base64,' + response.data[i].EmpPhoto + '">';
+                    htmlStr += '<img class="ui tiny circular image" src="data:image/png;base64,' + response.data[i].EmpPhoto + '">';
                     htmlStr += '<div class="ui content"><label class="header" style="word-wrap: break-word;">' + response.data[i].EmpName + '  <div class="ui left tiny label">' + response.data[i].LeaveType + '</div></label>';
                     htmlStr += '<div class="description">' + response.data[i].EmpNo + '<br>' + response.data[i].EventDate + '</div></div></div>';
                     htmlStr += '</div>';
