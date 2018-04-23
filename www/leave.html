@@ -397,7 +397,7 @@
                                     if (parseInt(date.getDate()) < parseInt(prevdate[j]))
                                         html = html + '<td class="day" id="' + j + '" onclick="DateSelect(' + j + ',' + prevdate[j] + ', 0)"><br>' + prevdate[j] + '</td>';
                                     else
-                                        html = html + '<td class="day half-day" id="' + j + '" onclick="DateSelect(' + j + ',' + prevdate[j] + ', 0)"><br>' + prevdate[j] + '</td>';
+                                        html = html + '<td class="day half-day" id="' + j + '" data-tooltip="No Data" data-position="top center" onclick="DateSelect(' + j + ',' + prevdate[j] + ', 0)"><br>' + prevdate[j] + '</td>';
                                 }
                             }
                             //html = html + '<td class="day" id="' + j + '" onclick="DateSelect(' + j + ',' + prevdate[j] + ')"><br>' + prevdate[j] + '</td>';
