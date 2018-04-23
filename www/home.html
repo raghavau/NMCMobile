@@ -97,12 +97,11 @@
             //debugger;
             $("#firstname").text(response.data[0].Name);
             $("#dept").text(response.data[0].Department);
-            if ($("#hempid").val() == "568300646")
-                $("#hempid").val('45600229');
+            $("#empimg").attr('src', 'data:image/png;base64,' + response.data[0].EmpPhoto);
         }).done(function() {
             //debugger;
             $(".dimmer").hide();
-            $("#empimg").attr('src', apiURL + 'User/ShowPicture/' + $("#hempid").val());
+            //$("#empimg").attr('src', apiURL + 'User/ShowPicture/' + $("#hempid").val());
         });
     });
 
