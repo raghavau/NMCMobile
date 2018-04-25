@@ -111,7 +111,7 @@
             }
         });
 
-        $("#empid").on("mousedown", function(e){
+        $("#empid").on("mouseup", function(e){
             var current_val = $(this).val();
             var typing_char = String.fromCharCode(e.which);
             if (parseFloat(current_val + "" + typing_char) > 9999999999) {
