@@ -75,7 +75,7 @@
     <div class="ui active inverted page dimmer">
         <div class="ui large text loader">Loading Please Wait.....</div>
     </div>
-    <div class="ui active inverted page dimmer" id="imghide"></div>
+    <div id="imghide"></div>
     <input type="hidden" id="hempid" />
 </body>
 
@@ -244,11 +244,13 @@
         //debugger;
         if (imgClick == 0) {
             $('body')[0].style.overflow = 'hidden';
+            $('#imghide').addClass('ui active inverted page dimmer');
             $('#imghide').show();
             obj.className = 'thumbnail';
             imgClick = 1;
         } else {
             $('body')[0].style.overflow = 'auto';
+            $('#imghide').removeClass('ui active inverted page dimmer');
             $('#imghide').hide();
             obj.className = 'ui mini circular image';
             imgClick = 0;
