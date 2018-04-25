@@ -111,10 +111,9 @@
             }
         });
 
-        $("#empid").on("mouseup", function(e){
+        $("#empid").on("mouseup", function(){
             var current_val = $(this).val();
-            var typing_char = String.fromCharCode(e.which);
-            if (parseFloat(current_val + "" + typing_char) > 9999999999) {
+            if (parseFloat(current_val) > 9999999999) {
                 return false;
             }
         });
