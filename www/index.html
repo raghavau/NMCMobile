@@ -111,14 +111,6 @@
             }
         });
 
-        $("#empid").on("mouseup", function(){
-            var current_val = $(this).val();
-            alert(current_val);
-            if (parseFloat(current_val) > 9999999999) {
-                return false;
-            }
-        });
-
         $('#login').click(function() {
             //debugger;
             var userData = {};
