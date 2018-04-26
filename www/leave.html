@@ -401,7 +401,7 @@
                                 }
                             }
                             //html = html + '<td class="day" id="' + j + '" onclick="DateSelect(' + j + ',' + prevdate[j] + ')"><br>' + prevdate[j] + '</td>';
-                            else {
+                            else if (color == 'green') {
                                 //debugger;
                                 if (leaveType == "CL")
                                     html = html + '<td class="day leave-cl" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
