@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Attendance</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui-custom.css">
+    <link rel="stylesheet" type="text/css" href="semantic/css/semantic.css">
+    <link rel="stylesheet" type="text/css" href="css/attenstyle.css">
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.js"></script>
+    <script type="text/javascript" src="semantic/js/semantic.js"></script>
+</head>
+
+<body>
+    <div class="ui column grid">
+        <div class="column">
+            <div class="ui stacked left aligned segment">
+                <div class="ui red ribbon label">Attendance</div><br><br>
+                <center>
+                    <div id="fromdate" class="datepicker"></div><br>
+                    <i class='circle red small icon'></i>No Data
+                    <i class='circle blue small icon'></i>Holiday
+                    <!--<i class='circle green small icon'></i>Leave
+                    <i class='stop circle green small icon'></i>Halfday Leave-->
+                </center>
+
+            </div>
+        </div>
+    </div>
+    <div class="ui active inverted page dimmer">
+        <div class="ui large text loader">Loading Please Wait.....</div>
+    </div>
+    <input type="hidden" id="hempid" value="45600001" />
+</body>
+
+</html>
+<script type="text/javascript">
+    var day = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+    var mons = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var curdate = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25];
+    var prevdate = [],
+        d = 26,
+        e = 0,
+        f, color;
+
+    var apiURL = 'http://175.101.102.102/NtraktApi/api/';
+    var qsParm = new Array(),
+        absent = new Array(),
+        altday = new Array(),
+        fullday = new Array(),
+        holiday = new Array(),
+        halfday = new Array(),
+        holdday = new Array(),
+        apprday = new Array(),
+        rejday = new Array(),
+        days = new Array();
+
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+    function onDeviceReady() {
+        document.addEventListener("backbutton", function(e) {
+            e.preventDefault();
+        }, false);
+    }
+
+    function qs() {
+        //debugger;
+        var query = window.location.search.substring(1);
+        var parms = query.split('&');
+        for (var i = 0; i < parms.length; i++) {
+            var pos = parms[i].indexOf('=');
+            if (pos > 0) {
+                var key = parms[i].substring(0, pos);
+                var val = parms[i].substring(pos + 1);
+                qsParm[key] = val;
+            }
+        }
+        if (parms.length > 0) {
+            $("#hempid").val(atob(qsParm["empid"]));
+            return true;
+        } else {
+            window.location.href = 'index.html';
+            return false;
+        }
+    }
+
+    $(document).ready(function() {
+        //qs();
+        $(".dimmer").show();
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = date.getMonth();
+
+        var cnt = null;
+
+        if (parseInt(date.getDate()) > 25)
+            cnt = new Date(year, parseInt(month) + 1, 0).getDate() - 25;
+        else
+            cnt = new Date(year, month, 0).getDate() - 25;
+
+        for (i = 0; i < cnt; i++)
+            prevdate.push(d + i);
+        prevdate.push.apply(prevdate, curdate);
+
+        $.get('http://localhost:64867/api/Attendance/New/' + $("#hempid").val(), function(response) {
+            //debugger;
+
+            /*for (i = 0; i <= response.data.length - 1; i++) {
+                days.push(response.data[i].AttendanceDate + ',' + response.data[i].InTime + ',' + response.data[i].OutTime);
+            }*/
+        }).done(function(response) {
+            var header1 = null,
+                header2 = null;
+
+            if (parseInt(date.getDate()) > 25) {
+                header1 = mons[new Date(year, month + 1, 0).getMonth()] + '-' + new Date(year, month, 0).getFullYear();
+                header2 = mons[new Date(year, month + 1, 1).getMonth()] + '-' + new Date(year, month, 1).getFullYear();
+            } else {
+                header1 = mons[new Date(year, month, 0).getMonth()] + '-' + new Date(year, month, 0).getFullYear();
+                header2 = mons[new Date(year, month + 1, 1).getMonth()] + '-' + new Date(year, month, 1).getFullYear();
+            }
+            var html = "<table cellspacing='0'><tr><td colspan='3' class='header'>" + header1 +
+                "</td><td class='header'>-</td><td colspan='3' class='header'>" + header2 + "</td></tr>";
+            html = html + "<tr>";
+            for (i = 0; i <= 7 - 1; i++) {
+                html = html + "<td class='header'>" + day[i] + "</td>";
+            }
+            html = html + '</tr>';
+            var d = 0;
+            for (j = 0; j < prevdate.length; j++) {
+                var leaveType = '';
+                if (j >= cnt) {
+                    if (parseInt(date.getDate()) > 25)
+                        f = day[new Date(year, parseInt(month) + 1, prevdate[j]).getDay()];
+                    else
+                        f = day[new Date(year, month, prevdate[j]).getDay()];
+                } else {
+                    if (parseInt(date.getDate()) > 25)
+                        f = day[new Date(year, month, prevdate[j]).getDay()];
+                    else
+                        f = day[new Date(year, month - 1, prevdate[j]).getDay()];
+                }
+                for (k = e; k < 7; k++) {
+                    //debugger;
+                    if (e == 6)
+                        e = 0;
+                    else
+                        e++;
+
+                    if (day[k] == f) {
+                        /*html = html + '<td class="day" id="' + j + '" data-tooltip="No Data" data-position="top center" onclick="DateSelect(' + j + ',' + prevdate[j] + ', 0)"><br>' + prevdate[j] + '</td>';*/
+                        debugger;
+                        html = html + response.data[d].HtmlContent.replace(/[']/g, "");
+                        d = d + 1;
+                        if (e == 0)
+                            html = html + '</tr><tr>';
+                        break;
+                    } else {
+                        html = html + '<td class="day"></td>';
+                    }
+                }
+            }
+
+            html = html + "</table>";
+            $('#fromdate').append(html);
+            $(".dimmer").hide();
+        });
+    });
+
+</script>
