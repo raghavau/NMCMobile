@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Attendance</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui-custom.css">
+    <link rel="stylesheet" type="text/css" href="semantic/css/semantic.css">
+    <link rel="stylesheet" type="text/css" href="bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/attenstyle.css">
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.js"></script>
+    <script type="text/javascript" src="semantic/js/semantic.js"></script>
+    <script type="text/javascript" src="bootstrap/dist/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="ui column grid">
+        <div class="column">
+            <div class="ui stacked left aligned segment">
+                <div class="ui red ribbon label">Leave Request</div><br><br>
+                <center>
+                    <div id="leavecount"></div>
+                    <div id="fromdate" class="datepicker"></div><br>
+                    <i class='circle red small icon'></i>No Data
+                    <i class='circle blue small icon'></i>Holiday
+                    <!--<i class='circle green small icon'></i>Leave
+                    <i class='stop circle green small icon'></i>Halfday Leave-->
+                </center>
+                <div class="ui form">
+                    <div class="grouped fields">
+                        <label>Leave Type</label>
+                        <div id="divChk"></div>
+                        <div class="field">
+                            <label>If Halfday, please check.</label>
+                            <div class="ui checkbox hd">
+                                <input name="example" type="checkbox" id="halfday">
+                                <label>Halfday</label>
+                            </div>
+                        </div>
+                        <div class='field' id="halftype">
+                            <div class='ui toggle checkbox ht'>
+                                <input name='example3' type='radio' value='1'>
+                                <label>Morning</label>
+                            </div>
+                            <div class='ui toggle checkbox ht'>
+                                <input name='example3' type='radio' value='2'>
+                                <label>Afternoon</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <input name="hidDates" id="hidDates" type="hidden">
+                            <label>Reason</label>
+                            <textarea name="txtReason" id="txtReason" rows="3" cols="40"></textarea>
+                        </div>
+
+                    </div>
+                </div>
+                <button class="ui teal fluid submit button right labeled icon disabled" type="button" id="request">
+                    <i class="checkmark icon"></i>
+                    <span>Submit</span>
+                </button><br>
+            </div>
+        </div>
+    </div>
+    <div class="ui active inverted page dimmer">
+        <div class="ui large text loader">Loading Please Wait.....</div>
+    </div>
+    <input type="hidden" id="hempid" />
+</body>
+
+</html>
+<script type="text/javascript">
+    var day = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+    var mons = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var curdate = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25];
+    var prevdate = [],
+        selectedDates = [],
+        d = 26,
+        e = 0,
+        f, color;
+    var chkValue = null,
+        hflday = false,
+        hlfvalue = null,
+        disableDays = [],
+        colors = ["green", "blue", "red", "orange", "teal", "brown", "purple", "yellow"];
+
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth();
+
+    var apiURL = 'http://175.101.102.102/NtraktApi/api/';
+    var qsParm = new Array(),
+        absent = new Array(),
+        altday = new Array(),
+        fullday = new Array(),
+        holiday = new Array(),
+        halfday = new Array(),
+        holdday = new Array(),
+        apprday = new Array(),
+        rejday = new Array(),
+        days = new Array();
+
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+    function onDeviceReady() {
+        document.addEventListener("backbutton", function(e) {
+            e.preventDefault();
+        }, false);
+    }
+
+    function qs() {
+        //debugger;
+        var query = window.location.search.substring(1);
+        var parms = query.split('&');
+        for (var i = 0; i < parms.length; i++) {
+            var pos = parms[i].indexOf('=');
+            if (pos > 0) {
+                var key = parms[i].substring(0, pos);
+                var val = parms[i].substring(pos + 1);
+                qsParm[key] = val;
+            }
+        }
+        if (parms.length > 0) {
+            $("#hempid").val(atob(qsParm["empid"]));
+            return true;
+        } else {
+            window.location.href = 'index.html';
+            return false;
+        }
+    }
+
+    $(document).ready(function() {
+        qs();
+        $(".dimmer").hide();
+        $("#halftype").hide();
+        documentLoad();
+
+        $(".ui.checkbox.hd").checkbox({
+            onChange: function() {
+                //debugger;
+                if ($(this)[0].checked) {
+                    $("#halftype").show();
+                    hflday = true;
+                } else {
+                    $("#halftype").hide();
+                    hflday = false;
+                    hlfvalue = null;
+                }
+            }
+        });
+
+        $(".ui.checkbox.ht").checkbox({
+            onChange: function() {
+                //debugger;
+                if ($(this)[0].checked)
+                    hlfvalue = $(this)[0].value;
+            }
+        });
+
+        $("#txtReason").keyup(function() {
+            //debugger;
+            if ($(this)[0].value.trim().length > 0) {
+                $("#request").removeClass('disabled');
+            } else {
+                $("#request").addClass('disabled');
+            }
+        });
+
+        $("#request").click(function() {
+            //debugger;
+            SaveData();
+        });
+    });
+
+    $(document).on('click', '.ui.checkbox.lt', function() {
+        //debugger;
+        $('.ui.checkbox.lt').each(function() {
+            //debugger;
+            var boolval = $(this)[0].firstChild.checked;
+            var inputval = $(this)[0].firstChild.value;
+            if (boolval) {
+                chkValue = inputval;
+            }
+        });
+    });
+
+    function documentLoad() {
+        $(".dimmer").show();
+        var cnt = new Date(year, month, 0).getDate() - 25;
+        for (i = 0; i < cnt; i++)
+            prevdate.push(d + i);
+        prevdate.push.apply(prevdate, curdate);
+        //debugger;
+        $.get(apiURL + 'Attendance/' + $("#hempid").val(), function(response) {
+            //debugger;
+
+            for (i = 0; i <= response.data.length - 1; i++) {
+                days.push(response.data[i].AttendanceDate + ',' + response.data[i].InTime + ',' + response.data[i].OutTime);
+            }
+        }).done(function() {
+            $.get(apiURL + 'Attendance/Leaves/' + $("#hempid").val(), function(response) {
+                //debugger;
+                for (i = 0; i <= response.Holidays.length - 1; i++) {
+                    holiday.push(response.Holidays[i]);
+                }
+                for (i = 0; i <= response.Fulldays.length - 1; i++) {
+                    fullday.push(response.Fulldays[i]);
+                }
+                for (i = 0; i <= response.Halfdays.length - 1; i++) {
+                    halfday.push(response.Halfdays[i]);
+                }
+                for (i = 0; i <= response.Holddays.length - 1; i++) {
+                    holdday.push(response.Holddays[i]);
+                }
+                for (i = 0; i <= response.Altdays.length - 1; i++) {
+                    altday.push(response.Altdays[i]);
+                }
+                for (i = 0; i <= response.Apprdays.length - 1; i++) {
+                    apprday.push(response.Apprdays[i]);
+                }
+                for (i = 0; i <= response.Rejdays.length - 1; i++) {
+                    rejday.push(response.Rejdays[i]);
+                }
+            }).done(function() {
+                var html = "<table cellspacing='0'><tr><td colspan='3' class='header'>" + mons[new Date(year, month, 0).getMonth()] + '-' + new Date(year, month, 0).getFullYear() +
+                    "</td><td class='header'>-</td><td colspan='3' class='header'>" + mons[new Date(year, month, 1).getMonth()] + '-' + new Date(year, month, 1).getFullYear() + "</td></tr>";
+                html = html + "<tr>";
+                for (i = 0; i <= 7 - 1; i++) {
+                    html = html + "<td class='header'>" + day[i] + "</td>";
+                }
+                html = html + '</tr>';
+                var d = 0;
+                for (j = 0; j < prevdate.length; j++) {
+                    var leaveType = '';
+                    if (j >= cnt) {
+                        f = day[new Date(year, month, prevdate[j]).getDay()];
+                        var cd = new Date(year, month, prevdate[j]);
+                        //debugger;
+                        color = null;
+
+                        for (l = 0; l <= absent.length - 1; l++) {
+                            if (absent[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'red';
+                                leaveType = absent[l][1];
+                            }
+                        }
+                        for (l = 0; l <= fullday.length - 1; l++) {
+                            if (fullday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'green';
+                                leaveType = fullday[l][1];
+                            }
+                        }
+                        for (l = 0; l <= halfday.length - 1; l++) {
+                            if (halfday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'stop green';
+                                leaveType = halfday[l][1];
+                            }
+                        }
+                        for (l = 0; l <= holiday.length - 1; l++) {
+                            if (holiday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'h';
+                                leaveType = holiday[l][1];
+                            }
+                        }
+                        for (l = 0; l <= holdday.length - 1; l++) {
+                            if (holdday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'hold';
+                                leaveType = holdday[l][1];
+                            }
+                        }
+                        for (l = 0; l <= altday.length - 1; l++) {
+                            if (altday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'a';
+                                leaveType = altday[l][1];
+                            }
+                        }
+                        for (l = 0; l <= apprday.length - 1; l++) {
+                            if (apprday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'appr';
+                                leaveType = apprday[l][1];
+                            }
+                        }
+                        for (l = 0; l <= rejday.length - 1; l++) {
+                            if (rejday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'rej';
+                                leaveType = rejday[l][1];
+                            }
+                        }
+                    } else {
+                        f = day[new Date(year, month - 1, prevdate[j]).getDay()];
+                        var cd = new Date(year, month - 1, prevdate[j]);
+                        color = null;
+
+                        for (l = 0; l <= absent.length - 1; l++) {
+                            if (absent[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'red';
+                                leaveType = absent[l][1];
+                            }
+                        }
+                        for (l = 0; l <= fullday.length - 1; l++) {
+                            if (fullday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'green';
+                                leaveType = fullday[l][1];
+                            }
+                        }
+                        for (l = 0; l <= halfday.length - 1; l++) {
+                            if (halfday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'stop green';
+                                leaveType = halfday[l][1];
+                            }
+                        }
+                        for (l = 0; l <= holiday.length - 1; l++) {
+                            if (holiday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'h';
+                                leaveType = holiday[l][1];
+                            }
+                        }
+                        for (l = 0; l <= holdday.length - 1; l++) {
+                            if (holdday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'hold';
+                                leaveType = holdday[l][1];
+                            }
+                        }
+                        for (l = 0; l <= altday.length - 1; l++) {
+                            if (altday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'a';
+                                leaveType = altday[l][1];
+                            }
+                        }
+                        for (l = 0; l <= apprday.length - 1; l++) {
+                            if (apprday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'appr';
+                                leaveType = apprday[l][1];
+                            }
+                        }
+                        for (l = 0; l <= rejday.length - 1; l++) {
+                            if (rejday[l][0].indexOf(cd.toLocaleDateString()) != -1) {
+                                color = 'rej';
+                                leaveType = rejday[l][1];
+                            }
+                        }
+                    }
+                    for (k = e; k < 7; k++) {
+                        //debugger;
+                        if (e == 6)
+                            e = 0;
+                        else
+                            e++;
+
+                        if (day[k] == f) {
+                            if (f == 'Su')
+                                html = html + '<td class="sunday"><br>' + prevdate[j] + '</td>';
+                            else if (color == 'h')
+                                html = html + '<td class="holiday" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                            else if (color == 'hold')
+                                html = html + '<td class="holdday" data-tooltip="' + leaveType + ' Pending For Approval" data-position="top center"><br>' + prevdate[j] + '</td>';
+                            else if (color == 'appr')
+                                html = html + '<td class="day leave-appr" data-tooltip="' + leaveType + ' is Approved" data-position="top center"><br>' + prevdate[j] + '</td>';
+                            else if (color == 'rej')
+                                html = html + '<td class="day leave-rej" data-tooltip="' + leaveType + ' is Rejected" data-position="top center"><br>' + prevdate[j] + '</td>';
+                            else if (color == 'a') {
+                                //debugger;
+                                if (leaveType.split('/')[0] == "CL")
+                                    html = html + '<td class="day leave-cl-alt" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                                else if (leaveType.split('/')[0] == "SL")
+                                    html = html + '<td class="day leave-sl-alt" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                                else if (leaveType.split('/')[1] == "CL")
+                                    html = html + '<td class="day leave-alt-cl" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                                else if (leaveType.split('/')[1] == "SL")
+                                    html = html + '<td class="day leave-alt-sl" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                                else
+                                    html = html + '<td class="day leave-alt" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                            } else if (color == null) {
+                                //debugger;
+                                if (parseInt(d) < parseInt(days.length - 1)) {
+                                    var sday = null;
+                                    if (parseInt(prevdate[j]) < 10)
+                                        sday = '0' + prevdate[j];
+                                    else sday = prevdate[j];
+                                    if (days[d].startsWith(sday)) {
+                                        if (days[d].split(',')[1] == "" && days[d].split(',')[2] == "") {
+                                            html = html + '<td class="day half-day" id="' + j + '" data-tooltip="No Data" data-position="top center" onclick="DateSelect(' + j + ',' + prevdate[j] + ', 0)"><br>' + prevdate[j] + '</td>';
+                                        } else if (days[d].split(',')[1] == "") {
+                                            html = html + '<td class="day half-day-bottom" id="' + j + '" data-tooltip="' + days[d].split(',')[2] + '" data-position="top center" onclick="DateSelect(' + j + ',' + prevdate[j] + ', 1)"><br>' + prevdate[j] + '</td>';
+                                        } else if (days[d].split(',')[2] == "") {
+                                            html = html + '<td class="day half-day-top" id="' + j + '" data-tooltip="' + days[d].split(',')[1] + '" data-position="top center" onclick="DateSelect(' + j + ',' + prevdate[j] + ', 2)"><br>' + prevdate[j] + '</td>';
+                                        } else {
+                                            html = html + '<td class="day" id="' + j + '" data-tooltip="' + days[d].split(',')[1] + ' - ' + days[d].split(',')[2] + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                                        }
+                                        d++;
+                                    } else {
+                                        html = html + '<td class="day half-day" id="' + j + '" data-tooltip="No Data" data-position="top center" onclick="DateSelect(' + j + ',' + prevdate[j] + ', 0)"><br>' + prevdate[j] + '</td>';
+                                    }
+                                } else {
+                                    if (parseInt(date.getDate()) < parseInt(prevdate[j]))
+                                        html = html + '<td class="day" id="' + j + '" onclick="DateSelect(' + j + ',' + prevdate[j] + ', 0)"><br>' + prevdate[j] + '</td>';
+                                    else
+                                        html = html + '<td class="day half-day" id="' + j + '" data-tooltip="No Data" data-position="top center" onclick="DateSelect(' + j + ',' + prevdate[j] + ', 0)"><br>' + prevdate[j] + '</td>';
+                                }
+                            }
+                            //html = html + '<td class="day" id="' + j + '" onclick="DateSelect(' + j + ',' + prevdate[j] + ')"><br>' + prevdate[j] + '</td>';
+                            else if (color == 'green') {
+                                //debugger;
+                                if (leaveType == "CL")
+                                    html = html + '<td class="day leave-cl" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                                else if (leaveType == "SL")
+                                    html = html + '<td class="day leave-sl" data-tooltip="' + leaveType + '" data-position="top center"><br>' + prevdate[j] + '</td>';
+                            }
+                            if (e == 0)
+                                html = html + '</tr><tr>';
+                            break;
+                        } else {
+                            html = html + '<td class="day"></td>';
+                        }
+                    }
+                }
+
+                html = html + "</table>";
+                $('#fromdate').append(html);
+                LeaveTypes();
+            });
+        });
+    }
+
+    function LeaveTypes() {
+        $(".dimmer").show();
+        $.get(apiURL + 'Attendance/LeaveTypes/' + $("#hempid").val(), function(response) {
+            //debugger;
+            var htmlStr = '';
+            for (i = 0; i <= response.data.length - 1; i++) {
+                if (parseInt(response.data[i].LeaveCount) > 0)
+                    htmlStr += "<div class='field'><div class='ui toggle checkbox lt'><input name='example2' type='radio' value='" + response.data[i].LeaveTypeSlno + "'><label> " + response.data[i].LeaveType + " </label></div></div>";
+            }
+            $("#divChk").append(htmlStr);
+        }).done(function() {
+            $.get(apiURL + 'Attendance/LeavesRemaining/' + $("#hempid").val(), function(response) {
+                //debugger;
+                var htmlStr = "<div class='ui circular labels '>";
+                for (i = 0; i <= response.data.length - 1; i++) {
+                    if (parseInt(response.data[i].LeaveCount) > 0) {
+                        htmlStr += "<a class='ui " + response.data[i].LeaveColour + " label'>" + response.data[i].LeaveType + "<div class='detail'>" + response.data[i].LeaveCount + "</div></a>";
+                    }
+                }
+                htmlStr += '</div>';
+                $("#leavecount").append(htmlStr);
+            }).done(function() {
+                $(".dimmer").hide();
+            });
+        });
+        $(".dimmer").hide();
+    }
+
+    function SaveData() {
+        //debugger;
+        var userData = [];
+        if ($('#dates').val() == "") {
+            alert('Please Select Leave Date');
+            return false;
+        } else if (chkValue == null) {
+            alert('Please Select Leave Type');
+            return false;
+        } else if (hflday == true && hlfvalue == null) {
+            alert('Please Select Halfday Type');
+            return false;
+        } else if (hflday == true && selectedDates.length > 1) {
+            alert('Please Select Only One Day for Halfday Leave Request');
+            return false;
+        } else {
+            for (var i = 0; i <= selectedDates.length - 1; i++) {
+                var fhs = null,
+                    shs = null;
+                if (hlfvalue == null) {
+                    fhs = 2;
+                    shs = 2;
+                } else {
+                    switch (hlfvalue) {
+                        case "1":
+                            fhs = 2;
+                            shs = null;
+                            break;
+                        case "2":
+                            fhs = null;
+                            shs = 2;
+                            break;
+                    }
+                }
+
+                var objdata = {
+                    EmpNo: $("#hempid").val(),
+                    FirstHalfStatus: fhs,
+                    SecondHalfStatus: shs,
+                    LeaveReason: $("#txtReason").val(),
+                    LeaveTemplate: chkValue,
+                    LeaveDate: selectedDates[i]
+                };
+
+                userData.push(objdata);
+            }
+
+            $(".dimmer").show();
+            //debugger;
+
+            $.ajax({
+                type: 'POST',
+                url: apiURL + 'Attendance/LeaveRequest',
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(userData),
+                success: function(result) {
+                    //debugger;
+                    if (result.data == 'Success') {
+                        alert('Your Leave Request Submitted Successfully');
+                        document.location.reload();
+                    } else {
+                        $(".dimmer").hide();
+                        alert('Your Leave Request Failed to Submit.');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('Error occurred while submitting data.\n\r' + xhr.responseText);
+                    $(".dimmer").hide();
+                }
+            });
+        }
+    }
+
+    function DateSelect(obj, obj1, obj2) {
+        //debugger;
+        var m = null;
+        if (parseInt(obj1) > 25)
+            m = new Date(year, month, 0).getMonth();
+        else
+            m = new Date(year, month, 1).getMonth();
+
+        var allowcount = 9 - holdday.length;
+        if (selectedDates.length <= allowcount) {
+            if (selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1))) == -1) {
+                $('#' + obj)[0].className = 'selected';
+                selectedDates.push($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1)));
+            } else {
+                if (parseInt(obj2) == 0)
+                    $('#' + obj)[0].className = 'day half-day';
+                else if (parseInt(obj2) == 1)
+                    $('#' + obj)[0].className = 'day half-day-bottom';
+                else if (parseInt(obj2) == 2)
+                    $('#' + obj)[0].className = 'day half-day-top';
+                else
+                    $('#' + obj)[0].className = 'day';
+                var i = selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1)));
+                selectedDates.splice(i, 1);
+            }
+        } else {
+            if (selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1))) != -1) {
+                if (parseInt(obj2) == 0)
+                    $('#' + obj)[0].className = 'day half-day';
+                else if (parseInt(obj2) == 1)
+                    $('#' + obj)[0].className = 'day half-day-bottom';
+                else if (parseInt(obj2) == 2)
+                    $('#' + obj)[0].className = 'day half-day-top';
+                else
+                    $('#' + obj)[0].className = 'day';
+                var i = selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1)));
+                selectedDates.splice(i, 1);
+            }
+        }
+    }
+
+</script>
