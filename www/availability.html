@@ -102,15 +102,67 @@
     <div class="ui active inverted page dimmer">
         <div class="ui large text loader">Loading</div>
     </div>
+    <input type="hidden" id="hempid" />
 </body>
 
 </html>
 <script type="text/javascript">
+    document.addEventListener("deviceready", onDeviceReady, false);
+//100733663577
+    function onDeviceReady() {
+        document.addEventListener("backbutton", onBackKeyDown, false);
+    }
+
+    function onBackKeyDown() {
+        var state = confirm('Are You Sure you want to Exit.');
+        if (state)
+            navigator.app.exitApp(); // exit the app
+    }
+
+    var apiURL = 'http://175.101.102.102/NtraktApi/api/';
+    var qsParm = new Array(),
+        empid = null;
+
+    function qs() {
+        //debugger;
+        var query = window.location.search.substring(1);
+        var parms = query.split('&');
+        for (var i = 0; i < parms.length; i++) {
+            var pos = parms[i].indexOf('=');
+            if (pos > 0) {
+                var key = parms[i].substring(0, pos);
+                var val = parms[i].substring(pos + 1);
+                qsParm[key] = val;
+            }
+        }
+        if (parms.length > 0) {
+            $("#hempid").val(atob(qsParm["empid"]));
+            return true;
+        } else {
+            window.location.href = 'index.html';
+            return false;
+        }
+    }
+
+    function CheckStatus(){
+        //debugger;
+        $('.dimmer').show();
+        $.get(apiURL + 'User/CheckDoctor/' + $("#hempid").val(), function(response) {
+            //debugger;
+        }).done(function(response) {
+            //debugger;
+            if(response.data != 'Success')
+                window.location.href = 'error.html';
+            $(".dimmer").hide();
+        });
+    }
+
     $(document).ready(function() {
         $(".dimmer").show();
         setTimeout(function() {
             $(".dimmer").hide();
-        }, 3000);
+        }, 2000);
+        CheckStatus();
     });
 
 </script>

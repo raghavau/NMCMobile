@@ -82,7 +82,7 @@
 </html>
 <script type="text/javascript">
     document.addEventListener("deviceready", onDeviceReady, false);
-
+//100733663577
     function onDeviceReady() {
         document.addEventListener("backbutton", onBackKeyDown, false);
     }
@@ -142,7 +142,7 @@
             $(this).closest('.message').transition('fade');
         });
 
-        getApprovalLeaves();
+        CheckStatus();
         $("#btnsearch").click(function() {
             getApprovalLeaves();
         });
@@ -151,6 +151,21 @@
             ApproveAll();
         });
     });
+
+    function CheckStatus(){
+        //debugger;
+        $('.dimmer').show();
+        $.get(apiURL + 'User/CheckLeaveApprovalAccess/' + $("#hempid").val(), function(response) {
+            //debugger;
+        }).done(function(response) {
+            //debugger;
+            if(response.data == 'Success')
+                getApprovalLeaves();
+            else
+                window.location.href = 'error.html';
+            $(".dimmer").hide();
+        });
+    }
 
     function getApprovalLeaves() {
         //debugger;
