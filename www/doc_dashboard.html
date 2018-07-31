@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Availablility</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="semantic/css/semantic.css">
+    <link rel="stylesheet" type="text/css" href="fontawesome4.7.0/css/font-awesome.css">
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="semantic/js/semantic.js"></script>
+    <style type="text/css">
+        body>.grid {
+            height: 100%;
+        }
+
+        .column {
+            /*max-width: 450px;*/
+            margin: 20px;
+        }
+
+        .dimmer {
+            background-color: #e9ecef;
+            height: 100%;
+            width: 100%;
+            z-index: 100;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body>
+    <br>
+    <div class="ui container">
+        <div class="page-header">
+            <h3>Admission</h3>
+            <div class="ui divider"></div>
+        </div>
+
+        <div class="ui left aligned segment">
+            <div class="ui active inverted dimmer">
+                <div class="ui text loader">Loading</div>
+            </div>
+            <div class="ui error small message">
+                <p>No Data Available.</p>
+            </div>
+            <div class="ui middle aligned relaxed divided list"></div>
+            <div class="ui small form">
+                <div class="form-row">
+                    <div class="form-group col-md-16">
+                        <div id="grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+    </div>
+    <div class="dimmer" id="dimmer"></div>
+    <input type="hidden" id="hempid" />
+</body>
+
+</html>
+<script type="text/javascript">
+    var apiURL = 'http://192.168.0.44/NtraktApi/api/';
+    //var apiURL = 'http://175.101.102.102/NtraktApi/api/';
+    var qsParm = new Array(),
+        empid = null;
+    /*document.addEventListener("deviceready", onDeviceReady, false);
+
+        function onDeviceReady() {
+            document.addEventListener("backbutton", onBackKeyDown, false);
+        }
+
+        function onBackKeyDown() {
+            var state = confirm('Are You Sure you want to Exit.');
+            if (state)
+                navigator.app.exitApp(); // exit the app
+        }
+
+        function qs() {
+            //debugger;
+            var query = window.location.search.substring(1);
+            var parms = query.split('&');
+            for (var i = 0; i < parms.length; i++) {
+                var pos = parms[i].indexOf('=');
+                if (pos > 0) {
+                    var key = parms[i].substring(0, pos);
+                    var val = parms[i].substring(pos + 1);
+                    qsParm[key] = val;
+                }
+            }
+            if (parms.length > 0) {
+                $("#hempid").val(atob(qsParm["empid"]));
+                return true;
+            } else {
+                window.location.href = 'index.html';
+                return false;
+            }
+        }*/
+
+
+    var timeout = setTimeout(function runMe() {
+        //debugger;
+
+        $(".dimmer").hide();
+        $.get(apiURL + 'DoctorStatus/Status/', function(response) {
+            //debugger;
+        }).done(function(response) {
+            //debugger;
+            var htmlStr = '';
+            $("#grid").empty();
+            if (response.data.length > 0) {
+                $('.error.message').hide();
+                htmlStr += '<table class="ui blue celled unstackable table"><thead><tr>'
+                        + '<th>Slno</th><th></th><th>EmpId</th><th>Name</th><th>Department</th><th>Designation</th><th>Status</th><th>Notes</th>'
+                        + '</tr></thead><tbody>';
+                for (var i = 0; i <= response.data.length - 1; i++) {
+                    //debugger;
+                    htmlStr += '<tr class="top aligned">'
+                            + '<td class="center aligned one wide">' + (i + 1) + '</td><td class="center aligned one wide"><img alt="" src="' + response.data[i].Image + '" width="40px" height="50px" onclick="ZoomImage(this)" style="border: 1px solid #e3e3e3" /></td>'
+                            + '<td class="one wide">' + response.data[i].DoctorId + '</td><td>' + response.data[i].FirstName + '</td>'
+                            + '<td>' + response.data[i].Department + '</td><td>' + response.data[i].Designation + '</td>'
+                            + '<td class="positive">' + response.data[i].AvailType + '</td><td class="four wide">' + response.data[i].Notes + '</td>'
+                            + '</tr>';
+                }
+                htmlStr += '</tbody></table>';
+
+                $("#grid").append(htmlStr);
+            } else {
+                $('.error.message').show();
+            }
+            timeout = setTimeout(runMe, 10000);
+        }).fail(function() {
+            $('.error.message').show();
+            timeout = setTimeout(runMe, 10000);
+        });
+    }, 1000);
+
+    $(document).ready(function() {
+        $(".dimmer").hide();
+        $('.error.message').hide();
+    });
+
+    var i=0;
+    function ZoomImage(obj) {
+        //debugger;
+        if (i == 0) {
+            obj.style.width = "150px";
+            obj.style.height = "170px";
+            obj.style.position = "absolute";
+            obj.style.zIndex = "9999";
+            $("#dimmer").show();
+            i = 1;
+        }
+        else {
+            obj.style.width = "40px";
+            obj.style.height = "50px";
+            obj.style.position = "relative";
+            obj.style.zIndex = "99";
+            $("#dimmer").hide();
+            i = 0;
+        }
+    }
+
+</script>

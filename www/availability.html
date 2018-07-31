@@ -42,19 +42,19 @@
                             </td>
                             <td>
                                 <div class="ui fitted toggle checkbox">
-                                    <input name="avail" type="radio" checked><label></label>
+                                    <input name="avail" type="radio" value="OP" checked><label></label>
                                 </div>
                             </td>
                         </tr>
                         <tr class="top aligned">
                             <td>
                                 <div class="content">
-                                    IP
+                                    Ward
                                 </div>
                                 <img class="ui tiny centered circular image" src="img/ip.svg"></td>
                             <td>
                                 <div class="ui fitted toggle checkbox">
-                                    <input name="avail" type="radio"> <label></label>
+                                    <input name="avail" type="radio" value="Ward"> <label></label>
                                 </div>
                             </td>
                         </tr>
@@ -66,7 +66,7 @@
                                 <img class="ui tiny centered circular image" src="img/ot.svg"></td>
                             <td>
                                 <div class="ui fitted toggle checkbox">
-                                    <input name="avail" type="radio"> <label></label>
+                                    <input name="avail" type="radio" value="OT"> <label></label>
                                 </div>
                             </td>
                         </tr>
@@ -78,7 +78,7 @@
                                 <img class="ui tiny centered circular image" src="img/rounds.svg"></td>
                             <td>
                                 <div class="ui fitted toggle checkbox">
-                                    <input name="avail" type="radio"> <label></label>
+                                    <input name="avail" type="radio" value="Rounds"> <label></label>
                                 </div>
                             </td>
                         </tr>
@@ -90,12 +90,20 @@
                                 <img class="ui tiny centered circular image" src="img/others.svg"></td>
                             <td>
                                 <div class="ui fitted toggle checkbox">
-                                    <input name="avail" type="radio"> <label></label>
+                                    <input name="avail" type="radio" value="Others"> <label></label>
                                 </div>
                             </td>
                         </tr>
                     </tbody>
                 </table>
+                <div class="field">
+                    <label>Notes</label>
+                    <textarea id="txtnotes" name="txtnotes" class="ui input" rows="3" cols="40"></textarea>
+                </div>
+                <button class="ui teal fluid submit button right labeled icon" type="button" id="submit">
+                    <i class="checkmark icon"></i>
+                    <span>Submit</span>
+                </button><br>
             </div>
         </div>
     </div>
@@ -108,7 +116,7 @@
 </html>
 <script type="text/javascript">
     document.addEventListener("deviceready", onDeviceReady, false);
-//100733663577
+    //100733663577
     function onDeviceReady() {
         document.addEventListener("backbutton", onBackKeyDown, false);
     }
@@ -119,7 +127,8 @@
             navigator.app.exitApp(); // exit the app
     }
 
-    var apiURL = 'http://175.101.102.102/NtraktApi/api/';
+    var apiURL = 'http://192.168.0.44/NtraktApi/api/';
+    //var apiURL = 'http://175.101.102.102/NtraktApi/api/';
     var qsParm = new Array(),
         empid = null;
 
@@ -144,14 +153,14 @@
         }
     }
 
-    function CheckStatus(){
+    function CheckStatus() {
         //debugger;
         $('.dimmer').show();
         $.get(apiURL + 'User/CheckDoctor/' + $("#hempid").val(), function(response) {
             //debugger;
         }).done(function(response) {
             //debugger;
-            if(response.data != 'Success')
+            if (response.data != 'Success')
                 window.location.href = 'error.html';
             $(".dimmer").hide();
         });
@@ -164,6 +173,45 @@
             $(".dimmer").hide();
         }, 2000);
         CheckStatus();
+
+        $("#submit").click(function() {
+            SaveData();
+        });
     });
+
+    function SaveData() {
+        //debugger;
+
+        var objdata = {
+            DoctorId: $("#hempid").val(),
+            AvailType: $("input[name='avail']:checked").val(),
+            Notes: $("#txtnotes").val()
+        };
+        $(".dimmer").show();
+        //debugger;
+
+        $.ajax({
+            type: 'POST',
+            url: apiURL + 'DoctorStatus/StatusChange',
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify(objdata),
+            success: function(result) {
+                //debugger;
+                if (result.data == 'Success') {
+                    alert('Your Status Successfully Updated.');
+                    document.location.reload();
+                } else {
+                    $(".dimmer").hide();
+                    alert('Your Status Failed to Update.');
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('Error occurred while submitting data.\n\r' + xhr.responseText);
+                $(".dimmer").hide();
+            }
+        });
+
+    }
 
 </script>
