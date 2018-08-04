@@ -42,7 +42,7 @@
                             </td>
                             <td>
                                 <div class="ui fitted toggle checkbox">
-                                    <input name="avail" type="radio" value="OP" checked><label></label>
+                                    <input name="avail" type="radio" value="1" checked><label></label>
                                 </div>
                             </td>
                         </tr>
@@ -54,7 +54,7 @@
                                 <img class="ui tiny centered circular image" src="img/ip.svg"></td>
                             <td>
                                 <div class="ui fitted toggle checkbox">
-                                    <input name="avail" type="radio" value="Ward"> <label></label>
+                                    <input name="avail" type="radio" value="2"> <label></label>
                                 </div>
                             </td>
                         </tr>
@@ -66,7 +66,7 @@
                                 <img class="ui tiny centered circular image" src="img/ot.svg"></td>
                             <td>
                                 <div class="ui fitted toggle checkbox">
-                                    <input name="avail" type="radio" value="OT"> <label></label>
+                                    <input name="avail" type="radio" value="3"> <label></label>
                                 </div>
                             </td>
                         </tr>
@@ -78,7 +78,7 @@
                                 <img class="ui tiny centered circular image" src="img/rounds.svg"></td>
                             <td>
                                 <div class="ui fitted toggle checkbox">
-                                    <input name="avail" type="radio" value="Rounds"> <label></label>
+                                    <input name="avail" type="radio" value="4"> <label></label>
                                 </div>
                             </td>
                         </tr>
@@ -90,7 +90,7 @@
                                 <img class="ui tiny centered circular image" src="img/others.svg"></td>
                             <td>
                                 <div class="ui fitted toggle checkbox">
-                                    <input name="avail" type="radio" value="Others"> <label></label>
+                                    <input name="avail" type="radio" value="5"> <label></label>
                                 </div>
                             </td>
                         </tr>
@@ -127,8 +127,8 @@
             navigator.app.exitApp(); // exit the app
     }
 
-    var apiURL = 'http://192.168.0.44/NtraktApi/api/';
-    //var apiURL = 'http://175.101.102.102/NtraktApi/api/';
+    //var apiURL = 'http://192.168.0.44/NtraktApi/api/';
+    var apiURL = 'http://175.101.102.102/NtraktApi/api/';
     var qsParm = new Array(),
         empid = null;
 
@@ -188,7 +188,7 @@
             Notes: $("#txtnotes").val()
         };
         $(".dimmer").show();
-        //debugger;
+        debugger;
 
         $.ajax({
             type: 'POST',
