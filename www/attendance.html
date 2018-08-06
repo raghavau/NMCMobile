@@ -100,60 +100,63 @@
         $.get(apiURL + 'Attendance/' + $("#hempid").val(), function(response) {
             //debugger;
         }).done(function(response) {
-            var header1 = null,
-                header2 = null;
+            //debugger;
+            if (response.data.length > 0) {
+                var header1 = null,
+                    header2 = null;
 
-            if (parseInt(date.getDate()) > 25) {
-                header1 = mons[new Date(year, month + 1, 0).getMonth()] + '-' + new Date(year, month, 0).getFullYear();
-                header2 = mons[new Date(year, month + 1, 1).getMonth()] + '-' + new Date(year, month, 1).getFullYear();
-            } else {
-                header1 = mons[new Date(year, month + 1, 0).getMonth()] + '-' + new Date(year, month, 0).getFullYear();
-                header2 = mons[new Date(year, month + 1, 1).getMonth()] + '-' + new Date(year, month, 1).getFullYear();
-            }
-            var html = "<table cellspacing='0'><tr><td colspan='3' class='header'>" + header1 +
-                "</td><td class='header'>-</td><td colspan='3' class='header'>" + header2 + "</td></tr>";
-            html = html + "<tr>";
-            for (i = 0; i <= 7 - 1; i++) {
-                html = html + "<td class='header'>" + day[i] + "</td>";
-            }
-            html = html + '</tr>';
-            var d = 0;
-            for (j = 0; j < prevdate.length; j++) {
-                var leaveType = '';
-                if (j >= cnt) {
-                    if (parseInt(date.getDate()) > 25)
-                        f = day[new Date(year, parseInt(month) + 1, prevdate[j]).getDay()];
-                    else
-                        f = day[new Date(year, month, prevdate[j]).getDay()];
+                if (parseInt(date.getDate()) > 25) {
+                    header1 = mons[new Date(year, month + 1, 0).getMonth()] + '-' + new Date(year, month, 0).getFullYear();
+                    header2 = mons[new Date(year, month + 1, 1).getMonth()] + '-' + new Date(year, month, 1).getFullYear();
                 } else {
-                    if (parseInt(date.getDate()) > 25)
-                        f = day[new Date(year, month, prevdate[j]).getDay()];
-                    else
-                        f = day[new Date(year, month - 1, prevdate[j]).getDay()];
+                    header1 = mons[new Date(year, month + 1, 0).getMonth()] + '-' + new Date(year, month, 0).getFullYear();
+                    header2 = mons[new Date(year, month + 1, 1).getMonth()] + '-' + new Date(year, month, 1).getFullYear();
                 }
-                for (k = e; k < 7; k++) {
-                    //debugger;
-                    if (e == 6)
-                        e = 0;
-                    else
-                        e++;
-
-                    if (day[k] == f) {
-                        /*html = html + '<td class="day" id="' + j + '" data-tooltip="No Data" data-position="top center" onclick="DateSelect(' + j + ',' + prevdate[j] + ', 0)"><br>' + prevdate[j] + '</td>';*/
-                        //debugger;
-                        html = html + response.data[d].HtmlContent.replace(/[']/g, "");
-                        d = d + 1;
-                        if (e == 0)
-                            html = html + '</tr><tr>';
-                        break;
+                var html = "<table cellspacing='0'><tr><td colspan='3' class='header'>" + header1 +
+                    "</td><td class='header'>-</td><td colspan='3' class='header'>" + header2 + "</td></tr>";
+                html = html + "<tr>";
+                for (i = 0; i <= 7 - 1; i++) {
+                    html = html + "<td class='header'>" + day[i] + "</td>";
+                }
+                html = html + '</tr>';
+                var d = 0;
+                for (j = 0; j < prevdate.length; j++) {
+                    var leaveType = '';
+                    if (j >= cnt) {
+                        if (parseInt(date.getDate()) > 25)
+                            f = day[new Date(year, parseInt(month) + 1, prevdate[j]).getDay()];
+                        else
+                            f = day[new Date(year, month, prevdate[j]).getDay()];
                     } else {
-                        html = html + '<td class="day"></td>';
+                        if (parseInt(date.getDate()) > 25)
+                            f = day[new Date(year, month, prevdate[j]).getDay()];
+                        else
+                            f = day[new Date(year, month - 1, prevdate[j]).getDay()];
+                    }
+                    for (k = e; k < 7; k++) {
+                        //debugger;
+                        if (e == 6)
+                            e = 0;
+                        else
+                            e++;
+
+                        if (day[k] == f) {
+                            /*html = html + '<td class="day" id="' + j + '" data-tooltip="No Data" data-position="top center" onclick="DateSelect(' + j + ',' + prevdate[j] + ', 0)"><br>' + prevdate[j] + '</td>';*/
+                            //debugger;
+                            html = html + response.data[d].HtmlContent.replace(/[']/g, "");
+                            d = d + 1;
+                            if (e == 0)
+                                html = html + '</tr><tr>';
+                            break;
+                        } else {
+                            html = html + '<td class="day"></td>';
+                        }
                     }
                 }
-            }
 
-            html = html + "</table>";
-            $('#fromdate').append(html);
+                html = html + "</table>";
+                $('#fromdate').append(html);
+            }
             $(".dimmer").hide();
         });
     });
