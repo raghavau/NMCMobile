@@ -128,7 +128,7 @@
             navigator.app.exitApp(); // exit the app
     }
 
-    //var apiURL = 'http://192.168.0.44/NtraktApi/api/';
+    //var apiURL = 'http://192.168.1.44/NtraktApi/api/';
     //var apiURL = 'http://175.101.102.102/NtraktApi/api/';
     var apiURL = 'http://175.101.102.104/NtraktApi/api/';
     var qsParm = new Array(),
@@ -162,6 +162,7 @@
             //debugger;
         }).done(function(response) {
             //debugger;
+            DoctorStatus();
             if (response.data != 'Success')
                 window.location.href = 'error.html';
             $(".dimmer").hide();
@@ -180,6 +181,24 @@
             SaveData();
         });
     });
+
+    function DoctorStatus() {
+        //debugger;
+        $('.dimmer').show();
+        $.get(apiURL + 'DoctorStatus/Status/' + $("#hempid").val(), function(response) {
+            //debugger;
+        }).done(function(response) {
+            //debugger;
+            var len = $("input[name='avail']").length;
+
+            for (var i = 0; i <= len - 1; i++) {
+                if ($("input[name='avail']")[i].value == response.data[0].AvailTypeSlno) {
+                    $("input[name='avail']")[i].checked = true;
+                }
+            }
+            $(".dimmer").hide();
+        });
+    }
 
     function SaveData() {
         //debugger;
