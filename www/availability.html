@@ -32,76 +32,76 @@
             <div class="ui stacked left aligned segment">
                 <div class="ui red ribbon label">Doctor Availability</div><br>
                 <div class="ui form">
-                <table class="ui top aligned center aligned very basic celled table">
-                    <tbody>
-                        <tr class="top aligned">
-                            <td>
-                                <div class="content">
-                                    OP
-                                </div>
-                                <img class="ui tiny centered circular image" src="img/op.svg">
-                            </td>
-                            <td>
-                                <div class="ui fitted toggle checkbox">
-                                    <input name="avail" type="radio" value="1" checked><label></label>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="top aligned">
-                            <td>
-                                <div class="content">
-                                    Ward
-                                </div>
-                                <img class="ui tiny centered circular image" src="img/ip.svg"></td>
-                            <td>
-                                <div class="ui fitted toggle checkbox">
-                                    <input name="avail" type="radio" value="2"> <label></label>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="top aligned">
-                            <td>
-                                <div class="content">
-                                    OT
-                                </div>
-                                <img class="ui tiny centered circular image" src="img/ot.svg"></td>
-                            <td>
-                                <div class="ui fitted toggle checkbox">
-                                    <input name="avail" type="radio" value="3"> <label></label>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="top aligned">
-                            <td>
-                                <div class="content">
-                                    Rounds
-                                </div>
-                                <img class="ui tiny centered circular image" src="img/rounds.svg"></td>
-                            <td>
-                                <div class="ui fitted toggle checkbox">
-                                    <input name="avail" type="radio" value="4"> <label></label>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="top aligned">
-                            <td>
-                                <div class="content">
-                                    Others
-                                </div>
-                                <img class="ui tiny centered circular image" src="img/others.svg"></td>
-                            <td>
-                                <div class="ui fitted toggle checkbox">
-                                    <input name="avail" type="radio" value="5"> <label></label>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="field">
-                    <label>Notes</label>
-                    <textarea id="txtnotes" name="txtnotes" class="ui input" rows="3" cols="40"></textarea>
-                </div>
-                <button class="ui teal fluid submit button right labeled icon" type="button" id="submit">
+                    <table class="ui top aligned center aligned very basic celled table">
+                        <tbody>
+                            <tr class="top aligned">
+                                <td>
+                                    <div class="content">
+                                        OP
+                                    </div>
+                                    <img class="ui tiny centered circular image" src="img/op.svg">
+                                </td>
+                                <td>
+                                    <div class="ui fitted toggle checkbox">
+                                        <input name="avail" type="radio" value="1" checked><label></label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="top aligned">
+                                <td>
+                                    <div class="content">
+                                        Ward
+                                    </div>
+                                    <img class="ui tiny centered circular image" src="img/ip.svg"></td>
+                                <td>
+                                    <div class="ui fitted toggle checkbox">
+                                        <input name="avail" type="radio" value="2"> <label></label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="top aligned">
+                                <td>
+                                    <div class="content">
+                                        OT
+                                    </div>
+                                    <img class="ui tiny centered circular image" src="img/ot.svg"></td>
+                                <td>
+                                    <div class="ui fitted toggle checkbox">
+                                        <input name="avail" type="radio" value="3"> <label></label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="top aligned">
+                                <td>
+                                    <div class="content">
+                                        Rounds
+                                    </div>
+                                    <img class="ui tiny centered circular image" src="img/rounds.svg"></td>
+                                <td>
+                                    <div class="ui fitted toggle checkbox">
+                                        <input name="avail" type="radio" value="4"> <label></label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="top aligned">
+                                <td>
+                                    <div class="content">
+                                        Others
+                                    </div>
+                                    <img class="ui tiny centered circular image" src="img/others.svg"></td>
+                                <td>
+                                    <div class="ui fitted toggle checkbox">
+                                        <input name="avail" type="radio" value="5"> <label></label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="field">
+                        <label>Notes</label>
+                        <textarea id="txtnotes" name="txtnotes" class="ui input" rows="3" cols="40"></textarea>
+                    </div>
+                    <button class="ui teal fluid submit button right labeled icon" type="button" id="submit">
                     <i class="checkmark icon"></i>
                     <span>Submit</span>
                 </button></div><br>
@@ -189,11 +189,13 @@
             //debugger;
         }).done(function(response) {
             //debugger;
-            var len = $("input[name='avail']").length;
+            if (response.data.length > 0) {
+                var len = $("input[name='avail']").length;
 
-            for (var i = 0; i <= len - 1; i++) {
-                if ($("input[name='avail']")[i].value == response.data[0].AvailTypeSlno) {
-                    $("input[name='avail']")[i].checked = true;
+                for (var i = 0; i <= len - 1; i++) {
+                    if ($("input[name='avail']")[i].value == response.data[0].AvailTypeSlno) {
+                        $("input[name='avail']")[i].checked = true;
+                    }
                 }
             }
             $(".dimmer").hide();
