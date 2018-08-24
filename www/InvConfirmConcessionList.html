@@ -1,0 +1,255 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Concession Confirm List</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="semantic/css/semantic.css">
+    <link rel="stylesheet" type="text/css" href="fontawesome4.7.0/css/font-awesome.css">
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="semantic/js/semantic.js"></script>
+    <script type="text/javascript" src="js/jquery.blockUI.js"></script>
+
+    <style type="text/css">
+        .btnReject {
+            cursor: pointer;
+            color: red;
+        }
+
+    </style>
+
+    <script type="text/javascript">
+        var glbUser = getParameterByName("uname");
+        //var apiURL = "http://192.168.1.41/InvConcessMobile/WebService.asmx/";
+        //var apiURL = "http://192.168.1.251/mobileinvestigation/WebService.asmx/";
+        //var apiURL = "http://175.101.102.102/mobileinvestigation/WebService.asmx/";
+        var apiURL = "http://175.101.102.102/NtraktApi/api/InvConcession/";
+        //var apiURL = "http://192.168.1.41/NtraktApi/api/InvConcession/";
+
+
+        $(function() {
+
+            CheckDoctorAcess();
+
+
+        });
+
+
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+
+        function CheckDoctorAcess() {
+            //debugger;
+            var ConData = {};
+
+            ConData.User = glbUser;
+
+            $.post(apiURL + "CheckConcess", ConData, function(response) {
+
+            }).done(function(result) {
+
+                if (result.data == "Y") {
+                    LoadConcessionMemList();
+                } else {
+                    window.location = "error.html";
+                }
+            }).fail(function(jqxhr, settings, ex) {
+                console.log(ex)
+            });
+
+
+        }
+
+
+
+        function LoadConcessionMemList() {
+            $("#grid").empty();
+            //$.ajax({
+            //    url: apiURL + "GetConcessionMemList",
+            //    type: 'POST',
+            //    //crossDomain: true,
+            //    contentType: "application/json; charset=utf-8",
+            //    dataType: "json",
+            //    success: function (result) {
+            //        var mData = result.d;
+
+            //        if (result.d == '')
+            //        {
+            //            $("#grid").append("No Records found");
+            //            $(".dimmer").hide();
+            //            return;
+            //        }
+
+            //        var tabHtml = '';
+
+            //        tabHtml = '<table class="ui celled unstackable table"><thead><tr class="ui inverted teal table"><th>ConfirmNo</th><th>RegNo</th><th>Billdate</th><th>RefferedBy</th><th>BillAmt</th><th>Con(%)</th><th>NetAmt</th><th>&nbsp;</th><th>&nbsp;</th></tr></thead>'
+
+            //        $.each(mData, function (index, rData) {
+            //            tabHtml = tabHtml + "<tr><td>" + rData.BillNo + "</td><td>" + rData.PRNo + "</td><td>" + rData.BillDate + "</td><td>" + rData.ReferedBy + "</td>" +
+            //                      "<td>" + rData.BillAmount + "</td><td>" + rData.Concession + "</td><td>" + rData.NetAmount + "</td><td><a href='InConfirmConcessApproval.html?rno=" + rData.PRNo + "&bno=" + rData.BillNo + " &uname="+ glbUser +"'>Approve</a></td><td><u class='btnReject' bno='" + rData.BillNo + "' prno='" + rData.PRNo + "' oinfo='" + rData.OtherInfo + "'>Reject</u></td></tr>";
+            //        });
+
+            //        tabHtml = tabHtml + "</table>";
+            //        $("#grid").append(tabHtml);
+
+            //        $(".btnReject").click(function () {
+            //            var billno, prno, oinfo;
+            //            billno = $(this).attr("bno");
+            //            prno = $(this).attr("prno");
+            //            oinfo = $(this).attr("oinfo");
+
+            //            if (confirm("Are you sure you want to reject this bill?") == true) {
+            //                RejectTheConcession(billno, prno, oinfo);
+            //            }
+
+            //        });
+
+            //        $(".dimmer").hide();
+
+            //    },
+            //    fail : function(result)
+            //    {
+            //        console.log(result.d);
+            //    },
+            //    error: function (response,result)
+            //    {
+            //        console.log(result);
+            //    }
+
+            //});
+
+            $.get(apiURL + "ConcessList", function(response) {
+
+            }).done(function(result) {
+
+                var mData = result.data;
+
+                if (result.data == '') {
+                    $("#grid").append("No Records found");
+                    $(".dimmer").hide();
+                    return;
+                }
+
+                var tabHtml = '';
+
+                tabHtml = '<table class="ui celled unstackable table"><thead><tr class="ui inverted teal table"><th>ConfirmNo</th><th>RegNo</th><th>Billdate</th><th>RefferedBy</th><th>BillAmt</th><th>Con(%)</th><th>NetAmt</th><th>&nbsp;</th><th>&nbsp;</th></tr></thead>'
+
+                $.each(mData, function(index, rData) {
+
+                    tabHtml = tabHtml + "<tr><td>" + rData.BillNo + "</td><td>" + rData.PRNo + "</td><td>" + rData.BillDate + "</td><td>" + rData.ReferedBy + "</td>" +
+                        "<td>" + rData.BillAmount + "</td><td>" + rData.Concession + "</td><td>" + rData.NetAmount + "</td><td><a href='InConfirmConcessApproval.html?rno=" + rData.PRNo + "&bno=" + rData.BillNo + "&uname=" + glbUser + "'>Approve</a></td><td><u class='btnReject' bno='" + rData.BillNo + "' prno='" + rData.PRNo + "' oinfo='" + rData.OtherInfo + "'>Reject</u></td></tr>";
+                });
+
+                tabHtml = tabHtml + "</table>";
+                $("#grid").append(tabHtml);
+
+                $(".btnReject").click(function() {
+                    var billno, prno, oinfo;
+                    billno = $(this).attr("bno");
+                    prno = $(this).attr("prno");
+                    oinfo = $(this).attr("oinfo");
+
+                    if (oinfo == null) {
+                        oinfo = "";
+                    }
+
+                    if (confirm("Are you sure you want to reject this bill?") == true) {
+                        RejectTheConcession(billno, prno, oinfo);
+                    }
+
+                });
+
+                $(".dimmer").hide();
+
+            }).fail(function(jqxhr, settings, ex) {
+                console.log(ex)
+            });
+        }
+
+
+        function RejectTheConcession(bno, prno, otherinfo) {
+            //debugger;
+            $(".dimmer").show();
+            //$.ajax({
+            //    url: apiURL + "UpdateMemberConcession",
+            //    type: 'POST',
+            //    data:JSON.stringify({Billno : bno, PRNo : prno, OtherInfo : otherinfo, User: glbUser}),
+            //    contentType: "application/json; charset=utf-8",
+            //    dataType: "json",
+            //    success: function (result) {
+            //        if (result.d == "success")
+            //        {
+            //            alert("Application rejected successfully...");
+            //            LoadConcessionMemList();
+            //        }
+            //    },
+            //    fail: function (result) {
+            //        console.log(result.d);
+            //    },
+            //    error: function (response, result) {
+            //        console.log(result);
+            //    }
+
+            //});
+
+            var ConData = {};
+
+            ConData.BillNo = bno;
+            ConData.PRNo = prno;
+
+            if (otherinfo == "") {
+                otherinfo = "null";
+            }
+
+            ConData.OtherInfo = otherinfo;
+            ConData.User = glbUser;
+
+            $.post(apiURL + "ConcessReject", ConData, function(response) {
+
+            }).done(function(result) {
+
+                if (result.data == "success") {
+                    alert("Application rejected successfully...");
+                    LoadConcessionMemList();
+                }
+            }).fail(function(jqxhr, settings, ex) {
+                console.log(ex)
+            });
+
+        }
+
+    </script>
+
+</head>
+
+<body>
+    <br/>
+    <div class="ui container">
+        <div class="page-header">
+            <h3>Concession Confirm List</h3>
+            <div class="ui divider"></div>
+        </div>
+        <div class="ui small form">
+            <div class="field">
+                <div id="grid"></div>
+            </div>
+        </div>
+        <br>
+    </div>
+
+    <div class="ui active inverted page dimmer">
+        <div class="ui large text loader">Loading</div>
+    </div>
+
+</body>
+
+
+</html>

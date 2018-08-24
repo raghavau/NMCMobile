@@ -43,7 +43,7 @@
         </div>
     </div>
     <iframe frameborder="0" width="100%" id="ifrm" style="position: absolute" scrolling="auto"></iframe>
-    <div class="ui bottom fixed fluid five item labeled icon menu">
+    <div class="ui bottom fixed fluid six item labeled icon tiny menu">
         <a class="item" id="profile">
             <i class="id card red icon"></i>
             Profile
@@ -64,9 +64,12 @@
             <i class="doctor purple icon"></i>
             Availability
         </a>
+        <a class="item" id="concession">
+            <i class="check circle outline green icon"></i>
+            Concession Approval
+        </a>
     </div>
     <input type="hidden" id="hempid" />
-
 </body>
 
 </html>
@@ -133,6 +136,9 @@
         });
         $('#availability').click(function() {
             $('#ifrm').attr('src', 'availability.html?empid=' + btoa($("#hempid").val()));
+        });
+        $('#concession').click(function() {
+            $('#ifrm').attr('src', 'InvConfirmConcessionList.html?uname=' + btoa($("#hempid").val()));
         });
     });
 
