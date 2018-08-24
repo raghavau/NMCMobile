@@ -16,6 +16,9 @@
             cursor: pointer;
             color: red;
         }
+        body{
+            overflow: auto;
+        }
 
     </style>
 
@@ -50,7 +53,7 @@
             //debugger;
             var ConData = {};
 
-            ConData.User = glbUser;
+            ConData.User = atob(glbUser);
 
             $.post(apiURL + "CheckConcess", ConData, function(response) {
 
