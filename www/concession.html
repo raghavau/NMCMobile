@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="semantic/css/semantic.css">
+    <link rel="stylesheet" type="text/css" href="fontawesome4.7.0/css/font-awesome.css">
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="semantic/js/semantic.js"></script>
+    <style type="text/css">
+        body {
+            background-color: #fff;
+            overflow: hidden;
+        }
+
+        body>.grid {
+            height: 100%;
+        }
+
+        .column {
+            /*max-width: 450px;*/
+            margin: 20px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="ui column grid">
+        <div class="column">
+            <button class="ui fluid labeled icon orange button" id="btnOP">
+                <i class="right arrow icon"></i> OP Concession
+            </button>
+            <br>
+            <button class="ui fluid labeled icon teal button" id="btnIP">
+                <i class="right arrow icon"></i> IP Concession
+            </button>
+        </div>
+    </div>
+    <input type="hidden" id="hempid" />
+</body>
+
+</html>
+<script type="text/javascript">
+    //var apiURL = 'http://192.168.0.44/NtraktApi/api/';
+    //var apiURL = 'http://175.101.102.102/NtraktApi/api/';
+    var apiURL = 'http://175.101.102.104/NtraktApi/api/';
+    var qsParm = new Array();
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+    function onDeviceReady() {
+        document.addEventListener("backbutton", function(e) {
+            e.preventDefault();
+        }, false);
+    }
+
+    function qs() {
+        //debugger;
+        var query = window.location.search.substring(1);
+        var parms = query.split('&');
+        for (var i = 0; i < parms.length; i++) {
+            var pos = parms[i].indexOf('=');
+            if (pos > 0) {
+                var key = parms[i].substring(0, pos);
+                var val = parms[i].substring(pos + 1);
+                qsParm[key] = val;
+            }
+        }
+        if (parms.length > 0) {
+            $("#hempid").val(atob(qsParm["empid"]));
+            return true;
+        } else {
+            window.location.href = 'index.html';
+            return false;
+        }
+    }
+
+    $(document).ready(function() {
+        qs();
+        $("#btnOP").click(function(){
+            document.location.href = "InvConfirmConcessionList.html?uname=" + btoa($("#hempid").val());
+        });
+
+        $("#btnIP").click(function(){
+            document.location.href = "IpConcessList.html?uname=" + btoa($("#hempid").val());
+        });
+    });
+
+</script>
