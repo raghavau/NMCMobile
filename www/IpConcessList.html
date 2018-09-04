@@ -58,7 +58,7 @@
             {
                 var ConData = {};
 
-                ConData.User = glbUser;
+                ConData.User = atob(glbUser);
 
                 $.post(apiURL + "CheckConcess", ConData, function (response) {
 

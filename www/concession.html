@@ -77,15 +77,31 @@
         }
     }
 
-    $(document).ready(function() {
-        qs();
-        $("#btnOP").click(function(){
-            document.location.href = "InvConfirmConcessionList.html?uname=" + btoa($("#hempid").val());
-        });
+    function CheckStatus() {
+        //debugger;
+        $('.dimmer').show();
+        $.get(apiURL + 'User/CheckDoctor/' + $("#hempid").val(), function(response) {
+            //debugger;
+        }).done(function(response) {
+            //debugger;
+            $(".column").show();
+            $("#btnOP").click(function() {
+                document.location.href = "InvConfirmConcessionList.html?uname=" + btoa($("#hempid").val());
+            });
 
-        $("#btnIP").click(function(){
-            document.location.href = "IpConcessList.html?uname=" + btoa($("#hempid").val());
+            $("#btnIP").click(function() {
+                document.location.href = "IpConcessList.html?uname=" + btoa($("#hempid").val());
+            });
+            if (response.data != 'Success')
+                window.location.href = 'error.html';
+            $(".dimmer").hide();
         });
+    }
+
+    $(document).ready(function() {
+        $(".column").hide();
+        qs();
+        CheckStatus();
     });
 
 </script>
