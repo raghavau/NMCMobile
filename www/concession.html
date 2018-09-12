@@ -30,12 +30,21 @@
 <body>
     <div class="ui column grid">
         <div class="column">
-            <button class="ui fluid labeled icon orange button" id="btnOP">
+            <h3 class="ui dividing header"><i class="angle right icon"></i>Concessions</h3>
+            <button class="ui fluid labeled icon orange disabled button" id="btnOP">
                 <i class="right arrow icon"></i> OP Concession
             </button>
             <br>
-            <button class="ui fluid labeled icon teal button" id="btnIP">
+            <button class="ui fluid labeled icon teal disabled button" id="btnIP">
                 <i class="right arrow icon"></i> IP Concession
+            </button>
+            <h3 class="ui dividing header"><i class="angle right icon"></i>Vehicle</h3>
+            <button class="ui fluid labeled icon brown disabled button" id="btnVeh">
+                <i class="right arrow icon"></i> Vehicle Request
+            </button>
+            <br>
+            <button class="ui fluid labeled icon blue disabled button" id="btnVehApr">
+                <i class="right arrow icon"></i> Vehicle Request Approval
             </button>
         </div>
     </div>
@@ -45,7 +54,7 @@
 </html>
 <script type="text/javascript">
     //var apiURL = 'http://192.168.0.44/NtraktApi/api/';
-    ////var apiURL = 'http://175.101.102.102/NtraktApi/api/';
+    //var apiURL = 'http://175.101.102.102/NtraktApi/api/';
     var apiURL = 'http://narayanagroup.co.in/NtraktApi/api/';
     var qsParm = new Array();
     document.addEventListener("deviceready", onDeviceReady, false);
@@ -77,7 +86,7 @@
         }
     }
 
-    function CheckStatus() {
+    function CheckDoctor() {
         //debugger;
         $('.dimmer').show();
         $.get(apiURL + 'User/CheckDoctor/' + $("#hempid").val(), function(response) {
@@ -85,23 +94,88 @@
         }).done(function(response) {
             //debugger;
             $(".column").show();
-            $("#btnOP").click(function() {
-                document.location.href = "InvConfirmConcessionList.html?uname=" + btoa($("#hempid").val());
-            });
+            if (response.data != 'Success') {
+                $("#btnOP").removeClass('ui fluid labeled icon orange button');
+                $("#btnIP").removeClass('ui fluid labeled icon teal button');
 
-            $("#btnIP").click(function() {
-                document.location.href = "IpConcessList.html?uname=" + btoa($("#hempid").val());
-            });
-            if (response.data != 'Success')
-                window.location.href = 'error.html';
+                $("#btnOP").addClass('ui fluid labeled icon orange disabled button');
+                $("#btnIP").addClass('ui fluid labeled icon teal disabled button');
+            } else {
+                $("#btnOP").removeClass('ui fluid labeled icon orange disabled button');
+                $("#btnIP").removeClass('ui fluid labeled icon teal disabled button');
+
+                $("#btnOP").addClass('ui fluid labeled icon orange button');
+                $("#btnIP").addClass('ui fluid labeled icon teal button');
+            }
+            $(".dimmer").hide();
+        });
+    }
+
+    function CheckTransportAuthority() {
+        //debugger;
+        $('.dimmer').show();
+        var userData = {};
+        userData.ID = $("#hempid").val();
+
+        $.post(apiURL + 'Vehicle/CheckUserAccess', userData, function(response) {
+            //debugger;
+            $(".column").show();
+
+            switch (response.data) {
+                case 'N':
+                    $("#btnVeh").removeClass('ui fluid labeled icon brown button');
+                    $("#btnVehApr").removeClass('ui fluid labeled icon blue button');
+
+                    $("#btnVeh").addClass('ui fluid labeled icon brown disabled button');
+                    $("#btnVehApr").addClass('ui fluid labeled icon blue disabled button');
+                    break;
+                case 'F':
+                    $("#btnVeh").removeClass('ui fluid labeled icon brown disabled button');
+                    $("#btnVehApr").removeClass('ui fluid labeled icon blue disabled button');
+
+                    $("#btnVeh").addClass('ui fluid labeled icon brown button');
+                    $("#btnVehApr").addClass('ui fluid labeled icon blue button');
+                    break;
+                case 'R':
+                    $("#btnVeh").removeClass('ui fluid labeled icon brown disabled button');
+                    $("#btnVehApr").removeClass('ui fluid labeled icon blue disabled button');
+
+                    $("#btnVeh").addClass('ui fluid labeled icon brown button');
+                    $("#btnVehApr").addClass('ui fluid labeled icon blue disabled button');
+                    break;
+                case 'A':
+                    $("#btnVeh").removeClass('ui fluid labeled icon brown disabled button');
+                    $("#btnVehApr").removeClass('ui fluid labeled icon blue disabled button');
+
+                    $("#btnVeh").addClass('ui fluid labeled icon brown disabled button');
+                    $("#btnVehApr").addClass('ui fluid labeled icon blue button');
+                    break;
+            };
+
             $(".dimmer").hide();
         });
     }
 
     $(document).ready(function() {
-        $(".column").hide();
+        //debugger;
         qs();
-        CheckStatus();
+        $("#btnOP").click(function() {
+            document.location.href = "InvConfirmConcessionList.html?uname=" + btoa($("#hempid").val());
+        });
+
+        $("#btnIP").click(function() {
+            document.location.href = "IpConcessList.html?uname=" + btoa($("#hempid").val());
+        });
+
+        $("#btnVeh").click(function() {
+            document.location.href = "VehicleReqForm.html?uid=" + btoa($("#hempid").val());
+        });
+
+        $("#btnVehApr").click(function() {
+            document.location.href = "VehicleReqApproval.html?uid=" + btoa($("#hempid").val());
+        });
+        CheckDoctor();
+        CheckTransportAuthority();
     });
 
 </script>
