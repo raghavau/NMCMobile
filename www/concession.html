@@ -12,7 +12,7 @@
     <style type="text/css">
         body {
             background-color: #fff;
-            overflow: hidden;
+            overflow: auto;
         }
 
         body>.grid {
@@ -46,6 +46,10 @@
             <button class="ui fluid labeled icon blue disabled button" id="btnVehApr">
                 <i class="right arrow icon"></i> Vehicle Request Approval
             </button>
+            <br>
+            <button class="ui fluid labeled icon green disabled button" id="btnVehAprLst">
+                <i class="right arrow icon"></i> Vehicle Approved List
+            </button>
         </div>
     </div>
     <input type="hidden" id="hempid" />
@@ -53,7 +57,7 @@
 
 </html>
 <script type="text/javascript">
-    //var apiURL = 'http://192.168.0.44/NtraktApi/api/';
+    //var apiURL = 'http://192.168.1.44/NtraktApi/api/';
     //var apiURL = 'http://175.101.102.102/NtraktApi/api/';
     var apiURL = 'http://narayanagroup.co.in/NtraktApi/api/';
     var qsParm = new Array();
@@ -122,33 +126,77 @@
             $(".column").show();
 
             switch (response.data) {
-                case 'N':
+                case 'NA':
                     $("#btnVeh").removeClass('ui fluid labeled icon brown button');
                     $("#btnVehApr").removeClass('ui fluid labeled icon blue button');
+                    $("#btnVehAprLst").removeClass('ui fluid labeled icon green button');
 
                     $("#btnVeh").addClass('ui fluid labeled icon brown disabled button');
                     $("#btnVehApr").addClass('ui fluid labeled icon blue disabled button');
+                    $("#btnVehAprLst").addClass('ui fluid labeled icon green disabled button');
                     break;
-                case 'F':
+                case 'FA':
                     $("#btnVeh").removeClass('ui fluid labeled icon brown disabled button');
                     $("#btnVehApr").removeClass('ui fluid labeled icon blue disabled button');
+                    $("#btnVehAprLst").removeClass('ui fluid labeled icon green disabled button');
 
                     $("#btnVeh").addClass('ui fluid labeled icon brown button');
                     $("#btnVehApr").addClass('ui fluid labeled icon blue button');
+                    $("#btnVehAprLst").addClass('ui fluid labeled icon green button');
                     break;
-                case 'R':
+                case 'RQ':
                     $("#btnVeh").removeClass('ui fluid labeled icon brown disabled button');
                     $("#btnVehApr").removeClass('ui fluid labeled icon blue disabled button');
+                    $("#btnVehAprLst").removeClass('ui fluid labeled icon green disabled button');
 
                     $("#btnVeh").addClass('ui fluid labeled icon brown button');
                     $("#btnVehApr").addClass('ui fluid labeled icon blue disabled button');
+                    $("#btnVehAprLst").addClass('ui fluid labeled icon green disabled button');
                     break;
-                case 'A':
+                case 'AP':
                     $("#btnVeh").removeClass('ui fluid labeled icon brown disabled button');
                     $("#btnVehApr").removeClass('ui fluid labeled icon blue disabled button');
+                    $("#btnVehAprLst").removeClass('ui fluid labeled icon green disabled button');
 
                     $("#btnVeh").addClass('ui fluid labeled icon brown disabled button');
                     $("#btnVehApr").addClass('ui fluid labeled icon blue button');
+                    $("#btnVehAprLst").addClass('ui fluid labeled icon green disabled button');
+                    break;
+                case 'RT':
+                    $("#btnVeh").removeClass('ui fluid labeled icon brown disabled button');
+                    $("#btnVehApr").removeClass('ui fluid labeled icon blue disabled button');
+                    $("#btnVehAprLst").removeClass('ui fluid labeled icon green disabled button');
+
+                    $("#btnVeh").addClass('ui fluid labeled icon brown disabled button');
+                    $("#btnVehApr").addClass('ui fluid labeled icon blue disabled button');
+                    $("#btnVehAprLst").addClass('ui fluid labeled icon green button');
+                    break;
+                case 'RA':
+                    $("#btnVeh").removeClass('ui fluid labeled icon brown disabled button');
+                    $("#btnVehApr").removeClass('ui fluid labeled icon blue disabled button');
+                    $("#btnVehAprLst").removeClass('ui fluid labeled icon green disabled button');
+
+                    $("#btnVeh").addClass('ui fluid labeled icon brown button');
+                    $("#btnVehApr").addClass('ui fluid labeled icon blue button');
+                    $("#btnVehAprLst").addClass('ui fluid labeled icon green disabled button');
+                    break;
+                case 'RR':
+                    $("#btnVeh").removeClass('ui fluid labeled icon brown disabled button');
+                    $("#btnVehApr").removeClass('ui fluid labeled icon blue disabled button');
+                    $("#btnVehAprLst").removeClass('ui fluid labeled icon green disabled button');
+
+                    $("#btnVeh").addClass('ui fluid labeled icon brown button');
+                    $("#btnVehApr").addClass('ui fluid labeled icon blue disabled button');
+                    $("#btnVehAprLst").addClass('ui fluid labeled icon green button');
+                    break;
+                case 'AR':
+                    $("#btnVeh").removeClass('ui fluid labeled icon brown disabled button');
+                    $("#btnVehApr").removeClass('ui fluid labeled icon blue disabled button');
+                    $("#btnVehAprLst").removeClass('ui fluid labeled icon green disabled button');
+
+                    $("#btnVeh").addClass('ui fluid labeled icon brown disabled button');
+                    $("#btnVehApr").addClass('ui fluid labeled icon blue button');
+                    $("#btnVehAprLst").addClass('ui fluid labeled icon green button');
                     break;
             };
 
@@ -173,6 +221,10 @@
 
         $("#btnVehApr").click(function() {
             document.location.href = "VehicleReqApproval.html?uid=" + btoa($("#hempid").val());
+        });
+
+        $("#btnVehAprLst").click(function() {
+            document.location.href = "VehicleReqApprovedList.html?uid=" + btoa($("#hempid").val());
         });
         CheckDoctor();
         CheckTransportAuthority();

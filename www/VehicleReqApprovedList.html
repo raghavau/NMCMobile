@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
 
-
     <!----LIVE MOBILE-->
     <link href="semantic/css/semantic.css" rel="stylesheet" />
     <link href="css/jquery-ui.css" rel="stylesheet" />
@@ -21,20 +20,43 @@
 
         var glbUser = atob(getQueryString("uid"));
         var glbTrslno;
+        var glbDate = "";
+        var glbEnd = "";
 
         $(function() {
             $(".dimmer").show();
+            $("#txtFrom, #txtTo").datepicker({
+                dateFormat: "dd/M/yy"
+            });
+
+            SetDates();
             LoadReqList();
         });
+
+
+        function SetDates() {
+            var cDate = new Date();
+            var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            glbDate = cDate.getDate() + "/" + months[cDate.getMonth()] + "/" + cDate.getFullYear();
+            glbEnd = glbDate;
+
+            $("#txtFrom").val(glbDate);
+            $("#txtTo").val(glbEnd);
+
+        }
 
 
         function LoadReqList() {
             $("#listVeh").empty();
             var vData = {};
+            var status = $("#cmbStatus").val();
+            var rowStyle = "";
 
-            vData.ID = glbUser;
+            vData.FromDate = glbDate;
+            vData.ToDate = glbEnd;
+            vData.Type = status;
 
-            $.post(apiURL + "VehReqList", vData, function(response) {}).done(function(result) {
+            $.post(apiURL + "VehReqApprList", vData, function(response) {}).done(function(result) {
                 var data = result.data;
 
                 if (data == '') {
@@ -43,31 +65,42 @@
                     return;
                 }
 
-                var tabHtml = "";
+                var tabHtml = '<table class="ui small unstackable table"><thead>' +
+                    '<tr><th></th><th>Appl Name</th><th>Department</th><th>Division</th><th>Req. ID</th></tr></thead><tbody>';
 
                 $.each(data, function(index, rData) {
-                    tabHtml = tabHtml + '<div class="item">' +
-                        '<div class="right floated content">' +
-                        '<button class="btnaccept circular basic tiny green  ui icon button" tid="' + rData.ID + '"><i class="chevron right icon"></i></button>' +
-                        '<button class="btnreject circular basic tiny red  ui icon button" tid="' + rData.ID + '"><i class="delete red icon"></i></button>' +
-                        '</div>' +
-                        '<div class="content">' +
-                        '<table><tr><td><b>Appl. Name</b></td><td>:</td><td> ' + rData.Name + '</td></tr>' +
-                        '<tr><td><b>Department</b></td><td>:</td><td> ' + rData.DepName + '</td></tr>' +
-                        '<tr><td><b>Division</b></td><td>:</td><td> ' + rData.Division + '</td></tr>' +
-                        '<tr><td><b>Type</b></td><td>:</td><td> ' + rData.Type + '</td></tr>' +
-                        '<tr><td><b>No Of Vehicles</b></td><td>:</td><td> ' + rData.VehNo + '</td></tr>' +
-                        '<tr><td><b>Req. Date</b></td><td>:</td><td> ' + rData.ReqDate + '</td></tr>' +
-                        '<tr><td><b>Duration</b></td><td>:</td><td> ' + rData.FromDate + '</td></tr></table>' +
-                        '</div></div>';
+
+                    if (status == "T") {
+                        if (rData.ApprName != "") {
+                            rowStyle = "app_row";
+                        } else {
+                            rowStyle = "";
+                        }
+
+                    }
+                    tabHtml = tabHtml + '<tr class="' + rowStyle + '"><td><button class="btnaccept circular basic mini green  ui icon button" tid="' + rData.ID + '" title="more>>"><i class="chevron right icon"></i></button></td><td>' + rData.Name + '</td><td>' + rData.DepName + '</td><td>' + rData.Division + '</td><td>' + rData.ID + '</td></tr>';
+
+                    //tabHtml = tabHtml + '<div class="item">' +
+                    //        '<div class="right floated content">' +
+                    //            '<button class="btnaccept circular basic tiny green  ui icon button" tid="' + rData.ID + '" title="more>>"><i class="chevron right icon"></i></button>' +
+                    //        '</div>' +
+                    //        '<div class="content">' +
+                    //            '<table><tr><td><b>Appl. Name</b></td><td>:</td><td> ' + rData.Name + '</td></tr>' +
+                    //            '<tr><td><b>Department</b></td><td>:</td><td> ' + rData.DepName + '</td></tr>' +
+                    //            '<tr><td><b>Division</b></td><td>:</td><td> ' + rData.Division + '</td></tr>' +
+                    //            '<tr><td><b>Type</b></td><td>:</td><td> ' + rData.Type + '</td></tr>' +
+                    //            '<tr><td><b>No Of Vehicles</b></td><td>:</td><td> ' + rData.VehNo + '</td></tr>' +
+                    //            '<tr><td><b>Req. Date</b></td><td>:</td><td> ' + rData.ReqDate + '</td></tr>' +
+                    //            '<tr><td><b>Duration</b></td><td>:</td><td> ' + rData.FromDate + '</td></tr>' +
+                    //            '<tr><td><b>Approved By</b></td><td>:</td><td> ' + rData.ApprName + '</td></tr>' +
+                    //            '<tr><td><b>Date Approved</b></td><td>:</td><td> ' + (rData.AppDate).substring(0, 10) + '</td></tr>' +
+                    //            '</table>' +
+                    //        '</div></div>';
                 });
+
+                tabHtml = tabHtml + '</tbody></table>';
 
                 $("#listVeh").append(tabHtml);
-
-                $(".btnreject").click(function() {
-                    var id = $(this).attr("tid");
-                    RejectVehicleReq(id);
-                });
 
                 $(".btnaccept").click(function() {
                     var id = $(this).attr("tid");
@@ -83,56 +116,8 @@
         }
 
 
-        function RejectVehicleReq(ID) {
-            if (confirm("Are you sure you want to reject this requisition?") == false) {
-                return;
-            }
-
-            var vData = {};
-
-            vData.ID = ID;
-            vData.User = glbUser
-            vData.Type = "R";
-            vData.PhNo = "";
-            $.post(apiURL + "UpdateVehReq", vData, function(response) {}).done(function(result) {
-                var data = result.data;
-                if (data == "success") {
-                    LoadReqList();
-                }
-
-            }).fail(function(jqxhr, settings, ex) {
-                console.log(ex)
-            });
-
-        }
 
 
-        function ApproveRequest() {
-            $("#btnSave").text("Please wait...");
-            $("#btnSave").prop('disabled', true);
-
-            var vData = {};
-
-            vData.ID = glbTrslno;
-            vData.User = glbUser
-            vData.Type = "A";
-            vData.PhNo = "7331170039"; //7331170039
-            $.post(apiURL + "UpdateVehReq", vData, function(response) {}).done(function(result) {
-                var data = result.data;
-                if (data == "success") {
-                    alert("Requisition approved successfully...");
-                    LoadReqList();
-                    $("#divDetails").hide();
-                    $("#divList").show();
-                    $("#btnSave").text("Please wait...");
-                    $("#btnSave").prop('disabled', true);
-                }
-
-            }).fail(function(jqxhr, settings, ex) {
-                console.log(ex)
-            });
-
-        }
 
 
         function AcceptVehicleReq(id) {
@@ -155,9 +140,12 @@
                 $("#lblTo").text(data.ToDate);
                 $("#lblOff").text(data.OffName);
                 $("#lblPurpose").text(data.Purpose);
+                $("#lblApprName").text(data.ApprName == "" ? "-" : data.ApprName);
+                $("#lblDateApp").text(data.AppDate == "" ? "-" : data.AppDate);
                 $("#lblSource").text(data.Source);
                 $("#lblDest").text(data.Dest);
                 $("#lblRepTime").text(data.RepTime);
+
                 $("#divDetails").show();
                 $("#divList").hide();
 
@@ -181,6 +169,47 @@
             $("#divList").show();
         }
 
+
+        function SearchRequest() {
+            var d1 = $("#txtFrom").val()
+            var d2 = $("#txtTo").val();
+            if (d1 != "") {
+                if (d2 == "") {
+                    alert("Please enter to date");
+                    return;
+                }
+            }
+
+            if (d2 != "") {
+                if (d1 == "") {
+                    alert("Please enter from date");
+                    return;
+                }
+            }
+
+            var sDate = +new Date(d1);
+            var eDate = +new Date(d2);
+
+            if (d1 > d2) {
+                alert("From date must less than To date");
+                return;
+            }
+
+            $(".dimmer").show();
+            glbDate = $("#txtFrom").val();
+            glbEnd = $("#txtTo").val();
+
+            LoadReqList();
+        }
+
+        function CancelSearch() {
+
+            SetDates();
+            $("#cmbStatus").val("P");
+
+            LoadReqList();
+        }
+
     </script>
 
     <style type="text/css">
@@ -195,6 +224,11 @@
             margin: 8px;
         }
 
+        .app_row td {
+            color: green;
+            font-weight: bold;
+        }
+
     </style>
 
 </head>
@@ -203,16 +237,53 @@
     <br />
     <div class="ui container">
         <div class="page-header">
-            <h3>Vehicle Requisition Approval</h3>
+            <h3>Vehicle Requisition Approved / Pending List</h3>
             <div class="ui divider"></div>
         </div>
 
+        <div style="height:5px;">&nbsp;</div>
         <div id="divList">
+            <div class="ui small form">
+                <div class="row">
+                    <div class="fields">
+                        <div class="two wide field">
+                            <label>Status</label>
+                            <div>
+                                <select id="cmbStatus">
+                                    <option value="T">All</option>
+                                    <option value="P" selected>Pending</option>
+                                    <option value="A">Approved</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="two wide field">
+                            <label>From Date</label>
+                            <div>
+                                <input type="text" id="txtFrom" placeholder="DD/MMM/YYYY" />
+                            </div>
+                        </div>
+                        <div class="two wide field">
+                            <label>To Date</label>
+                            <div>
+                                <input type="text" id="txtTo" placeholder="DD/MMM/YYYY" />
+                            </div>
+                        </div>
+                        <div class="four wide field">
+                            <div style="margin-bottom:6px;">&nbsp;</div>
+                            <div>
+                                <button class="ui button small blue" onclick="SearchRequest();">Search</button>
+                                <button class="ui button small grey" onclick="CancelSearch();">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="ui middle aligned divided list" id="listVeh">
             </div>
         </div>
-
+        <div style="height:5px;">&nbsp;</div>
         <div class="ui small form" id="divDetails" style="display:none;">
+
             <div class="row">
                 <div class="fields">
                     <div class="four wide field">
@@ -332,12 +403,16 @@
                         </div>
                     </div>
                     <div class="four wide field">
-                        <div>&nbsp;</div>
+                        <label>Approved By</label>
+                        <div id="lblApprName">
+
+                        </div>
                     </div>
                     <div class="four wide field">
-                        <div>&nbsp;</div>
+                        <label>Date Approved</label>
+                        <div id="lblDateApp">
 
-
+                        </div>
 
                     </div>
                 </div>
@@ -350,11 +425,8 @@
                     </div>
                     <div class="four wide field">
                         <div>&nbsp;</div>
-                        <button class="ui primary tiny button" id="btnSave" onclick="ApproveRequest();">
-                            Approve
-                        </button>
                         <button class="ui tiny button" id="btnSave" onclick="Cancel();">
-                            Cancel
+                            Close
                         </button>
                     </div>
                     <div class="four wide field">
@@ -363,6 +435,7 @@
                 </div>
             </div>
         </div>
+        <br />
         <br />
     </div>
 

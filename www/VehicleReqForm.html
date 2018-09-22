@@ -4,6 +4,8 @@
     <title>Vehilce Requistion Form</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+
+    <!----LIVE MOBILE-->
     <link href="semantic/css/semantic.css" rel="stylesheet" />
     <link href="css/jquery-ui.css" rel="stylesheet" />
     <script src="js/jquery-3.2.1.min.js"></script>
@@ -11,9 +13,8 @@
     <link href="fontawesome4.7.0/css/font-awesome.min.css" rel="stylesheet" />
     <script src="semantic/js/semantic.js"></script>
 
-    <script type="text/javascript">
 
-        //var apiURL = "http://192.168.1.41/NtraktApi/api/Vehicle/";
+    <script type="text/javascript">
         //var apiURL = 'http://175.101.102.102/NtraktApi/api/Vehicle/';
         var apiURL = 'http://narayanagroup.co.in/NtraktApi/api/Vehicle/';
 
@@ -22,13 +23,10 @@
         $(function () {
             LoadDivisionList();
             LoadVehTypes();
-            $(".ui.dropdown").dropdown();
 
-            var mon = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            var d = new Date();
-            $("#txtReqDate").val(d.getDate() + "/" + mon[d.getMonth()] + "/" + d.getFullYear());
+            SetDate();
 
-            $("#txtReqDate").datepicker({ dateFormat: "dd/M/yy" });
+            //$("#txtReqDate").datepicker({ dateFormat: "dd/M/yy" });
             $("#txtFromDate").datepicker({ dateFormat: "dd/M/yy" });
             $("#txtToDate").datepicker({ dateFormat: "dd/M/yy" });
 
@@ -39,6 +37,14 @@
                 }
             });
         });
+
+
+        function SetDate()
+        {
+            var mon = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var d = new Date();
+            $("#txtReqDate").val(d.getDate() + "/" + mon[d.getMonth()] + "/" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds());
+        }
 
 
         function getQueryString(name) {
@@ -61,6 +67,9 @@
             var to = $("#txtToDate").val();
             var name = $("#txtNOO").val();
             var purpose = $("#txtPurpose").val();
+            var source = $("#txtSource").val();
+            var dest = $("#txtDest").val();
+            var reptime = $("#txtRepTime").val();
 
 
             if (appname == "")
@@ -80,7 +89,7 @@
             }
 
             if (type == "-1") {
-                alert("Please select type");
+                alert("Please select vehicle type");
                 return;
             }
 
@@ -138,6 +147,30 @@
                 return;
             }
 
+            if (name.length > 50)
+            {
+                alert("Name of the official chareters must less than 50");
+                return;
+            }
+
+            if (source == "")
+            {
+                alert("Please enter source");
+                return;
+            }
+
+            if (dest == "")
+            {
+                alert("Please enter destination");
+                return;
+            }
+
+            if (reptime == "")
+            {
+                alert("Please enter report time & place");
+                return;
+            }
+
             if (purpose == "") {
                 alert("Please enter purpose");
                 return;
@@ -159,6 +192,9 @@
             vData.OffName = name;
             vData.Purpose = purpose;
             vData.User = glbUser;
+            vData.Source = source;
+            vData.Dest = dest;
+            vData.RepTime = reptime;
 
             $.post(apiURL + "SaveVehReq", vData, function (response) {
             }).done(function (result) {
@@ -228,6 +264,10 @@
              $("#txtToDate").val("");
              $("#txtNOO").val("");
              $("#txtPurpose").val("");
+             $("#txtSource").val("");
+             $("#txtDest").val("");
+             $("#txtRepTime").val("");
+             SetDate();
         }
 
 
@@ -259,9 +299,11 @@
                    </div>
                    <div class="four wide field">
                        <label>Division</label>
+
                            <select id="ddlDivision" class="ui dropdown">
                                <option value="-1">-Select-</option>
                            </select>
+
 
                    </div>
                </div>
@@ -270,9 +312,11 @@
                 <div class="fields">
                     <div class="four wide field">
                         <label>Vehilce Type</label>
+
                             <select id="ddlType" class="ui dropdown">
                                 <option value="-1">-Select-</option>
                             </select>
+
                     </div>
                     <div class="four wide field">
                         <label>No Of Vehicles</label>
@@ -283,7 +327,7 @@
                     <div class="four wide field">
                         <label>Requisition Date</label>
                         <div>
-                            <input id="txtReqDate" type="text" placeholder="DD/MM/YYYY" />
+                            <input id="txtReqDate" type="text" placeholder="DD/MM/YYYY" readonly />
                         </div>
 
                     </div>
@@ -313,6 +357,29 @@
                 </div>
             </div>
             <div class="row">
+                <div class="fields">
+                    <div class="four wide field">
+                        <label>Source</label>
+                        <div>
+                            <input id="txtSource" type="text" />
+                        </div>
+                    </div>
+                    <div class="four wide field">
+                        <label>Destination</label>
+                        <div>
+                            <input id="txtDest" type="text"  />
+                        </div>
+                    </div>
+                    <div class="four wide field">
+                        <label>Report Time & Place</label>
+                        <div>
+                            <input id="txtRepTime" type="text" />
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
 
                 <div class="fields">
                     <div class="four wide field">
@@ -331,19 +398,18 @@
             </div>
             <div class="row">
                 <div class="fields">
+                    <div class="four wide field">
+                        <div>&nbsp;</div>
+                    </div>
                     <div class="four wide field" align="center">
                         <button class="ui primary tiny button" id="btnSave" onclick="SaveData();">
                             Submit
                         </button>
                     </div>
-                    <div class="four wide field">
-                        <div>&nbsp;</div>
-                    </div>
                 </div>
             </div>
-            <br>
         </div>
-
+        <br />
   </div>
 
 </body>
