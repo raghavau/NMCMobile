@@ -51,7 +51,7 @@
                         </div>
                         <div class="field">
                             <input name="hidDates" id="hidDates" type="hidden">
-                            <label>Reason</label>
+                            <label>Reason \ Alternative</label>
                             <textarea name="txtReason" id="txtReason" rows="3" cols="40"></textarea>
                         </div>
                     </div>
@@ -90,8 +90,8 @@
     var month = date.getMonth();
 
     //var apiURL = 'http://192.168.0.44/NtraktApi/api/';
-    //var apiURL = 'http://175.101.102.102/NtraktApi/api/';
-    var apiURL = 'http://narayanagroup.co.in/NtraktApi/api/';
+    var apiURL = 'http://175.101.102.102/NtraktApi/api/';
+    //var apiURL = 'http://narayanagroup.co.in/NtraktApi/api/';
     var qsParm = new Array(),
         absent = new Array(),
         altday = new Array(),
@@ -164,7 +164,22 @@
 
         $("#txtReason").keyup(function() {
             //debugger;
-            if ($(this)[0].value.trim().length > 0) {
+            if ($('#dates').val() == "") {
+                $(this).val('');
+                return false;
+            } else if (chkValue == null) {
+                $(this).val('');
+                return false;
+            } else if (hflday == true && hlfvalue == null) {
+                $(this).val('');
+                return false;
+            } else if (selectedDates.length == 0) {
+                $(this).val('');
+                return false;
+            } else if (hflday == true && selectedDates.length > 1) {
+                $(this).val('');
+                return false;
+            } else if ($(this)[0].value.trim().length > 0) {
                 $("#request").removeClass('disabled');
             } else {
                 $("#request").addClass('disabled');
@@ -377,7 +392,7 @@
         else
             m = new Date(year, month, 1).getMonth();
 
-        var allowcount = 9 - holdday.length;
+        var allowcount = 8 - holdday.length;
         if (selectedDates.length <= allowcount) {
             if (selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1))) == -1) {
                 $('#' + obj)[0].className = 'selected';
