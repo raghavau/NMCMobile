@@ -325,6 +325,9 @@
         } else if (hflday == true && selectedDates.length > 1) {
             alert('Please Select Only One Day for Halfday Leave Request');
             return false;
+        } else if ($('#txtReason').val() == "") {
+            alert('Please Enter Reason or Alternative');
+            return false;
         } else {
             for (var i = 0; i <= selectedDates.length - 1; i++) {
                 var fhs = null,
