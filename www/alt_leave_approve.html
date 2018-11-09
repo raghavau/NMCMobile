@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Registration</title>
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui-custom.css">
+    <link rel="stylesheet" type="text/css" href="semantic/css/semantic.css">
+    <link rel="stylesheet" type="text/css" href="fontawesome4.7.0/css/font-awesome.css">
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.js"></script>
+    <script type="text/javascript" src="semantic/js/semantic.js"></script>
+    <style type="text/css">
+        body {
+            background-color: #e5e5e5;
+        }
+
+        body>.grid {
+            height: 100%;
+        }
+
+        .column {
+            max-width: 450px;
+        }
+
+        .thumbnail {
+            width: 200px;
+            height: 250px;
+            position: fixed;
+            z-index: 999999;
+            border-radius: 10px;
+            top: 50%;
+            left: 50%;
+            /*margin-right: -50%;*/
+            transform: translate(-50%, -50%);
+            /*-webkit-transition: all 500ms ease-in;
+            -webkit-transform: scale(1);
+            -ms-transition: all 500ms ease-in;
+            -ms-transform: scale(1);
+            -moz-transition: all 500ms ease-in;
+            -moz-transform: scale(1);
+            transition: all 500ms ease-in;*/
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="ui padded stacked left aligned segment">
+        <div class="ui error message">
+            <i class="close icon"></i>
+            <p>No Data Available. Please check for another date</p>
+        </div>
+        <div class="ui middle aligned relaxed divided list"></div>
+    </div>
+    <div class="ui active inverted page dimmer">
+        <div class="ui large text loader">Loading Please Wait.....</div>
+    </div>
+    <input type="hidden" id="hempid" />
+</body>
+
+</html>
+<script type="text/javascript">
+    document.addEventListener("deviceready", onDeviceReady, false);
+//100733663577
+    function onDeviceReady() {
+        document.addEventListener("backbutton", onBackKeyDown, false);
+    }
+
+    function onBackKeyDown() {
+        var state = confirm('Are You Sure you want to Exit.');
+        if (state)
+            navigator.app.exitApp(); // exit the app
+    }
+
+    //var apiURL = 'http://192.168.0.44/NtraktApi/api/';
+    var apiURL = 'http://175.101.102.102/NtraktApi/api/';
+    //var apiURL = 'http://narayanagroup.co.in/NtraktApi/api/';
+    var qsParm = new Array(),
+        empid = null;
+
+    function qs() {
+        //debugger;
+        var query = window.location.search.substring(1);
+        var parms = query.split('&');
+        for (var i = 0; i < parms.length; i++) {
+            var pos = parms[i].indexOf('=');
+            if (pos > 0) {
+                var key = parms[i].substring(0, pos);
+                var val = parms[i].substring(pos + 1);
+                qsParm[key] = val;
+            }
+        }
+        if (parms.length > 0) {
+            $("#hempid").val(atob(qsParm["empid"]));
+            return true;
+        } else {
+            window.location.href = 'index.html';
+            return false;
+        }
+    }
+
+    $(document).ready(function() {
+        qs();
+        empid = $("#hempid").val();
+
+        $('.dimmer').hide();
+        $('#imghide').hide();
+        $('.error.message').hide();
+    });
+</script>
