@@ -30,41 +30,21 @@
 <body>
     <div class="ui column grid">
         <div class="column">
-            <!--<div class="ui left aligned segment">
-                <div class="ui middle aligned selection divided list">
-                    <div class="item">
-                        <div class="right floated content">
-                            <button class="ui right floated circular icon green basic button"><i class="icon green check"></i></button>
-                        </div>
-                        <i class="right triangle icon"></i>
-                        <div class="top aligned content">
-                            <div class="header">Leave Status</div>
-                            <div class="description">Your SL request for the date 12/04/2018 is pending for approval
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="right floated content">
-                            <button class="ui right floated circular icon green basic button"><i class="icon green check"></i></button>
-                        </div>
-                        <i class="right triangle icon"></i>
-                        <div class="content">
-                            <div class="header">Leave Status</div>
-                            <div class="description">Your SL request for the date 12/04/2018 has been approved
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>-->
-            <label class="ui red fluid large label">No New Notifications</label>
+            <div class="ui left aligned segment">
+                <div class="ui middle aligned selection divided list"></div>
+            </div>
+            <label id="lblError" class="ui red fluid large label"></label>
         </div>
+    </div>
+    <div class="ui active inverted page dimmer">
+        <div class="ui large text loader">Loading Please Wait.....</div>
     </div>
     <input type="hidden" id="hempid" />
 </body>
 
 </html>
 <script type="text/javascript">
-    //var apiURL = 'http://192.168.0.44/NtraktApi/api/';
+    //var apiURL = 'http://192.168.1.44/NtraktApi/api/';
     var apiURL = 'http://175.101.102.102/NtraktApi/api/';
     //var apiURL = 'http://narayanagroup.co.in/NtraktApi/api/';
     var qsParm = new Array();
@@ -97,10 +77,60 @@
             return false;
         }
     }
+
     $(document).ready(function() {
         qs();
+        empid = $("#hempid").val();
         $(".dimmer").show();
-        $('.ui.accordion').accordion();
+        $("#lblError").hide();
+        $("#lblError").text();
+
+        ShowNotifications();
+
+        MarkAsReadNotifications();
     });
+
+    function ShowNotifications() {
+        $(".dimmer").show();
+        $("#lblError").hide();
+        $("#lblError").text();
+        $.get(apiURL + 'Notifications/' + $("#hempid").val(), function(response) {
+            //debugger;
+            var htmlStr = '';
+            if (response.data.length > 0) {
+                for (i = 0; i <= response.data.length - 1; i++) {
+                    htmlStr += "<div class='item'><div class='right floated content'></div>";
+                    if(response.data[i].Status == "1")
+                        htmlStr += "<i class='right triangle red icon'></i>";
+                    else
+                        htmlStr += "<i class='right triangle black icon'></i>";
+                    htmlStr += "<div class='content'><div class='header'>" + response.data[i].NotificationHeader + "</div><div class='description'>" + response.data[i].NotificationDescription + "</div></div>";
+                    htmlStr += "</div>";
+                }
+                $(".divided.list").append(htmlStr);
+            } else {
+                $("#lblError").show();
+                $("#lblError").text("No New Notifications");
+            }
+        }).done(function() {
+
+        });
+        $(".dimmer").hide();
+    }
+
+    function MarkAsReadNotifications() {
+        var ntfData = {};
+        ntfData.UserId = $("#hempid").val();
+        ntfData.NotificationId = "0";
+        //debugger;
+        $(".dimmer").show();
+        $.post(apiURL + 'Notifications/MarkRead', ntfData, function(response) {
+            //debugger;
+            $(".dimmer").hide();
+        }, 'json').fail(function(jqxhr, settings, ex) {
+            $(".dimmer").hide();
+            alert("error: " + ex);
+        });
+    }
 
 </script>

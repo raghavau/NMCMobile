@@ -35,7 +35,7 @@
                 <i class="home icon"></i>
             </a>
             <a class="item" id="notifications">
-                <i class="alarm icon"></i>
+                <i class="alarm icon"></i> <span id="ntfCount" class="ui tiny red circular label"></span>
             </a>
             <a class="item" id="signout">
                 <i class="sign out icon"></i>
@@ -75,6 +75,9 @@
 </html>
 <script type="text/javascript" src="cordova.js"></script>
 <script type="text/javascript">
+    //var apiURL = 'http://192.168.1.44/NtraktApi/api/';
+    var apiURL = 'http://175.101.102.102/NtraktApi/api/';
+    //var apiURL = 'http://narayanagroup.co.in/NtraktApi/api/';
     document.addEventListener("deviceready", onDeviceReady, false);
 
     function onDeviceReady() {
@@ -104,6 +107,13 @@
             return false;
         }
     }
+
+    var timeout = setTimeout(function runMe() {
+        //debugger;
+        ShowNotifications();
+        timeout = setTimeout(runMe, 10000);
+    }, 10000);
+
     $(document).ready(function() {
         qs();
         var ifrmheight = $('body').height() - $('.bottom').height();
@@ -111,6 +121,10 @@
         $('#ifrm').height(ifrmheight - 45);
 
         $('#ifrm').attr('src', 'home.html?empid=' + btoa($("#hempid").val()));
+
+        $("#ntfCount").text("");
+        $("#ntfCount").hide();
+        ShowNotifications();
 
         $('#home').click(function() {
             $('#ifrm').attr('src', 'home.html?empid=' + btoa($("#hempid").val()));
@@ -145,5 +159,29 @@
         });*/
         //IpConcessList.html?uname=40800318&type=C
     });
+
+    function ShowNotifications() {
+        $.get(apiURL + 'Notifications/' + $("#hempid").val(), function(response) {
+            //debugger;
+            var arrdata = response.data;
+            if (arrdata.length > 0) {
+                selectedArray = jQuery.grep(arrdata, function(data, i) {
+                    //debugger;
+                    return data.Status == 1;
+                });
+
+                if (selectedArray.length > 0) {
+                    $("#ntfCount").text(selectedArray.length);
+                    $("#ntfCount").show();
+                } else {
+                    $("#ntfCount").text("");
+                    $("#ntfCount").hide();
+                }
+            } else {
+                $("#ntfCount").text("");
+                $("#ntfCount").hide();
+            }
+        });
+    }
 
 </script>
