@@ -78,6 +78,12 @@
         }
     }
 
+    var timeout = setTimeout(function runMe() {
+        //debugger;
+        ShowNotifications();
+        timeout = setTimeout(runMe, 10000);
+    }, 10000);
+
     $(document).ready(function() {
         qs();
         empid = $("#hempid").val();
@@ -94,6 +100,7 @@
         $(".dimmer").show();
         $("#lblError").hide();
         $("#lblError").text();
+        $(".divided.list").empty();
         $.get(apiURL + 'Notifications/' + $("#hempid").val(), function(response) {
             //debugger;
             var htmlStr = '';
@@ -103,7 +110,7 @@
                     if(response.data[i].Status == "1")
                         htmlStr += "<i class='right triangle red icon'></i>";
                     else
-                        htmlStr += "<i class='right triangle black icon'></i>";
+                        htmlStr += "<i class='right triangle gray icon'></i>";
                     htmlStr += "<div class='content'><div class='header'>" + response.data[i].NotificationHeader + "</div><div class='description'>" + response.data[i].NotificationDescription + "</div></div>";
                     htmlStr += "</div>";
                 }
