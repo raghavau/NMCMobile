@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="fontawesome4.7.0/css/font-awesome.css">
     <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui.js"></script>
+    <script type="text/javascript" src="js/moment.js"></script>
     <script type="text/javascript" src="semantic/js/semantic.js"></script>
     <style type="text/css">
         body {
@@ -47,12 +48,11 @@
 </head>
 
 <body>
-    <div class="ui padded stacked left aligned segment">
-        <div class="ui error message">
-            <i class="close icon"></i>
-            <p>No Data Available. Please check for another date</p>
+    <div style="margin: 10px;">
+        <div class="ui padded stacked left aligned segment">
+            <label id="lblError" class="ui red fluid large label">No Data Available.</label>
+            <div class="ui middle aligned relaxed divided list"></div>
         </div>
-        <div class="ui middle aligned relaxed divided list"></div>
     </div>
     <div class="ui active inverted page dimmer">
         <div class="ui large text loader">Loading Please Wait.....</div>
@@ -63,7 +63,7 @@
 </html>
 <script type="text/javascript">
     document.addEventListener("deviceready", onDeviceReady, false);
-//100733663577
+    //100733663577
     function onDeviceReady() {
         document.addEventListener("backbutton", onBackKeyDown, false);
     }
@@ -74,8 +74,8 @@
             navigator.app.exitApp(); // exit the app
     }
 
-    //var apiURL = 'http://192.168.0.44/NtraktApi/api/';
-    var apiURL = 'http://175.101.102.102/NtraktApi/api/';
+    var apiURL = 'http://192.168.1.44/NtraktApi/api/';
+    //var apiURL = 'http://175.101.102.102/NtraktApi/api/';
     //var apiURL = 'http://narayanagroup.co.in/NtraktApi/api/';
     var qsParm = new Array(),
         empid = null;
@@ -107,6 +107,109 @@
 
         $('.dimmer').hide();
         $('#imghide').hide();
-        $('.error.message').hide();
+        $('.red.label').hide();
+
+        getLeavesToApprove();
     });
+
+    function getLeavesToApprove() {
+        //debugger;
+        $('.dimmer').show();
+
+        $.get(apiURL + 'Attendance/AlternateLeavesToApprove/' + $("#hempid").val(), function(response) {
+            $(".divided.list").empty();
+        }).done(function(response) {
+            //debugger;
+            var htmlStr = '';
+            if (response.data.length > 0) {
+                $('.red.label').hide();
+                for (var i = 0; i <= response.data.length - 1; i++) {
+                    //debugger;
+                    htmlStr += '<div class="item"><div class="right floated content">';
+                    htmlStr += '<button class="ui tiny basic green icon button" onclick="Approve(' + response.data[i].EmpNo + ',\'' + response.data[i].EventDate + '\')">';
+                    htmlStr += '<i class="check icon"></i></button>';
+                    htmlStr += '<button class="ui tiny basic red icon button" onclick="Reject(' + response.data[i].EmpNo + ',\'' + response.data[i].EventDate + '\')">';
+                    htmlStr += '<i class="trash icon"></i></button></div>';
+                    htmlStr += '<div class="ui content"><label class="header" style="word-wrap: break-word;">' + response.data[i].EmpName + ' <div class="ui left tiny label">' + response.data[i].LeaveType + '</div><h5 class="ui teal header">' + response.data[i].Designation + '</h5></label>';
+                    htmlStr += '<div class="description">' + response.data[i].EventDate + '</div></div></div>';
+                    htmlStr += '</div>';
+                }
+
+                $(".divided.list").append(htmlStr);
+            } else {
+                $('.red.label').show();
+            }
+            $('.dimmer').hide();
+        }).fail(function() {
+            $('.dimmer').hide();
+        });
+    }
+
+    function ApproveAll() {
+        $('.dimmer').show();
+        var DateVal = $("#txtdate").val();
+        $.post(apiURL + 'Attendance/LeavesApproveAll/', {
+            "AttendanceDate": DateVal,
+            "UserId": empid
+        }, function(response) {
+            //debugger;
+        }).done(function(response) {
+            //debugger;
+            document.location.reload();
+        }).fail(function() {
+            $('.dimmer').hide();
+        });
+    }
+
+    function Approve(empNo, leaveDate) {
+        //debugger;
+        $('.dimmer').show();
+        var leaveData = [];
+        var lDate = leaveDate.split('-');
+
+        var objdata = {
+            EmpNo: empNo,
+            LeaveDate: lDate[0] + '/' + moment().month(lDate[1]).format("MM") + '/' + lDate[2],
+            UserId: empid
+        };
+        leaveData.push(objdata);
+
+        $.ajax({
+            type: 'POST',
+            url: apiURL + 'Attendance/AlternateLeaveApprove',
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify(leaveData),
+            success: function(result) {
+                //debugger;
+                if (result.data == 'Success') {
+                    document.location.reload();
+                } else {
+                    $(".dimmer").hide();
+                    alert('Error occurred while submitting data.');
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('Error occurred while submitting data.\n\r' + xhr.responseText);
+                $(".dimmer").hide();
+            }
+        });
+    }
+
+    function Reject(empNo, leaveDate) {
+        //debugger;
+        $('.dimmer').show();
+        $.post(apiURL + 'Attendance/LeaveReject/', {
+            "EmpNo": empNo,
+            "LeaveDate": leaveDate,
+            "UserId": empid
+        }, function(response) {
+            //debugger;
+        }).done(function(response) {
+            getLeavesToApprove();
+        }).fail(function() {
+            $('.dimmer').hide();
+        });
+    }
+
 </script>
