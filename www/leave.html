@@ -295,8 +295,17 @@
 
                 html = html + "</table>";
                 $('#fromdate').append(html);
+
+                LeaveTypes();
+                $(".dimmer").hide();
             }
-            LeaveTypes();
+            else {
+                prevdate = [];
+                setTimeout(documentLoad(), 3000);
+            }
+        }).fail(function() {
+            //debugger;
+            documentLoad();
         });
     }
 
@@ -457,7 +466,8 @@
             else
                 m = new Date(year, month, 1).getMonth();
 
-            var isfutureDate = false, isbeforeDate = false;
+            var isfutureDate = false,
+                isbeforeDate = false;
 
             isbeforeDate = moment(year + '-' + (m + 1) + '-' + obj1).isBefore(moment().subtract(3, 'days'));
             if (chkValue == "8")
