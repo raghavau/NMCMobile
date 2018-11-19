@@ -49,6 +49,9 @@
     var apiURL = 'http://175.101.102.102/NtraktApi/api/';
     //var apiURL = 'http://narayanagroup.co.in/NtraktApi/api/';
     var qsParm = new Array();
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth();
 
     document.addEventListener("deviceready", onDeviceReady, false);
 
@@ -81,11 +84,13 @@
 
     $(document).ready(function() {
         qs();
-        $(".dimmer").show();
-        var date = new Date();
-        var year = date.getFullYear();
-        var month = date.getMonth();
+        $(".dimmer").hide();
 
+        documentLoad();
+    });
+
+    function documentLoad() {
+        $(".dimmer").show();
         var cnt = null;
 
         if (parseInt(date.getDate()) > 25)
@@ -156,10 +161,13 @@
 
                 html = html + "</table>";
                 $('#fromdate').append(html);
+                $(".dimmer").hide();
+            } else {
+                prevdate = [];
+                setTimeout(documentLoad(), 3000);
             }
-            $(".dimmer").hide();
         });
-    });
+    }
 
     function DateSelect(obj, obj1, obj2) {}
 

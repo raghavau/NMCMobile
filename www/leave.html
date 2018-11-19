@@ -23,8 +23,22 @@
                 <div class="ui red ribbon label">Leave Request</div><br><br>
                 <div class="ui form">
                     <div class="grouped fields">
-                        <label>Leave Type</label>
+                        <label>Type</label>
+                        <select class="ui fluid dropdown" id="selType" name="selType">
+                            <!--<option value="0" selected>Select</option>
+                            <option value="1">Leave</option>
+                            <option value="2">OnDuty</option>
+                            <option value="3">Manual Present</option>
+                            <option value="4">UnPaid Leave</option>
+                            <option value="5">Absent</option>-->
+                        </select>
+                    </div>
+                    <div class="grouped fields" id="divLeave" name="divLeave">
+                        <label>Leave</label>
                         <div id="divChk" class="inline fields"></div>
+                        <div id="divDates" class="fields">
+                            <select class='ui fluid dropdown' id='selmanualLeaveType' name='selmanualLeaveType'></select>
+                        </div>
                     </div>
                     <center>
                         <div id="leavecount"></div>
@@ -34,7 +48,7 @@
                         <!--<i class='circle green small icon'></i>Leave
                         <i class='stop circle green small icon'></i>Halfday Leave-->
                     </center>
-                    <div class="field">
+                    <!--<div class="field">
                         <label>If Halfday, please check.</label>
                         <div class="ui checkbox hd">
                             <input name="example" type="checkbox" id="halfday">
@@ -50,7 +64,7 @@
                             <input name='example3' type='radio' value='2'>
                             <label>Afternoon</label>
                         </div>
-                    </div>
+                    </div>-->
                     <div class="field" id="alternatePnl">
                         <label>Alternate</label>
                         <select id="alternateUser" name="alternateUser" class="ui dropdown"></select>
@@ -84,9 +98,12 @@
     var prevdate = [],
         selectedDates = [],
         selectedObjects = [],
+        selectedArray = [],
+        manualLeaves = [],
+        hasOption = [],
         d = 26,
         e = 0,
-        f, color;
+        f, color, leaveStatus = 'N';
     var chkValue = null,
         hflday = false,
         hlfvalue = null,
@@ -148,6 +165,9 @@
 
         $("#leavecount").hide();
         $("#alternatePnl").hide();
+        $("#divLeave").hide();
+        $("#divDates").hide();
+
         documentLoad();
 
         $(".ui.checkbox.hd").checkbox({
@@ -177,13 +197,17 @@
             if ($('#dates').val() == "") {
                 $(this).val('');
                 return false;
-            } else if (chkValue == null) {
-                $(this).val('');
-                return false;
-            } else if (hflday == true && hlfvalue == null) {
-                $(this).val('');
-                return false;
-            } else if (selectedDates.length == 0) {
+            } else if (leaveStatus == "L" || leaveStatus == "O") {
+                if (chkValue == null) {
+                    $(this).val('');
+                    return false;
+                }
+            }
+            /*else if (hflday == true && hlfvalue == null) {
+                           $(this).val('');
+                           return false;
+                       }*/
+            if (selectedDates.length == 0) {
                 $(this).val('');
                 return false;
             } else if (hflday == true && selectedDates.length > 1) {
@@ -193,6 +217,37 @@
                 $("#request").removeClass('disabled');
             } else {
                 $("#request").addClass('disabled');
+            }
+        });
+
+        $("#selType").change(function() {
+            var selectedType = this.value;
+            $("#request").addClass('disabled');
+            $("#txtReason").val('');
+            $("#divLeave").hide();
+            $("#divDates").hide();
+            for (var i = 0; i <= selectedObjects.length - 1; i++) {
+                $('#' + selectedObjects[i])[0].className = 'day';
+            }
+
+            selectedDates = [];
+            selectedObjects = [];
+            //debugger;
+            selectedArray = jQuery.grep(hasOption, function(data, i) {
+                return data.LeaveStatus == selectedType;
+            });
+
+            if (selectedArray.length > 0) {
+                if (selectedArray[0].HasOption == "L") {
+                    $("#divLeave").show();
+                    leaveStatus = 'L';
+                    LeaveTypes(selectedType);
+                } else if (selectedArray[0].HasOption == "O") {
+                    $("#divLeave").show();
+                    $("#divDates").show();
+                    leaveStatus = 'O';
+                    LeaveTypes(selectedType);
+                }
             }
         });
 
@@ -210,7 +265,10 @@
             var inputval = $(this)[0].firstChild.value;
             if (boolval) {
                 chkValue = inputval;
-                LeavesToAvail($(this)[0].textContent.trim());
+                if (leaveStatus == 'L')
+                    LeavesToAvail($(this)[0].textContent.trim());
+                else if (leaveStatus == 'O')
+                    ManualLeaves();
 
                 for (var i = 0; i <= selectedObjects.length - 1; i++) {
                     $('#' + selectedObjects[i])[0].className = 'day';
@@ -241,6 +299,7 @@
         }).done(function(response) {
             //debugger;
             if (response.data.length > 0) {
+                manualLeaves = response.data;
                 var header1 = null,
                     header2 = null;
 
@@ -295,11 +354,9 @@
 
                 html = html + "</table>";
                 $('#fromdate').append(html);
-
-                LeaveTypes();
+                LeaveStatus();
                 $(".dimmer").hide();
-            }
-            else {
+            } else {
                 prevdate = [];
                 setTimeout(documentLoad(), 3000);
             }
@@ -309,14 +366,44 @@
         });
     }
 
-    function LeaveTypes() {
+    function LeaveStatus() {
+        //debugger;
+        $(".dimmer").show();
+        $("#selType").empty();
+        hasOption = [];
+        $.get(apiURL + 'Attendance/LeaveStatus/', function(response) {
+            //debugger;
+            hasOption = jQuery.grep(response.data, function(data, i) {
+                //debugger;
+                return data.HasOption != 'N';
+            });
+            var htmlStr = '';
+            htmlStr += "<option value='0' seleted>Select</option>";
+            for (i = 0; i <= response.data.length - 1; i++) {
+                htmlStr += "<option value='" + response.data[i].LeaveStatus + "'>" + response.data[i].LeaveTemplateName + "</option>";
+            }
+            $("#selType").append(htmlStr);
+        }).done(function() {
+
+        });
+        $(".dimmer").hide();
+    }
+
+    function LeaveTypes(status) {
         $(".dimmer").show();
         $.get(apiURL + 'Attendance/LeaveTypes/' + $("#hempid").val(), function(response) {
             //debugger;
+            $("#divChk").empty();
+            selectedArray = jQuery.grep(response.data, function(data, i) {
+                //debugger;
+                return data.LeaveStatus == status;
+            });
             var htmlStr = '';
-            for (i = 0; i <= response.data.length - 1; i++) {
-                if (parseInt(response.data[i].LeaveCount) > 0)
-                    htmlStr += "<div class='field'><div class='ui toggle checkbox lt'><input name='example2' type='radio' value='" + response.data[i].LeaveTypeSlno + "'><label> " + response.data[i].LeaveType + " </label></div></div>";
+            for (i = 0; i <= selectedArray.length - 1; i++) {
+                if (status == "2" && parseInt(selectedArray[i].LeaveCount) > 0)
+                    htmlStr += "<div class='field'><div class='ui toggle checkbox lt'><input name='example2' type='radio' value='" + selectedArray[i].LeaveTypeSlno + "'><label> " + selectedArray[i].LeaveType + " </label></div></div>";
+                else
+                    htmlStr += "<div class='field'><div class='ui toggle checkbox lt'><input name='example2' type='radio' value='" + selectedArray[i].LeaveTypeSlno + "'><label> " + selectedArray[i].LeaveType + " </label></div></div>";
             }
             $("#divChk").append(htmlStr);
         }).done(function() {
@@ -372,16 +459,52 @@
         $(".dimmer").hide();
     }
 
+    function ManualLeaves() {
+        //debugger;
+        $("#selmanualLeaveType").empty();
+        selectedArray = [];
+        html = "";
+        if (chkValue == null) {
+            $(this).val('');
+            return;
+        } else {
+            if (manualLeaves.length > 0) {
+                if (chkValue == "2") {
+                    selectedArray = jQuery.grep(manualLeaves, function(data, i) {
+                        return data.IsHoliday == 'Y' && data.DurationInHours >= 6;
+                    });
+                } else if (chkValue == "9") {
+                    selectedArray = jQuery.grep(manualLeaves, function(data, i) {
+                        return data.DurationInHours >= 12;
+                    });
+                }
+                //debugger;
+
+                if (selectedArray.length > 0) {
+                    if (selectedArray.length > 1) {
+                        html += "<option value='0' selected>Select</option>";
+                    }
+                    for (var i = 0; i <= selectedArray.length - 1; i++) {
+                        html += "<option>" + moment(selectedArray[i].AttendanceDate).format("DD/MM/YYYY") + "</option>"
+                    }
+                }
+                $("#selmanualLeaveType").append(html);
+            }
+        }
+    }
+
     function SaveData() {
         //debugger;
         var userData = [];
         if ($('#dates').val() == "") {
             alert('Please Select Leave Date');
             return false;
-        } else if (chkValue == null) {
-            alert('Please Select Leave Type');
-            return false;
-        } else if (hflday == true && hlfvalue == null) {
+        }
+        /*else if (chkValue == null) {
+                   alert('Please Select Leave Type');
+                   return false;
+        }*/
+        else if (hflday == true && hlfvalue == null) {
             alert('Please Select Halfday Type');
             return false;
         } else if (hflday == true && selectedDates.length > 1) {
@@ -398,7 +521,8 @@
             for (var i = 0; i <= selectedDates.length - 1; i++) {
                 var fhs = null,
                     shs = null;
-                if (hlfvalue == null) {
+                fhs = shs = $("#selType").val();
+                /*if (hlfvalue == null) {
                     fhs = 2;
                     shs = 2;
                 } else {
@@ -412,7 +536,10 @@
                             shs = 2;
                             break;
                     }
-                }
+                }*/
+
+                var CompDate = null;
+                CompDate = $("#selmanualLeaveType").val();
 
                 var objdata = {
                     EmpNo: $("#hempid").val(),
@@ -421,7 +548,8 @@
                     LeaveReason: $("#txtReason").val(),
                     LeaveTemplate: chkValue,
                     LeaveDate: selectedDates[i],
-                    AlternateEmpNo: $("#alternateUser").val() == null ? 0 : $("#alternateUser").val()
+                    AlternateEmpNo: $("#alternateUser").val() == null ? 0 : $("#alternateUser").val(),
+                    CompensatoryLeaveDate: CompDate
                 };
 
                 userData.push(objdata);
@@ -456,57 +584,121 @@
 
     function DateSelect(obj, obj1, obj2) {
         //debugger;
-        if (chkValue == null) {
-            $(this).val('');
-            return;
-        } else {
-            var m = null;
-            if (parseInt(obj1) > 25)
-                m = new Date(year, month, 0).getMonth();
-            else
-                m = new Date(year, month, 1).getMonth();
+        var m = null;
+        if (parseInt(obj1) > 25)
+            m = new Date(year, month, 0).getMonth();
+        else
+            m = new Date(year, month, 1).getMonth();
+        //console.log(moment(new Date(year, m, obj1)).format("ddd"));
+        var isfutureDate = false,
+            isbeforeDate = false;
+        var selected = $("#selType option:selected").val()
 
-            var isfutureDate = false,
-                isbeforeDate = false;
-
-            isbeforeDate = moment(year + '-' + (m + 1) + '-' + obj1).isBefore(moment().subtract(3, 'days'));
-            if (chkValue == "8")
-                isfutureDate = moment(new Date(year, m, obj1)).isAfter(new Date());
-
-            if (!isfutureDate && !isbeforeDate) {
-                var allowcount = parseInt($("#hleavestoavail").val()) - holdday.length;
-                if (selectedDates.length <= parseInt(allowcount - 1)) {
-                    if (selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1))) == -1) {
-                        $('#' + obj)[0].className = 'selected';
-                        selectedDates.push($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1)));
-                        selectedObjects.push(obj);
+        isbeforeDate = moment(year + '-' + (m + 1) + '-' + obj1).isBefore(moment().subtract(3, 'days'));
+        if (chkValue == "8")
+            isfutureDate = moment(new Date(year, m, obj1)).isAfter(new Date());
+        if (leaveStatus == 'L') {
+            if (chkValue == null) {
+                $(this).val('');
+                return;
+            } else {
+                if (!isfutureDate && !isbeforeDate) {
+                    var allowcount = parseInt($("#hleavestoavail").val()) - holdday.length;
+                    if (selectedDates.length <= parseInt(allowcount - 1)) {
+                        if (selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1))) == -1) {
+                            $('#' + obj)[0].className = 'selected';
+                            selectedDates.push($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1)));
+                            selectedObjects.push(obj);
+                        } else {
+                            if (parseInt(obj2) == 3)
+                                $('#' + obj)[0].className = 'day half-day';
+                            else if (parseInt(obj2) == 1)
+                                $('#' + obj)[0].className = 'day half-day-bottom';
+                            else if (parseInt(obj2) == 2)
+                                $('#' + obj)[0].className = 'day half-day-top';
+                            else
+                                $('#' + obj)[0].className = 'day';
+                            var i = selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1)));
+                            selectedDates.splice(i, 1);
+                            selectedObjects.splice(i, 1);
+                        }
                     } else {
-                        if (parseInt(obj2) == 3)
-                            $('#' + obj)[0].className = 'day half-day';
-                        else if (parseInt(obj2) == 1)
-                            $('#' + obj)[0].className = 'day half-day-bottom';
-                        else if (parseInt(obj2) == 2)
-                            $('#' + obj)[0].className = 'day half-day-top';
-                        else
-                            $('#' + obj)[0].className = 'day';
-                        var i = selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1)));
-                        selectedDates.splice(i, 1);
-                        selectedObjects.splice(i, 1);
+                        if (selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1))) != -1) {
+                            if (parseInt(obj2) == 3)
+                                $('#' + obj)[0].className = 'day half-day';
+                            else if (parseInt(obj2) == 1)
+                                $('#' + obj)[0].className = 'day half-day-bottom';
+                            else if (parseInt(obj2) == 2)
+                                $('#' + obj)[0].className = 'day half-day-top';
+                            else
+                                $('#' + obj)[0].className = 'day';
+                            var i = selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1)));
+                            selectedDates.splice(i, 1);
+                            selectedObjects.splice(i, 1);
+                        }
                     }
+                }
+            }
+        } else if (leaveStatus == 'O') {
+            if (chkValue == null) {
+                $(this).val('');
+                return;
+            } else {
+                if (!isbeforeDate) {
+                    var allowcount = 1;
+                    if (selectedDates.length <= parseInt(allowcount - 1)) {
+                        if (selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1))) == -1) {
+                            $('#' + obj)[0].className = 'selected';
+                            selectedDates.push($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1)));
+                            selectedObjects.push(obj);
+                        } else {
+                            if (parseInt(obj2) == 3)
+                                $('#' + obj)[0].className = 'day half-day';
+                            else if (parseInt(obj2) == 1)
+                                $('#' + obj)[0].className = 'day half-day-bottom';
+                            else if (parseInt(obj2) == 2)
+                                $('#' + obj)[0].className = 'day half-day-top';
+                            else
+                                $('#' + obj)[0].className = 'day';
+                            var i = selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1)));
+                            selectedDates.splice(i, 1);
+                            selectedObjects.splice(i, 1);
+                        }
+                    } else {
+                        if (selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1))) != -1) {
+                            if (parseInt(obj2) == 3)
+                                $('#' + obj)[0].className = 'day half-day';
+                            else if (parseInt(obj2) == 1)
+                                $('#' + obj)[0].className = 'day half-day-bottom';
+                            else if (parseInt(obj2) == 2)
+                                $('#' + obj)[0].className = 'day half-day-top';
+                            else
+                                $('#' + obj)[0].className = 'day';
+                            var i = selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1)));
+                            selectedDates.splice(i, 1);
+                            selectedObjects.splice(i, 1);
+                        }
+                    }
+                }
+            }
+        } else if (parseInt(selected) > 0 && leaveStatus == 'N') {
+            if (!isbeforeDate) {
+                if (selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1))) == -1) {
+                    $('#' + obj)[0].className = 'selected';
+                    selectedDates.push($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1)));
+                    selectedObjects.push(obj);
                 } else {
-                    if (selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1))) != -1) {
-                        if (parseInt(obj2) == 3)
-                            $('#' + obj)[0].className = 'day half-day';
-                        else if (parseInt(obj2) == 1)
-                            $('#' + obj)[0].className = 'day half-day-bottom';
-                        else if (parseInt(obj2) == 2)
-                            $('#' + obj)[0].className = 'day half-day-top';
-                        else
-                            $('#' + obj)[0].className = 'day';
-                        var i = selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1)));
-                        selectedDates.splice(i, 1);
-                        selectedObjects.splice(i, 1);
-                    }
+                    if (parseInt(obj2) == 3)
+                        $('#' + obj)[0].className = 'day half-day';
+                    else if (parseInt(obj2) == 1)
+                        $('#' + obj)[0].className = 'day half-day-bottom';
+                    else if (parseInt(obj2) == 2)
+                        $('#' + obj)[0].className = 'day half-day-top';
+                    else
+                        $('#' + obj)[0].className = 'day';
+                    var i = selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1)));
+                    selectedDates.splice(i, 1);
+                    selectedObjects.splice(i, 1);
                 }
             }
         }
