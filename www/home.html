@@ -94,6 +94,10 @@
 
     $(document).ready(function() {
         qs();
+        OnLoad();
+    });
+
+    function OnLoad() {
         $(".dimmer").show();
         $.get(apiURL + 'User/Info/' + $("#hempid").val(), function(response) {
             //debugger;
@@ -105,7 +109,9 @@
             //debugger;
             $(".dimmer").hide();
             //$("#empimg").attr('src', apiURL + 'User/ShowPicture/' + $("#hempid").val());
+        }).fail(function() {
+            setTimeout(OnLoad(), 3000);
         });
-    });
+    }
 
 </script>
