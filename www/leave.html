@@ -41,12 +41,18 @@
                             <!--<select class='ui fluid dropdown' id='selmanualLeaveType' name='selmanualLeaveType'></select>-->
                         </div>
                     </div>
+                    <div class="grouped fields" id="divOD" name="divOD">
+                        <label>Purpose of Visit</label>
+                        <input type="text" id="txtODPurpose" name="txtODPurpose" class="ui input" />
+                        <label>Place of Visit</label>
+                        <input type="text" id="txtODPlace" name="txtODPlace" class="ui input" />
+                    </div>
                     <center>
                         <div id="leavecount"></div>
                         <div id="fromdate" class="datepicker"></div><br>
-                        <i class='circle red small icon'></i>No Data
+                        <!--<i class='circle red small icon'></i>No Data
                         <i class='circle blue small icon'></i>Holiday
-                        <!--<i class='circle green small icon'></i>Leave
+                        <i class='circle green small icon'></i>Leave
                         <i class='stop circle green small icon'></i>Halfday Leave-->
                     </center>
                     <!--<div class="field">
@@ -107,9 +113,7 @@
         f, color, leaveStatus = 'N';
     var chkValue = null,
         hflday = false,
-        hlfvalue = null,
-        disableDays = [],
-        colors = ["green", "blue", "red", "orange", "teal", "brown", "purple", "yellow"];
+        hlfvalue = null;
 
     var date = new Date();
     var year = date.getFullYear();
@@ -119,15 +123,7 @@
     var apiURL = 'http://175.101.102.102/NtraktApi/api/';
     //var apiURL = 'http://narayanagroup.co.in/NtraktApi/api/';
     var qsParm = new Array(),
-        absent = new Array(),
-        altday = new Array(),
-        fullday = new Array(),
-        holiday = new Array(),
-        halfday = new Array(),
-        holdday = new Array(),
-        apprday = new Array(),
-        rejday = new Array(),
-        days = new Array();
+        holdday = new Array();
 
     document.addEventListener("deviceready", onDeviceReady, false);
 
@@ -168,6 +164,7 @@
         $("#alternatePnl").hide();
         $("#divLeave").hide();
         $("#divDates").hide();
+        $("#divOD").hide();
 
         documentLoad();
 
@@ -198,7 +195,7 @@
             if ($('#dates').val() == "") {
                 $(this).val('');
                 return false;
-            } else if (leaveStatus == "L" || leaveStatus == "O") {
+            } else if (leaveStatus == "L" || leaveStatus == "M") {
                 if (chkValue == null) {
                     $(this).val('');
                     return false;
@@ -227,6 +224,12 @@
             $("#txtReason").val('');
             $("#divLeave").hide();
             $("#divDates").hide();
+            $("#divDates").empty();
+            $("#alternatePnl").hide();
+            $('#alternateUser').dropdown('clear');
+            $("#divOD").hide();
+            $("#txtODPurpose").val('');
+            $("#txtODPlace").val('');
             leaveStatus = 'N';
             for (var i = 0; i <= selectedObjects.length - 1; i++) {
                 //$('#' + selectedObjects[i])[0].className = 'day';
@@ -246,11 +249,14 @@
                     $("#divLeave").show();
                     leaveStatus = 'L';
                     LeaveTypes(selectedType);
-                } else if (selectedArray[0].HasOption == "O") {
+                } else if (selectedArray[0].HasOption == "M") {
                     $("#divLeave").show();
                     $("#divDates").show();
-                    leaveStatus = 'O';
+                    leaveStatus = 'M';
                     LeaveTypes(selectedType);
+                } else if (selectedArray[0].HasOption == "O") {
+                    leaveStatus = 'O';
+                    $("#divOD").show();
                 }
             }
         });
@@ -274,7 +280,7 @@
                 chkValue = inputval;
                 if (leaveStatus == 'L')
                     LeavesToAvail($(this)[0].textContent.trim());
-                else if (leaveStatus == 'O')
+                else if (leaveStatus == 'M')
                     ManualLeaves();
 
                 for (var i = 0; i <= selectedObjects.length - 1; i++) {
@@ -428,7 +434,8 @@
                 $("#leavecount").append(htmlStr);
             }).done(function() {
                 $(".dimmer").hide();
-                AlternateUsers();
+                if (leaveStatus == 'L')
+                    AlternateUsers();
             });
         });
         $(".dimmer").hide();
@@ -497,6 +504,19 @@
                         return data.DurationInHours >= 12;
                     });
                 }
+
+                var compArray = [];
+                compArray = jQuery.grep(manualLeaves, function(data, i) {
+                    return data.CompensateLeaveDate != "";
+                });
+
+                for (var i = 0; i <= selectedArray.length - 1; i++) {
+                    for (var j = 0; j <= compArray.length - 1; j++) {
+                        if (selectedArray[i].AttendanceDate == compArray[j].CompensateLeaveDate) {
+                            selectedArray.splice(i, 1);
+                        }
+                    }
+                }
                 //debugger;
                 html += "<select class='ui fluid dropdown' id='selmanualLeaveType' name='selmanualLeaveType'>";
                 if (selectedArray.length > 0) {
@@ -504,7 +524,13 @@
                         html += "<option value='0' selected>Select</option>";
                     }
                     for (var i = 0; i <= selectedArray.length - 1; i++) {
-                        html += "<option>" + moment(selectedArray[i].AttendanceDate).format("DD/MM/YYYY") + "</option>"
+                        var attenDate = selectedArray[i].AttendanceDate;
+                        /*selectedArray[i].AttendanceDate.split(' ')[0].split('-')[1] + '-'
+                                                                + selectedArray[i].AttendanceDate.split(' ')[0].split('-')[0] + '-'
+                                                                + selectedArray[i].AttendanceDate.split(' ')[0].split('-')[2];*/
+                        //html += "<option>" + moment(attenDate, ["MM-DD-YYYY", "DD-MM-YYYY"]).format("DD/MM/YYYY") + " (" + selectedArray[i].InTime + " - " +
+                        html += "<option value='" + attenDate + "'>" + attenDate + " (" + selectedArray[i].InTime + " - " +
+                            selectedArray[i].OutTime + ")</option>";
                     }
                 }
                 html += "</select>";
@@ -524,18 +550,21 @@
         /*else if (chkValue == null) {
                    alert('Please Select Leave Type');
                    return false;
-        }*/
+        }
         else if (hflday == true && hlfvalue == null) {
             alert('Please Select Halfday Type');
             return false;
         } else if (hflday == true && selectedDates.length > 1) {
             alert('Please Select Only One Day for Halfday Leave Request');
             return false;
-        } else if ($("#alternateUser").val() == "0") {
-            alert('Please Select Alternate Employee');
-            $("#alternateUser").focus();
-            return false;
-        } else if ($('#txtReason').val() == "") {
+        }*/ else if (leaveStatus == 'L') {
+            if ($("#alternateUser").val() == "0") {
+                alert('Please Select Alternate Employee');
+                $("#alternateUser").focus();
+                return false;
+            }
+        }
+        if ($('#txtReason').val() == "") {
             alert('Please Enter Reason');
             return false;
         } else {
@@ -566,11 +595,11 @@
                     EmpNo: $("#hempid").val(),
                     FirstHalfStatus: fhs,
                     SecondHalfStatus: shs,
-                    LeaveReason: $("#txtReason").val(),
+                    LeaveReason: $("#txtReason").val() + ' ' + $("#txtODPurpose").val() + ' ' + $("#txtODPlace").val(),
                     LeaveTemplate: chkValue,
                     LeaveDate: selectedDates[i],
                     AlternateEmpNo: $("#alternateUser").val() == null ? 0 : $("#alternateUser").val(),
-                    CompensatoryLeaveDate: CompDate
+                    CompensateLeaveDate: CompDate
                 };
 
                 userData.push(objdata);
@@ -675,12 +704,12 @@
                     }
                 }
             }
-        } else if (leaveStatus == 'O') {
+        } else if (leaveStatus == 'M') {
             if (chkValue == null) {
                 $(this).val('');
                 return;
             } else {
-                if ($("#selmanualLeaveType").val() != undefined && $("#selmanualLeaveType").val() != null && $("#selmanualLeaveType").val() != "") {
+                if ($("#selmanualLeaveType").val() != undefined && $("#selmanualLeaveType").val() != null && $("#selmanualLeaveType").val() != "" && $("#selmanualLeaveType").val() != "0") {
 
                     if (!isbeforeDate) {
                         var allowcount = 1;
@@ -720,7 +749,7 @@
                     }
                 }
             }
-        } else if (parseInt(selected) > 0 && leaveStatus == 'N') {
+        } else if (parseInt(selected) > 0 && (leaveStatus == 'N' || leaveStatus == 'O')) {
             if (!isbeforeDate) {
                 if (selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1))) == -1) {
                     $('#' + obj)[0].className = 'selected';

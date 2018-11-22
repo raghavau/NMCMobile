@@ -275,13 +275,18 @@ body > .grid {
 }
 
 .leave-co {
-    background-color: #cc7f7f;
+    background-color: #ff6f69;
     color: white !important;
 }
 
 .leave-do {
     background-color: #65737e;
     color: white !important;
+}
+
+.leave-od {
+    background-color: #2CDBF9;
+    color: black !important;
 }
 
 .leave-wp {
