@@ -21,6 +21,30 @@
     <div class="ui column grid">
         <div class="column">
             <div class="ui stacked left aligned segment">
+                <div style="position: absolute; top: 1px; right: 5px; width: 15px; height: 15px; float: right;" id="divLegend">
+                    <img alt="" src="img/pie.png" width="15px" height="15px" />
+                    <div class="ui special popup">
+                        <div class="ui list">
+                            <div class="item"><span class="ui fluid label" style="background-color: #5dc779; color: white;">Casual Leave</span></div>
+                            <div class="item"><span class="ui fluid label" style="background-color: #ff7373; color: white;">Sick Leave</span></div>
+                            <div class="item"><span class="ui fluid label" style="background-color: #6897bb; color: white;">Compensate Off</span></div>
+                            <div class="item"><span class="ui fluid label" style="background-color: #65737e; color: white;">Day Off</span></div>
+                            <div class="item"><span class="ui fluid label" style="background-color: #598179; color: white;">OnDuty</span></div>
+                            <div class="item"><span class="ui fluid label" style="background-color: #ff0000; color: white;">Absent</span></div>
+                            <div class="item"><span class="ui fluid label" style="background-color: #a85c45; color: white;">Unpaid Leave</span></div>
+                            <!--<div class="item"><span style="color: #d7e4f5">Sunday</span></div>
+                            <div class="item"><span style="color: #91bbe4">Holiday</span></div>
+                            <div class="item"><span style="color: #dedede">No Data</span></div>-->
+                        </div>
+                    </div>
+
+                    <!--<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="svg1" width="25" height="25">
+                        <rect x="1" y="1" height="10" width="10" style="fill: #d62d20; fill-opacity: 0.6;" />
+                        <rect x="12" y="1" height="10" width="10" style="fill: #008744; fill-opacity: 0.6;" />
+                        <rect x="1" y="12" height="10" width="10" style="fill: #0057e7; fill-opacity: 0.6;" />
+                        <rect x="12" y="12" height="10" width="10" style="fill: #ffa700; fill-opacity: 0.6;" />
+                    </svg>-->
+                </div>
                 <div class="ui red ribbon label">Leave Request</div><br><br>
                 <div class="ui form">
                     <div class="grouped fields">
@@ -42,9 +66,9 @@
                         </div>
                     </div>
                     <div class="grouped fields" id="divOD" name="divOD">
-                        <label>Purpose of Visit</label>
+                        <label>Purpose of Visit <i class="icon red tiny asterisk"></i></label>
                         <input type="text" id="txtODPurpose" name="txtODPurpose" class="ui input" />
-                        <label>Place of Visit</label>
+                        <label>Place of Visit <i class="icon red tiny asterisk"></i></label>
                         <input type="text" id="txtODPlace" name="txtODPlace" class="ui input" />
                     </div>
                     <center>
@@ -73,12 +97,12 @@
                         </div>
                     </div>-->
                     <div class="field" id="alternatePnl">
-                        <label>Alternate</label>
+                        <label>Alternate <i class="icon red tiny asterisk"></i></label>
                         <select id="alternateUser" name="alternateUser" class="ui dropdown"></select>
                     </div>
                     <div class="field">
                         <input name="hidDates" id="hidDates" type="hidden">
-                        <label>Reason</label>
+                        <label>Reason <i class="icon red tiny asterisk"></i></label>
                         <textarea name="txtReason" id="txtReason" rows="3" cols="40"></textarea>
                     </div><br>
                 </div>
@@ -165,6 +189,10 @@
         $("#divLeave").hide();
         $("#divDates").hide();
         $("#divOD").hide();
+
+        $('#divLegend').popup({
+            popup: '.special.popup'
+        });
 
         documentLoad();
 
@@ -557,7 +585,8 @@
         } else if (hflday == true && selectedDates.length > 1) {
             alert('Please Select Only One Day for Halfday Leave Request');
             return false;
-        }*/ else if (leaveStatus == 'L') {
+        }*/
+        else if (leaveStatus == 'L') {
             if ($("#alternateUser").val() == "0") {
                 alert('Please Select Alternate Employee');
                 $("#alternateUser").focus();
@@ -589,7 +618,8 @@
                 }*/
 
                 var CompDate = null;
-                CompDate = $("#selmanualLeaveType").val();
+                if ($("#selmanualLeaveType").val() > 0)
+                    CompDate = $("#selmanualLeaveType").val();
 
                 var objdata = {
                     EmpNo: $("#hempid").val(),

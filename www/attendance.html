@@ -17,6 +17,30 @@
     <div class="ui column grid">
         <div class="column">
             <div class="ui stacked left aligned segment">
+                <div style="position: absolute; top: 1px; right: 5px; width: 15px; height: 15px; float: right;" id="divLegend">
+                    <img alt="" src="img/pie.png" width="15px" height="15px" />
+                    <div class="ui special popup">
+                        <div class="ui list">
+                            <div class="item"><span class="ui fluid label" style="background-color: #5dc779; color: white;">Casual Leave</span></div>
+                            <div class="item"><span class="ui fluid label" style="background-color: #ff7373; color: white;">Sick Leave</span></div>
+                            <div class="item"><span class="ui fluid label" style="background-color: #6897bb; color: white;">Compensate Off</span></div>
+                            <div class="item"><span class="ui fluid label" style="background-color: #65737e; color: white;">Day Off</span></div>
+                            <div class="item"><span class="ui fluid label" style="background-color: #598179; color: white;">OnDuty</span></div>
+                            <div class="item"><span class="ui fluid label" style="background-color: #ff0000; color: white;">Absent</span></div>
+                            <div class="item"><span class="ui fluid label" style="background-color: #a85c45; color: white;">Unpaid Leave</span></div>
+                            <!--<div class="item"><span style="color: #d7e4f5">Sunday</span></div>
+                            <div class="item"><span style="color: #91bbe4">Holiday</span></div>
+                            <div class="item"><span style="color: #dedede">No Data</span></div>-->
+                        </div>
+                    </div>
+
+                    <!--<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="svg1" width="25" height="25">
+                        <rect x="1" y="1" height="10" width="10" style="fill: #d62d20; fill-opacity: 0.6;" />
+                        <rect x="12" y="1" height="10" width="10" style="fill: #008744; fill-opacity: 0.6;" />
+                        <rect x="1" y="12" height="10" width="10" style="fill: #0057e7; fill-opacity: 0.6;" />
+                        <rect x="12" y="12" height="10" width="10" style="fill: #ffa700; fill-opacity: 0.6;" />
+                    </svg>-->
+                </div>
                 <div class="ui red ribbon label">Attendance</div><br><br>
                 <center>
                     <div id="fromdate" class="datepicker"></div><br>
@@ -86,6 +110,9 @@
         qs();
         $(".dimmer").hide();
 
+        $('#divLegend').popup({
+            popup: '.special.popup'
+        });
         documentLoad();
     });
 
