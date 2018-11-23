@@ -706,7 +706,7 @@
                             selectedObjects.push(obj);
                         } else {
                             if (parseInt(obj2) == 3)
-                                $('#' + obj)[0].className = 'day half-day';
+                                $('#' + obj)[0].className = 'day nodata';
                             else if (parseInt(obj2) == 1)
                                 $('#' + obj)[0].className = 'day half-day-bottom';
                             else if (parseInt(obj2) == 2)
@@ -720,7 +720,7 @@
                     } else {
                         if (selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1))) != -1) {
                             if (parseInt(obj2) == 3)
-                                $('#' + obj)[0].className = 'day half-day';
+                                $('#' + obj)[0].className = 'day nodata';
                             else if (parseInt(obj2) == 1)
                                 $('#' + obj)[0].className = 'day half-day-bottom';
                             else if (parseInt(obj2) == 2)
@@ -750,7 +750,7 @@
                                 selectedObjects.push(obj);
                             } else {
                                 if (parseInt(obj2) == 3)
-                                    $('#' + obj)[0].className = 'day half-day';
+                                    $('#' + obj)[0].className = 'day nodata';
                                 else if (parseInt(obj2) == 1)
                                     $('#' + obj)[0].className = 'day half-day-bottom';
                                 else if (parseInt(obj2) == 2)
@@ -764,7 +764,7 @@
                         } else {
                             if (selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1))) != -1) {
                                 if (parseInt(obj2) == 3)
-                                    $('#' + obj)[0].className = 'day half-day';
+                                    $('#' + obj)[0].className = 'day nodata';
                                 else if (parseInt(obj2) == 1)
                                     $('#' + obj)[0].className = 'day half-day-bottom';
                                 else if (parseInt(obj2) == 2)
@@ -787,7 +787,7 @@
                     selectedObjects.push(obj);
                 } else {
                     if (parseInt(obj2) == 3)
-                        $('#' + obj)[0].className = 'day half-day';
+                        $('#' + obj)[0].className = 'day nodata';
                     else if (parseInt(obj2) == 1)
                         $('#' + obj)[0].className = 'day half-day-bottom';
                     else if (parseInt(obj2) == 2)
