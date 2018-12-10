@@ -37,6 +37,13 @@
             opacity: 1;
         }
 
+        .sticky {
+            position: absolute;
+            bottom: 0px;
+            width: 100%;
+            text-align: center;
+        }
+
     </style>
 </head>
 
@@ -90,20 +97,21 @@
                     <form class="ui form">
                         <div class="field">
                             <div class="ui left icon input">
-                                <i class="user circle icon"></i>
-                                <input id="pin" placeholder="Enter PIN" type="password">
+                                <i class="unlock alternate icon"></i>
+                                <input id="pin" placeholder="Enter PIN" type="password" maxlength="5">
                             </div>
                         </div>
                         <div class="field">
                             <div class="ui left icon input">
-                                <i class="call square icon"></i>
-                                <input id="cnfpin" placeholder="Confirm PIN" type="number">
+                                <i class="unlock alternate icon"></i>
+                                <input id="cnfpin" placeholder="Confirm PIN" type="number" maxlength="5">
                             </div>
                         </div>
                         <button class="ui green fluid submit button right labeled icon" type="button" id="confirm">
                             <i class="checkmark icon"></i>
                             <span>Confirm</span>
                         </button>
+                        <i class="icon tiny red asterisk"></i> <span class="ui tiny red header">PIN should contains 5 numeric letters only.</span>
                         <div class="ui error message"></div>
                     </form>
                 </div>
@@ -113,12 +121,20 @@
     <div class="ui active inverted page dimmer">
         <div class="ui large text loader">Loading Please Wait.....</div>
     </div>
+    <div class="sticky">
+        <a href="index.html" class="ui animated bottom attached red button" tabindex="0">
+            <div class="visible content">Cancel</div>
+            <div class="hidden content">
+                <i class="home icon"></i>
+            </div>
+        </a>
+    </div>
     <input type="hidden" id="hempid" />
 </body>
 
 </html>
 <script type="text/javascript">
-    //var apiURL = 'http://192.168.0.44/NtraktApi/api/';
+    //var apiURL = 'http://192.168.1.44/NtraktApi/api/';
     var apiURL = 'http://175.101.102.102/NtraktApi/api/';
     //var apiURL = 'http://narayanagroup.co.in/NtraktApi/api/';
     var qsParm = new Array();
@@ -161,6 +177,18 @@
             }
         });
 
+        $("#pin").keypress(function(e) {
+            if ($(this)[0].value.trim().length > 4) {
+                return false;
+            }
+        });
+
+        $("#cnfpin").keypress(function(e) {
+            if ($(this)[0].value.trim().length > 4) {
+                return false;
+            }
+        });
+
         $("#empid").keyup(function() {
             //debugger;
             if ($(this)[0].value.trim().length > 0) {
@@ -172,29 +200,47 @@
 
         if (empid.trim().length > 0) {
             $('.dimmer').show();
-            $.get(apiURL + 'User/Info/' + $("#hempid").val(), function(response) {
+            $.get(apiURL + 'CheckOperator/' + empid, function(response) {
                 //debugger;
             }).done(function(response) {
                 //debugger;
-                if (response.data.length > 0) {
-                    $("#empid").val(response.data[0].BioEmpNo);
-                    $("#mobile").val(response.data[0].MobileNo);
-                    var userData = {};
-                    userData.EmpNo = empid;
-                    userData.MobileNo = $("#mobile").val();
-                    $.post(apiURL + 'User/OTP', userData, function(response) {
+                if (response.data == 'Success') {
+                    $.get(apiURL + 'User/Info/' + empid, function(response) {
                         //debugger;
-                    }).done(function() {
+                    }).done(function(response) {
+                        //debugger;
+                        if (response.data.length > 0) {
+                            $("#empid").val(response.data[0].BioEmpNo);
+                            $("#mobile").val(response.data[0].MobileNo);
+                            var userData = {};
+                            userData.EmpNo = empid;
+                            userData.MobileNo = $("#mobile").val();
+                            $.post(apiURL + 'User/OTP', userData, function(response) {
+                                //debugger;
+                            }).done(function() {
+                                $('.dimmer').hide();
+                                $('#send').hide();
+                                $('#show').show();
+                                $('#otp').focus();
+                            });
+                        } else {
+                            alert('To access mobile app,please contact HR Dept.');
+                            $('.dimmer').hide();
+                        }
+                    }).fail(function() {
                         $('.dimmer').hide();
-                        $('#send').hide();
-                        $('#show').show();
-                        $('#otp').focus();
+                        alert('To access mobile app,please contact HR Dept.');
+                        $("#empid").focus();
                     });
                 } else {
-                    alert('Invalid No Please Check.');
                     $('.dimmer').hide();
-                    window.location.href = 'index.html';
+                    alert('To access mobile app,please contact HR Dept.');
+                    $("#empid").focus();
                 }
+            }).fail(function() {
+                $('.dimmer').hide();
+                alert('To access mobile app,please contact HR Dept.');
+                $("#empid").focus();
             });
         }
 
@@ -202,31 +248,46 @@
             $('.dimmer').show();
             empid = $('#empid').val();
             if (empid.trim().length > 0) {
-                $.get(apiURL + 'User/Info/' + empid, function(response) {
+                $.get(apiURL + 'CheckOperator/' + empid, function(response) {
                     //debugger;
                 }).done(function(response) {
                     //debugger;
-                    if (response.data.length > 0) {
-                        $("#empid").val(response.data[0].BioEmpNo);
-                        $("#mobile").val(response.data[0].MobileNo);
-                        var userData = {};
-                        userData.EmpNo = empid;
-                        userData.MobileNo = $("#mobile").val();
-                        $.post(apiURL + 'User/OTP', userData, function(response) {
+                    if (response.data == 'Success') {
+                        $.get(apiURL + 'User/Info/' + empid, function(response) {
                             //debugger;
-                        }).done(function() {
+                        }).done(function(response) {
+                            //debugger;
+                            if (response.data.length > 0) {
+                                $("#empid").val(response.data[0].BioEmpNo);
+                                $("#mobile").val(response.data[0].MobileNo);
+                                var userData = {};
+                                userData.EmpNo = empid;
+                                userData.MobileNo = $("#mobile").val();
+                                $.post(apiURL + 'User/OTP', userData, function(response) {
+                                    //debugger;
+                                }).done(function() {
+                                    $('.dimmer').hide();
+                                    $('#send').hide();
+                                    $('#show').show();
+                                    $('#otp').focus();
+                                });
+                            } else {
+                                alert('To access mobile app,please contact HR Dept.');
+                                $('.dimmer').hide();
+                            }
+                        }).fail(function() {
                             $('.dimmer').hide();
-                            $('#send').hide();
-                            $('#show').show();
-                            $('#otp').focus();
+                            alert('To access mobile app,please contact HR Dept.');
+                            $("#empid").focus();
                         });
                     } else {
-                        alert('Invalid No Please Check.');
                         $('.dimmer').hide();
+                        alert('To access mobile app,please contact HR Dept.');
+                        $("#empid").focus();
                     }
                 }).fail(function() {
                     $('.dimmer').hide();
-                    alert('Invalid No.');
+                    alert('To access mobile app,please contact HR Dept.');
                     $("#empid").focus();
                 });
             }
@@ -268,9 +329,13 @@
                 userData.UniqueId = $("#pin").val();
                 $.post(apiURL + 'User/UpdatePin', userData, function(response) {
                     //debugger;
-                }).done(function() {
-                    $('.dimmer').hide();
-                    window.location.href = 'index.html';
+                }).done(function(response) {
+                    if (response.data == 'Success') {
+                        window.location.href = 'index.html';
+                    } else {
+                        alert('Error in PIN Update. Please try again.')
+                        $('.dimmer').hide();
+                    }
                 });
             }
         });

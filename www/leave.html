@@ -32,8 +32,9 @@
                             <div class="item"><span class="ui fluid label" style="background-color: #598179; color: white;">OnDuty</span></div>
                             <div class="item"><span class="ui fluid label" style="background-color: #ff0000; color: white;">Absent</span></div>
                             <div class="item"><span class="ui fluid label" style="background-color: #a85c45; color: white;">Unpaid Leave</span></div>
+                            <div class="item"><span class="ui fluid label" style="background-color: #666666; color: white;">Reject</span></div>
+                            <div class="item"><span class="ui fluid label" style="background-color: #91bbe4; color: white;">Holiday</span></div>
                             <!--<div class="item"><span style="color: #d7e4f5">Sunday</span></div>
-                            <div class="item"><span style="color: #91bbe4">Holiday</span></div>
                             <div class="item"><span style="color: #dedede">No Data</span></div>-->
                         </div>
                     </div>
@@ -344,16 +345,16 @@
             //debugger;
             if (response.data.length > 0) {
                 manualLeaves = response.data;
-                var header1 = null,
-                    header2 = null;
+                var header1 = response.data[0].Header1,
+                    header2 = response.data[0].Header2;
 
-                if (parseInt(date.getDate()) > 25) {
+                /*if (parseInt(date.getDate()) > 25) {
                     header1 = mons[new Date(year, month + 1, 0).getMonth()] + '-' + new Date(year, month, 0).getFullYear();
                     header2 = mons[new Date(year, month + 1, 1).getMonth()] + '-' + new Date(year, month, 1).getFullYear();
                 } else {
                     header1 = mons[new Date(year, month + 1, 0).getMonth()] + '-' + new Date(year, month, 0).getFullYear();
                     header2 = mons[new Date(year, month + 1, 1).getMonth()] + '-' + new Date(year, month, 1).getFullYear();
-                }
+                }*/
                 var html = "<table cellspacing='0'><tr><td colspan='3' class='header'>" + header1 +
                     "</td><td class='header'>-</td><td colspan='3' class='header'>" + header2 + "</td></tr>";
                 html = html + "<tr>";
