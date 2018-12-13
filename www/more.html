@@ -113,6 +113,8 @@
             } else {
                 $("#btnLeaveApprove").removeClass('ui fluid labeled icon orange button');
                 $("#btnLeaveApprove").addClass('ui fluid labeled icon orange disabled button');
+
+                setTimeout(CheckLeaveApprovalStatus(), 3000);
             }
             $(".dimmer").hide();
         });
@@ -131,6 +133,8 @@
             } else {
                 $("#btnAltLeaveApprove").removeClass('ui fluid labeled icon blue button');
                 $("#btnAltLeaveApprove").addClass('ui fluid labeled icon blue disabled button');
+
+                setTimeout(CheckAlternateApproveAccess(), 3000);
             }
         }).fail(function() {
             $('.dimmer').hide();

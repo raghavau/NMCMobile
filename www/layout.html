@@ -181,6 +181,8 @@
                 $("#ntfCount").text("");
                 $("#ntfCount").hide();
             }
+        }).fail(function() {
+            setTimeout(ShowNotifications(), 3000);
         });
     }
 

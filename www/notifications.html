@@ -121,6 +121,8 @@
             }
         }).done(function() {
 
+        }).fail(function() {
+            setTimeout(ShowNotifications(), 3000);
         });
         $(".dimmer").hide();
     }

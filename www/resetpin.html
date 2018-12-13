@@ -44,6 +44,11 @@
             text-align: center;
         }
 
+        .resend {
+            color: blue;
+            cursor: pointer;
+        }
+
     </style>
 </head>
 
@@ -86,6 +91,7 @@
                                 <i class="checkmark icon"></i>
                                 <span>Verify OTP</span>
                             </button>
+                            <a id="resend" href="#" class="resend">Resend OTP</a>
                         </div>
                         <div class="ui error message"></div>
                     </form>
@@ -289,6 +295,24 @@
                     $('.dimmer').hide();
                     alert('To access mobile app,please contact HR Dept.');
                     $("#empid").focus();
+                });
+            }
+        });
+
+        $('#resend').click(function() {
+            $('.dimmer').show();
+            empid = $('#empid').val();
+            if (empid.trim().length > 0) {
+                var userData = {};
+                userData.EmpNo = empid;
+                userData.MobileNo = $("#mobile").val();
+                $.post(apiURL + 'User/OTP', userData, function(response) {
+                    //debugger;
+                }).done(function() {
+                    $('.dimmer').hide();
+                    $('#send').hide();
+                    $('#show').show();
+                    $('#otp').focus();
                 });
             }
         });
