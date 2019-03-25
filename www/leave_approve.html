@@ -52,7 +52,8 @@
             <div class="ui label">
                 Date
             </div>
-            <input type="text" id="txtdate" readonly>
+            <!--<input type="text" id="txtdate" readonly>-->
+            <select class="ui fluid dropdown" id="seldate"></select>
             <button class="ui icon button" id="btnsearch"><i class="search icon"></i></button>
         </div>
         <br>
@@ -120,13 +121,15 @@
     }
 
     $(document).ready(function() {
+        $.ajaxSetup({ cache: false });
+        $('.ui.dropdown').dropdown();
         qs();
         empid = $("#hempid").val();
 
         $('.dimmer').hide();
         $('#imghide').hide();
         $('.error.message').hide();
-        $('#txtdate').datepicker({
+        /*$('#txtdate').datepicker({
             dateFormat: "dd/mm/yy",
             //changeMonth: true,
             //changeYear: true,
@@ -135,7 +138,7 @@
         });
         var date = new Date();
         var month = parseInt(date.getMonth() + 1) < 10 ? '0' + parseInt(date.getMonth() + 1) : parseInt(date.getMonth() + 1);
-        $("#txtdate").val(date.getDate() + '/' + month + '/' + date.getFullYear());
+        $("#txtdate").val(date.getDate() + '/' + month + '/' + date.getFullYear());*/
 
         $('.ui.sticky').sticky();
 
@@ -145,6 +148,10 @@
 
         CheckStatus();
         $("#btnsearch").click(function() {
+            getApprovalLeaves();
+        });
+
+        $("#seldate").on('change', function() {
             getApprovalLeaves();
         });
 
@@ -161,17 +168,44 @@
         }).done(function(response) {
             //debugger;
             if(response.data == 'Success')
-                getApprovalLeaves();
+                getLeaveApprovalDates();
             else
                 window.location.href = 'error.html';
             $(".dimmer").hide();
         });
     }
 
+    function getLeaveApprovalDates() {
+        //debugger;
+        $('.dimmer').show();
+        $.post(apiURL + 'Attendance/LeaveApprovalDates/', {
+            "EmpNo": empid
+        }, function(response) {
+            $("#seldate").empty();
+        }).done(function(response) {
+            var htmlStr = '';
+            if (response.data.length > 0) {
+                $('.error.message').hide();
+                $("#btnApproveAll").removeClass('disabled');
+                for (var i = 0; i <= response.data.length - 1; i++) {
+                    //debugger;
+                    htmlStr +='<option value="' + response.data[i] + '">' + response.data[i] + '</option>';
+                }
+                $("#seldate").append(htmlStr);
+            } else {
+                $('.error.message').show();
+            }
+            getApprovalLeaves();
+            $('.dimmer').hide();
+        }).fail(function() {
+            $('.dimmer').hide();
+        });
+    }
+
     function getApprovalLeaves() {
         //debugger;
         $('.dimmer').show();
-        var DateVal = $("#txtdate").val();
+        var DateVal = $("#seldate").val();
         var imgData = null;
         $.post(apiURL + 'Attendance/ApprovalLeaves/', {
             "AttendanceDate": DateVal,
@@ -209,7 +243,7 @@
 
     function ApproveAll() {
         $('.dimmer').show();
-        var DateVal = $("#txtdate").val();
+        var DateVal = $("#seldate").val();
         $.post(apiURL + 'Attendance/LeavesApproveAll/', {
             "AttendanceDate": DateVal,
             "UserId": empid
