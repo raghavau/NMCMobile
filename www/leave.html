@@ -259,6 +259,7 @@
             $("#divOD").hide();
             $("#txtODPurpose").val('');
             $("#txtODPlace").val('');
+            $("#leavecount").empty();
             chkValue = null;
             leaveStatus = 'N';
             for (var i = 0; i <= selectedObjects.length - 1; i++) {
@@ -667,7 +668,7 @@
     function DateSelect(obj, obj1, obj2) {
         //debugger;
 
-        var itr = moment.twix(moment().subtract(3, 'days'), new Date('2018-11-20')).iterate("days");
+        var itr = moment.twix(moment().subtract(3, 'days'), new Date()).iterate("days");
         var range = [],
             subtractDays = 4;
 
@@ -691,7 +692,7 @@
         var selected = $("#selType option:selected").val()
 
         isbeforeDate = moment(year + '-' + (m + 1) + '-' + obj1).isBefore(moment().subtract(subtractDays, 'days'));
-
+        
         if (chkValue == "8")
             isfutureDate = moment(new Date(year, m, obj1)).isAfter(new Date());
         if (leaveStatus == 'L') {
@@ -699,7 +700,8 @@
                 $(this).val('');
                 return;
             } else {
-                if (!isfutureDate && !isbeforeDate) {
+                if (!isfutureDate && !isbeforeDate) 
+                {
                     var allowcount = parseInt($("#hleavestoavail").val()) - holdday.length;
                     if (selectedDates.length <= parseInt(allowcount - 1)) {
                         if (selectedDates.indexOf($.datepicker.formatDate('dd/mm/yy', new Date(year, m, obj1))) == -1) {

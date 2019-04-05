@@ -219,13 +219,14 @@
                 $('.error.message').hide();
                 $("#btnApproveAll").removeClass('disabled');
                 for (var i = 0; i <= response.data.length - 1; i++) {
-                    //debugger;
+                    //debugger;$("#empimg").attr('src', 'http://narayanagroup.co.in/NtraktApi/ImageHandler.ashx?id=' + $("#hempid").val());
                     htmlStr += '<div class="item"><div class="right floated content">';
                     htmlStr += '<button class="ui tiny basic green icon button" onclick="Approve(' + response.data[i].EmpNo + ',\'' + response.data[i].EventDate + '\')">';
                     htmlStr += '<i class="check icon"></i></button>';
                     htmlStr += '<button class="ui tiny basic red icon button" onclick="Reject(' + response.data[i].EmpNo + ',\'' + response.data[i].EventDate + '\')">';
                     htmlStr += '<i class="trash icon"></i></button></div>';
-                    htmlStr += '<img class="ui mini circular image" src="data:image/png;base64,' + response.data[i].EmpPhoto + '" onclick="zoomImage(this)">';
+                    //htmlStr += '<img class="ui mini circular image" src="data:image/png;base64,' + response.data[i].EmpPhoto + '" onclick="zoomImage(this)">';
+                    htmlStr += '<img class="ui mini circular image" src="http://narayanagroup.co.in/NtraktApi/ImageHandler.ashx?id=' + response.data[i].EmpNo + '" onclick="zoomImage(this)">';
                     htmlStr += '<div class="ui content"><label class="header" style="word-wrap: break-word;">' + response.data[i].EmpName + '  <div class="ui left tiny label">' + response.data[i].LeaveType + '</div></label>';
                     htmlStr += '<div class="description">' + response.data[i].EmpNo + '<br>' + response.data[i].EventDate + '</div></div></div>';
                     htmlStr += '</div>';
@@ -233,6 +234,7 @@
 
                 $(".divided.list").append(htmlStr);
             } else {
+                getLeaveApprovalDates();
                 $('.error.message').show();
             }
             $('.dimmer').hide();
