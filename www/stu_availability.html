@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Availablility</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="semantic/css/semantic.css">
+    <link rel="stylesheet" type="text/css" href="fontawesome4.7.0/css/font-awesome.css">
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="semantic/js/semantic.js"></script>
+    <style type="text/css">
+        body {
+            background-color: #e5e5e5;
+        }
+
+        body>.grid {
+            height: 100%;
+        }
+
+        .column {
+            /*max-width: 450px;*/
+            margin: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ui column grid">
+        <div class="column">
+            <div class="ui stacked left aligned segment">
+                <div class="ui red ribbon label">Hostel Student Availability</div><br><br>
+                <div class="ui form">
+                    <div class="field">
+                        <div class="ui fluid labeled action input">
+                            <div class="ui label">Reg. No</div>
+                            <input type="text" name="txtRegno" id="txtRegno" class="ui input" />
+                            <button id="btnSearch" class="ui basic small primary button">Search</button>
+                        </div>
+                    </div>
+
+                    <div class="two fields">
+                        <div class="eight wide field">
+                            <div class="ui list">
+                                <div class="item">
+                                    <img class="ui image" src="img/logo.png">
+                                    <div class="content">
+                                        <label id="lblName" class="header"></label>
+                                        <div class="description"><span id="course"></span> <span id="year"></span> <span
+                                                id="branch"></span></div>
+                                        <div class="description">
+                                            <label><span id="hostel"></span></label><br>
+                                            <label><span id="room"></span></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="eight wide field">
+                            <div class="field">
+                                <div id="status" class="inline fields">
+                                    <!--<label>Status</label>
+                                    <div class="field">
+                                        <div class="ui slider checkbox">
+                                            <input name="avail" type="radio" value="1"><label>Leave</label>
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="ui slider checkbox">
+                                            <input name="avail" type="radio" value="2"><label>Outing</label>
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="ui slider checkbox">
+                                            <input name="avail" type="radio" value="3"><label>Others</label>
+                                        </div>
+                                    </div>-->
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label>Notes</label>
+                                <textarea id="txtnotes" name="txtnotes" class="ui input" rows="1" cols="40"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="ui teal fluid submit button right labeled icon" type="button" id="submit">
+                        <i class="checkmark icon"></i>
+                        <span>Submit</span>
+                    </button>
+                </div><br>
+            </div>
+        </div>
+    </div>
+    <div class="ui active inverted page dimmer">
+        <div class="ui large text loader">Loading</div>
+    </div>
+    <input type="hidden" id="hcampslno" />
+    <input type="hidden" id="hcourslno" />
+    <input type="hidden" id="hyearslno" />
+    <input type="hidden" id="hhostslno" />
+    <input type="hidden" id="hroomslno" />
+</body>
+
+</html>
+<script type="text/javascript">
+    document.addEventListener("deviceready", onDeviceReady, false);
+    //100733663577
+    function onDeviceReady() {
+        document.addEventListener("backbutton", onBackKeyDown, false);
+    }
+
+    function onBackKeyDown() {
+        var state = confirm('Are You Sure you want to Exit.');
+        if (state)
+            navigator.app.exitApp(); // exit the app
+    }
+
+    var apiURL = 'http://192.168.1.44/NtraktApi/api/';
+    //var apiURL = 'http://175.101.102.102/NtraktApi/api/';
+    //var apiURL = 'http://narayanagroup.co.in/NtraktApi/api/';
+    var qsParm = new Array(),
+        empid = null;
+
+    function qs() {
+        //debugger;
+        var query = window.location.search.substring(1);
+        var parms = query.split('&');
+        for (var i = 0; i < parms.length; i++) {
+            var pos = parms[i].indexOf('=');
+            if (pos > 0) {
+                var key = parms[i].substring(0, pos);
+                var val = parms[i].substring(pos + 1);
+                qsParm[key] = val;
+            }
+        }
+        if (parms.length > 0) {
+            $("#hempid").val(atob(qsParm["empid"]));
+            return true;
+        } else {
+            window.location.href = 'index.html';
+            return false;
+        }
+    }
+
+    function CheckStatus() {
+        //debugger;
+        $('.dimmer').show();
+        $.get(apiURL + 'User/CheckDoctor/' + $("#hempid").val(), function (response) {
+            //debugger;
+        }).done(function (response) {
+            //debugger;
+            StudentStatus();
+            if (response.data != 'Success')
+                window.location.href = 'error.html';
+            $(".dimmer").hide();
+        });
+    }
+
+    $(document).ready(function () {
+        //qs();
+        $(".dimmer").show();
+        setTimeout(function () {
+            $(".dimmer").hide();
+        }, 2000);
+
+        $("#btnSearch").click(function () {
+            StudentDetails();
+        });
+
+        $("#submit").click(function () {
+            SaveData();
+        });
+    });
+
+    function StudentDetails() {
+        $('.dimmer').show();
+        $.get(apiURL + 'Student/Details/' + $("#txtRegno").val(), function (response) {
+            //debugger;
+        }).done(function (response) {
+            //debugger;
+            if (response.data.length > 0) {
+                $("#lblName").text(response.data[0].StudentName);
+                $("#course").html('<i class="graduation cap icon"></i>' + response.data[0].Course);
+                $("#year").text('   ' + response.data[0].Year);
+                $("#branch").text('   ' + response.data[0].Branch);
+                $("#hostel").html('<i class="building icon"></i> ' + response.data[0].Hostel);
+                $("#room").html('<i class="bed icon"></i> ' + response.data[0].Room);
+                $("#hcampslno").val(response.data[0].CampusSlno);
+                $("#hcourslno").val(response.data[0].CourseSlno);
+                $("#hyearslno").val(response.data[0].YearSlno);
+                $("#hhostslno").val(response.data[0].HostelSlno);
+                $("#hroomslno").val(response.data[0].RoomSlno);
+                AvailabilityStatus();
+            }
+            $(".dimmer").hide();
+        }).fail(function (err) {
+            alert(err);
+            $(".dimmer").hide();
+        });
+    }
+
+    function AvailabilityStatus() {
+        //debugger;
+        $('.dimmer').show();
+        $.get(apiURL + 'Availability/STU', function (response) {
+            //debugger;
+        }).done(function (response) {
+            //debugger;
+            var htmlstr = "";
+            $("#status").empty();
+            if (response.data.length > 0) {
+                htmlstr += '<label>Status</label>';
+                for (var i = 0; i <= response.data.length - 1; i++) {
+                    htmlstr += '<div class="field"><div class="ui slider checkbox">';
+                    htmlstr += '<input name="avail" type="radio" value="' + response.data[i].Slno + '">';
+                    htmlstr += '<label>' + response.data[i].StatusName + '</label></div></div>';
+                }
+                $("#status").append(htmlstr);
+            }
+            StudentStatus();
+            $(".dimmer").hide();
+        });
+    }
+
+    function StudentStatus() {
+        //debugger;
+        $('.dimmer').show();
+        var objdata = {
+            Regno: $("#txtRegno").val(),
+            CampusSlno: $("#hcampslno").val(),
+            CourseSlno: $("#hcourslno").val(),
+            YearSlno: $("#hyearslno").val(),
+            HostelSlno: $("#hhostslno").val(),
+            RoomSlno: $("#hroomslno").val()
+        };
+        $(".dimmer").show();
+        //debugger;
+
+        $.ajax({
+            type: 'POST',
+            url: apiURL + 'Student/Status',
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify(objdata),
+            success: function (response) {
+                //debugger;
+                if (response.data.length > 0) {
+                    $("#txtnotes").val(response.data[0].Notes);
+                    var len = $("input[name='avail']").length;
+
+                    for (var i = 0; i <= len - 1; i++) {
+                        if ($("input[name='avail']")[i].value == response.data[0].AvailabilitySlno) {
+                            $("input[name='avail']")[i].checked = true;
+                        }
+                    }
+                }
+                $(".dimmer").hide();
+            },
+            error: function (xhr, status, error) {
+                alert('Error occurred while submitting data.\n\r' + xhr.responseText);
+                $(".dimmer").hide();
+            }
+        });
+    }
+
+    function SaveData() {
+        //debugger;
+
+        var objdata = {
+            Regno: $("#txtRegno").val(),
+            AvailabilityType: $("input[name='avail']:checked").val(),
+            Notes: $("#txtnotes").val(),
+            CampusSlno: $("#hcampslno").val(),
+            CourseSlno: $("#hcourslno").val(),
+            YearSlno: $("#hyearslno").val(),
+            HostelSlno: $("#hhostslno").val(),
+            RoomSlno: $("#hroomslno").val()
+        };
+        $(".dimmer").show();
+        //debugger;
+
+        $.ajax({
+            type: 'POST',
+            url: apiURL + 'Student/StatusChange',
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify(objdata),
+            success: function (result) {
+                //debugger;
+                if (result.data == 'Success') {
+                    alert('Your Status Successfully Updated.');
+                    document.location.reload();
+                } else {
+                    $(".dimmer").hide();
+                    alert('Your Status Failed to Update.');
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('Error occurred while submitting data.\n\r' + xhr.responseText);
+                $(".dimmer").hide();
+            }
+        });
+    }
+</script>

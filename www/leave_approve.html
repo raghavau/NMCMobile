@@ -219,7 +219,7 @@
                 $('.error.message').hide();
                 $("#btnApproveAll").removeClass('disabled');
                 for (var i = 0; i <= response.data.length - 1; i++) {
-                    //debugger;$("#empimg").attr('src', 'http://narayanagroup.co.in/NtraktApi/ImageHandler.ashx?id=' + $("#hempid").val());
+                    //debugger;
                     htmlStr += '<div class="item"><div class="right floated content">';
                     htmlStr += '<button class="ui tiny basic green icon button" onclick="Approve(' + response.data[i].EmpNo + ',\'' + response.data[i].EventDate + '\')">';
                     htmlStr += '<i class="check icon"></i></button>';
