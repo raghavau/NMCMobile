@@ -11,7 +11,7 @@
     <script type="text/javascript" src="semantic/js/semantic.js"></script>
     <style type="text/css">
         body {
-            background-color: #e5e5e5;
+            background-color: #ffffff;
         }
 
         body>.grid {
@@ -26,24 +26,33 @@
 </head>
 
 <body>
-    <div class="ui column grid">
-        <div class="column">
-            <div class="ui stacked left aligned segment">
-                <div class="ui red ribbon label">Hostel Student Availability</div><br><br>
-                <div class="ui form">
-                    <div class="field">
-                        <div class="ui fluid labeled action input">
+    <div class="ui container">
+        <br>
+        <div class="page-header">
+            <h3>Student Status Request</h3>
+            <div class="ui divider"></div>
+        </div>
+
+        <div class="ui stacked left aligned segment">
+            <div class="ui form">
+                <div class="two fields">
+                    <div class="four wide field">
+                        <div class="ui fluid labeled input">
                             <div class="ui label">Reg. No</div>
                             <input type="text" name="txtRegno" id="txtRegno" class="ui input" />
-                            <button id="btnSearch" class="ui basic small primary button">Search</button>
                         </div>
                     </div>
-
+                    <div class="one wide field">
+                        <button id="btnSearch" class="ui basic small primary button">Search</button>
+                    </div>
+                </div>              
+                
+                <div id="info">
                     <div class="two fields">
                         <div class="eight wide field">
                             <div class="ui list">
                                 <div class="item">
-                                    <img class="ui image" src="img/logo.png">
+                                    <img class="ui small rounded image" id="stuimg">
                                     <div class="content">
                                         <label id="lblName" class="header"></label>
                                         <div class="description"><span id="course"></span> <span id="year"></span> <span
@@ -81,14 +90,15 @@
                                 <label>Notes</label>
                                 <textarea id="txtnotes" name="txtnotes" class="ui input" rows="1" cols="40"></textarea>
                             </div>
+                            <div class="field"><br>
+                                <button class="ui teal submit button right labeled icon" type="button" id="submit">
+                                    <i class="checkmark icon"></i>
+                                    <span>Submit</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
-
-                    <button class="ui teal fluid submit button right labeled icon" type="button" id="submit">
-                        <i class="checkmark icon"></i>
-                        <span>Submit</span>
-                    </button>
-                </div><br>
+                </div>
             </div>
         </div>
     </div>
@@ -119,6 +129,8 @@
     var apiURL = 'http://192.168.1.44/NtraktApi/api/';
     //var apiURL = 'http://175.101.102.102/NtraktApi/api/';
     //var apiURL = 'http://narayanagroup.co.in/NtraktApi/api/';
+
+    var imgURL = 'http://192.168.1.44/NtraktApi/StuImages/';
     var qsParm = new Array(),
         empid = null;
 
@@ -159,13 +171,25 @@
 
     $(document).ready(function () {
         //qs();
+        $.ajaxSetup({ cache: false });
+        $("#info").hide();
         $(".dimmer").show();
         setTimeout(function () {
             $(".dimmer").hide();
-        }, 2000);
+        }, 1000);
+
+        $('#txtRegno').bind('keyup paste', function () {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
 
         $("#btnSearch").click(function () {
-            StudentDetails();
+            if($('#txtRegno').val() == ''){
+                alert('Please Enter Student Registration No.');
+                $('#txtRegno').focus()
+                return false;
+            }
+            else
+                StudentDetails();
         });
 
         $("#submit").click(function () {
@@ -180,6 +204,7 @@
         }).done(function (response) {
             //debugger;
             if (response.data.length > 0) {
+                $("#info").show();
                 $("#lblName").text(response.data[0].StudentName);
                 $("#course").html('<i class="graduation cap icon"></i>' + response.data[0].Course);
                 $("#year").text('   ' + response.data[0].Year);
@@ -191,11 +216,16 @@
                 $("#hyearslno").val(response.data[0].YearSlno);
                 $("#hhostslno").val(response.data[0].HostelSlno);
                 $("#hroomslno").val(response.data[0].RoomSlno);
+                //$("#stuimg").attr('src', 'data:image/png;base64,' + response.data[0].StudentPicture);
+                $("#stuimg").attr('src', imgURL + response.data[0].Regno + '.png');
                 AvailabilityStatus();
+            } else {
+                $("#info").hide();
             }
             $(".dimmer").hide();
         }).fail(function (err) {
             alert(err);
+            $("#info").hide();
             $(".dimmer").hide();
         });
     }
@@ -214,7 +244,7 @@
                 for (var i = 0; i <= response.data.length - 1; i++) {
                     htmlstr += '<div class="field"><div class="ui slider checkbox">';
                     htmlstr += '<input name="avail" type="radio" value="' + response.data[i].Slno + '">';
-                    htmlstr += '<label>' + response.data[i].StatusName + '</label></div></div>';
+                    htmlstr += '<label for="avail">' + response.data[i].StatusName + '</label></div></div>';
                 }
                 $("#status").append(htmlstr);
             }
@@ -226,41 +256,43 @@
     function StudentStatus() {
         //debugger;
         $('.dimmer').show();
-        var objdata = {
-            Regno: $("#txtRegno").val(),
-            CampusSlno: $("#hcampslno").val(),
-            CourseSlno: $("#hcourslno").val(),
-            YearSlno: $("#hyearslno").val(),
-            HostelSlno: $("#hhostslno").val(),
-            RoomSlno: $("#hroomslno").val()
-        };
-        $(".dimmer").show();
         //debugger;
 
-        $.ajax({
-            type: 'POST',
-            url: apiURL + 'Student/Status',
-            dataType: "json",
-            contentType: "application/json",
-            data: JSON.stringify(objdata),
-            success: function (response) {
-                //debugger;
-                if (response.data.length > 0) {
-                    $("#txtnotes").val(response.data[0].Notes);
+        $.get(apiURL + 'Student/Status/P', function (response) {
+            //debugger;
+        }).done(function (response) {
+            //debugger;
+            if (response.data.length > 0) {
+                selectedArray = response.data;
+
+                if ($("#txtRegno").val().length > 0) {
+                    if ($("#txtRegno").val().length == 12) {
+                        selectedArray = jQuery.grep(selectedArray, function (data, i) {
+                            //debugger;
+                            return data.Regno == $("#txtRegno").val();
+                        });
+                    } else {
+                        alert('Invalid Registration No');
+                        $("#txtRegno").val("");
+                        $("#txtRegno").focus();
+                    }
+                }
+
+                if (selectedArray.length > 0) {
+                    $("#txtnotes").val(selectedArray[0].Notes);
                     var len = $("input[name='avail']").length;
 
                     for (var i = 0; i <= len - 1; i++) {
-                        if ($("input[name='avail']")[i].value == response.data[0].AvailabilitySlno) {
+                        if ($("input[name='avail']")[i].value == selectedArray[0].AvailabilitySlno) {
                             $("input[name='avail']")[i].checked = true;
                         }
                     }
                 }
-                $(".dimmer").hide();
-            },
-            error: function (xhr, status, error) {
-                alert('Error occurred while submitting data.\n\r' + xhr.responseText);
-                $(".dimmer").hide();
             }
+            $(".dimmer").hide();
+        }).fail(function (xhr, status, error) {
+            alert('Error occurred.\n\r' + xhr.responseText);
+            $(".dimmer").hide();
         });
     }
 
@@ -282,7 +314,7 @@
 
         $.ajax({
             type: 'POST',
-            url: apiURL + 'Student/StatusChange',
+            url: apiURL + 'Student/Request',
             dataType: "json",
             contentType: "application/json",
             data: JSON.stringify(objdata),

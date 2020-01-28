@@ -151,13 +151,17 @@
         izoom = 0,
         timer = null,
         countdownNumberEl = null,
-        countdown = 60;
+        countdown = 60,
+        hostel = null,
+        status = null,
+        selectedArray = [];
 
     var timeout = setTimeout(function runMe() {
         //debugger;
         $(".dimmer").hide();
         clearInterval(timer);
         izoom = 0;
+        $("#grid").empty();
         $("#hostel").dropdown('clear');
         $("#status").dropdown('clear');
         $("#hostel").empty();
@@ -166,8 +170,6 @@
             //debugger;
         }).done(function (response) {
             //debugger;
-            $("#grid").empty();
-            
             if (response.data.length > 0) {
                 selectedArray = response.data;
                 Hostel(response.data);
@@ -179,12 +181,12 @@
                     $('.error.message').hide();
                     htmlStr +=
                         '<table class="ui celled unstackable table"><thead><tr class="ui inverted teal table">' +
-                        '<th>Slno</th><th></th><th>Student Name</th><th>Course</th><th>Hostel</th><th>Room</th><th>Status</th><th>Notes</th>' +
-                        '</tr></thead><tbody>';
+                        '<th>Slno</th><th></th><th>Student Name</th><th>Course</th><th>Hostel</th><th>Room</th><th>Status</th><th>Notes</th><th>Notes</th>' +
+                        '<th></th></tr></thead><tbody>';
                     for (var i = 0; i <= selectedArray.length - 1; i++) {
                         //debugger;
-                        htmlStr += '<tr class="top aligned"><td style="width: 30px" class="center aligned one wide">' + (i + 1) + '</td><td style="width: 50px" class="center aligned one wide">';
-                        //htmlStr += '<img alt="" src="http://narayanagroup.co.in/NtraktApi/Content/images/' + selectedArray[i].DoctorId + '.png"';
+                        htmlStr += '<tr class="top aligned"><td style="width: 30px">' + (i + 1) + '</td><td style="width: 50px">';
+                        //htmlStr += '<img alt="" src="http://192.168.1.44/NtraktApi/api/Student/ShowPicture/' + selectedArray[i].Regno + '"';
                         htmlStr += '<img alt="" src="' + imgURL + selectedArray[i].Regno + '.png"';
                         htmlStr += 'width="40px" height="50px" onclick="ZoomImage(this)" style="border: 1px solid #e3e3e3" /></td>' +
                             '<td style="width: 300px">' + selectedArray[i].StudentName + '<input type="hidden" id="hregno' + i + '" value="' + selectedArray[i].Regno + '" /></td>' +
@@ -192,13 +194,18 @@
                             '<input type="hidden" id="hcourse' + i + '" value="' + selectedArray[i].CourseSlno + '" /></td>' +
                             '<input type="hidden" id="hyear' + i + '" value="' + selectedArray[i].YearSlno + '" /></td>' +
                             '<td style="width: 200px">' + selectedArray[i].Hostel + '<input type="hidden" id="hhostel' + i + '" value="' + selectedArray[i].HostelSlno + '" /></td>' +
-                            '<td style="width: 100px">' + selectedArray[i].Room + '<input type="hidden" id="hroom' + i + '" value="' + selectedArray[i].RoomSlno + '" /></td>' +
+                            '<td style="width: 70px">' + selectedArray[i].Room + '<input type="hidden" id="hroom' + i + '" value="' + selectedArray[i].RoomSlno + '" /></td>' +
                             '</td><td style="width: 70px">';
                         if (selectedArray[i].AvailType == "Leave")
                             htmlStr += '<label class="ui green fluid label">' + selectedArray[i].AvailabilityType + '</label>';
                         else
                             htmlStr += '<label class="ui fluid label">' + selectedArray[i].AvailabilityType + '</label>';
-                        htmlStr += '</td><td style="width: 250px">' + selectedArray[i].Notes + '</td></tr>';
+                        htmlStr += '</td><td style="width: 200px">' + selectedArray[i].Notes + '</td>';
+                        htmlStr += '<td style="width: 200px"><input type="text" id="notes' + i + '" class="ui mini input" /></td>';
+                        htmlStr += '<td style="width: 50px"><button id="close' + i + '" class="ui mini negative button" onclick="Close(' + i + ')">Close</button>';
+                        htmlStr += '<input type="hidden" id="havlslno' + i + '" value="' + selectedArray[i].AvailabilitySlno + '" />';
+                        htmlStr += '<input type="hidden" id="hreqslno' + i + '" value="' + selectedArray[i].RequestSlno + '" />';
+                        htmlStr += '</td></tr>';
                     }
                     htmlStr += '</tbody></table>';
                     $("#grid").append(htmlStr);
@@ -212,7 +219,7 @@
             $('.error.message').show();
             timeout = setTimeout(runMe, 5000);
         });
-    }, 3000);
+    }, 300);
 
     $(document).ajaxStop($.unblockUI);
 
@@ -222,11 +229,11 @@
         $('.error.message').hide();
         $('.ui.dropdown').dropdown();
 
-        $('#txtRegno').bind('keyup paste', function(){
+        $('#txtRegno').bind('keyup paste', function () {
             this.value = this.value.replace(/[^0-9]/g, '');
         });
 
-        $("#btnReport").click(function(){
+        $("#btnReport").click(function () {
             Grid();
         });
 
@@ -246,11 +253,11 @@
     function Grid() {
         //debugger;
         $(".dimmer").hide();
+        $("#grid").empty();
         $.get(apiURL + 'Student/Status/Y', function (response) {
             //debugger;
         }).done(function (response) {
             //debugger;
-            $("#grid").empty();
             selectedArray = response.data;
             if (parseInt($("#hostel option:selected").val()) > 0) {
                 selectedArray = jQuery.grep(selectedArray, function (data, i) {
@@ -283,14 +290,13 @@
             
             if (selectedArray.length > 0) {
                 $('.error.message').hide();
-                htmlStr +=
-                    '<table class="ui celled unstackable table"><thead><tr class="ui inverted teal table">' +
-                    '<th>Slno</th><th></th><th>Student Name</th><th>Course</th><th>Hostel</th><th>Room</th><th>Status</th><th>Notes</th>' +
-                    '</tr></thead><tbody>';
+                htmlStr += '<table class="ui celled unstackable table"><thead><tr class="ui inverted teal table">' +
+                    '<th>Slno</th><th></th><th>Student Name</th><th>Course</th><th>Hostel</th><th>Room</th><th>Status</th><th>Notes</th><th>Notes</th>' +
+                    '<th></th></tr></thead><tbody>';
                 for (var i = 0; i <= selectedArray.length - 1; i++) {
                     //debugger;
-                    htmlStr += '<tr class="top aligned"><td style="width: 30px" class="center aligned one wide">' + (i + 1) + '</td><td style="width: 50px" class="center aligned one wide">';
-                    //htmlStr += '<img alt="" src="http://narayanagroup.co.in/NtraktApi/Content/images/' + selectedArray[i].DoctorId + '.png"';
+                    htmlStr += '<tr class="top aligned"><td style="width: 30px">' + (i + 1) + '</td><td style="width: 50px">';
+                    //htmlStr += '<img alt="" src="http://192.168.1.44/NtraktApi/api/Student/ShowPicture/' + selectedArray[i].Regno + '"';
                     htmlStr += '<img alt="" src="' + imgURL + selectedArray[i].Regno + '.png"';
                     htmlStr += 'width="40px" height="50px" onclick="ZoomImage(this)" style="border: 1px solid #e3e3e3" /></td>' +
                         '<td style="width: 300px">' + selectedArray[i].StudentName + '<input type="hidden" id="hregno' + i + '" value="' + selectedArray[i].Regno + '" /></td>' +
@@ -298,13 +304,18 @@
                         '<input type="hidden" id="hcourse' + i + '" value="' + selectedArray[i].CourseSlno + '" /></td>' +
                         '<input type="hidden" id="hyear' + i + '" value="' + selectedArray[i].YearSlno + '" /></td>' +
                         '<td style="width: 200px">' + selectedArray[i].Hostel + '<input type="hidden" id="hhostel' + i + '" value="' + selectedArray[i].HostelSlno + '" /></td>' +
-                        '<td style="width: 100px">' + selectedArray[i].Room + '<input type="hidden" id="hroom' + i + '" value="' + selectedArray[i].RoomSlno + '" /></td>' +
+                        '<td style="width: 70px">' + selectedArray[i].Room + '<input type="hidden" id="hroom' + i + '" value="' + selectedArray[i].RoomSlno + '" /></td>' +
                         '</td><td style="width: 70px">';
                     if (selectedArray[i].AvailType == "Leave")
                         htmlStr += '<label class="ui green fluid label">' + selectedArray[i].AvailabilityType + '</label>';
                     else
                         htmlStr += '<label class="ui fluid label">' + selectedArray[i].AvailabilityType + '</label>';
-                    htmlStr += '</td><td style="width: 250px">' + selectedArray[i].Notes + '</td></tr>';
+                    htmlStr += '</td><td style="width: 200px">' + selectedArray[i].Notes + '</td>';
+                    htmlStr += '<td style="width: 200px"><input type="text" id="notes' + i + '" class="ui mini input" /></td>';
+                    htmlStr += '<td style="width: 50px"><button id="close' + i + '" class="ui mini negative button" onclick="Close(' + i + ')">Close</button>';
+                    htmlStr += '<input type="hidden" id="havlslno' + i + '" value="' + selectedArray[i].AvailabilitySlno + '" />';
+                    htmlStr += '<input type="hidden" id="hreqslno' + i + '" value="' + selectedArray[i].RequestSlno + '" />';
+                    htmlStr += '</td></tr>';
                 }
                 htmlStr += '</tbody></table>';
                 $("#grid").append(htmlStr);
@@ -318,7 +329,6 @@
 
     function AvailabilityStatus(data) {
         var statusArray = [];
-        $("#status").empty();
         if (data.length > 0) {
             $.each(data, function (idx, val) {
                 //debugger;
@@ -328,9 +338,10 @@
 
             //debugger;
             var uniqueItems = [...new Set(statusArray)]; //Array.from(new Set(statusArray));
-            console.log(uniqueItems);
-
-            var htmlStr = '';            
+            
+            $('#status').dropdown('clear');
+            var htmlStr = '';
+            $("#status").empty();
             if (uniqueItems.length > 0) {
                 if (uniqueItems.length == 1) {
                     htmlStr += '<option value="' + uniqueItems[0].split(',')[0] + '">' + uniqueItems[0].split(',')[1] + '</option>';
@@ -350,7 +361,6 @@
 
     function Hostel(data) {
         var hostelArray = [];
-        $("#hostel").empty();
         if (data.length > 0) {
             $.each(data, function (idx, val) {
                 //debugger;
@@ -360,9 +370,10 @@
 
             //debugger;
             var uniqueItems = [...new Set(hostelArray)]; //Array.from(new Set(hostelArray));
-            console.log(uniqueItems);
-
+            
+            $('#hostel').dropdown('clear');
             var htmlStr = '';
+            $("#hostel").empty();
             if (uniqueItems.length > 0) {
                 if (uniqueItems.length == 1) {
                     htmlStr += '<option value="' + uniqueItems[0].split(',')[0] + '">' + uniqueItems[0].split(',')[1] + '</option>';
@@ -379,6 +390,39 @@
                 $("#hostel").empty();
             }
         }
+    }
+
+    function Close(obj) {
+        //debugger;
+        var objdata = {
+            RequestSlno: $("#hreqslno" + obj).val(),
+            Regno: $("#hregno" + obj).val(),
+            Notes: $("#notes" + obj).val(),
+            ApprovalUser: "admin"
+        };
+        $(".dimmer").show();
+        //debugger;
+        $.ajax({
+            type: 'POST',
+            url: apiURL + 'Student/Close',
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify(objdata),
+            success: function (result) {
+                //debugger;
+                if (result.data == 'Success') {
+                    alert('Your Status Successfully Updated.');
+                    document.location.reload();
+                } else {
+                    $(".dimmer").hide();
+                    alert('Your Status Failed to Update.');
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('Error occurred while submitting data.\n\r' + xhr.responseText);
+                $(".dimmer").hide();
+            }
+        });
     }
 
     function ZoomImage(obj) {
